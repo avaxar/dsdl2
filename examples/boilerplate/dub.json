@@ -1,0 +1,16 @@
+{
+	"authors": [
+		"Avaxar <avaxar@nekkl.org>"
+	],
+	"copyright": "Copyright © 2023, Avaxar",
+	"dependencies": {
+		"dsdl2": {
+			"path": "./../.."
+		}
+	},
+	"description": "A boilerplate DSDL2 application.",
+	"license": "none",
+	"name": "boilerplate",
+	"targetType": "executable",
+	"versions": ["SDL_2_26"]
+}
