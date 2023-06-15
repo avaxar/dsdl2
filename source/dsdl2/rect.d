@@ -34,15 +34,22 @@ struct Point {
 
     @disable this();
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Point` from a vanilla `SDL_Point` from bindbc-sdl
+     +
+     + Params:
+     +   sdlPoint = the `dsdl2.Point` struct
      +/
     this(SDL_Point sdlPoint) {
         this._sdlPoint = sdlPoint;
     }
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Point` by feeding in an `x` and `y` pair
+     + 
+     + Params:
+     +   x = x coordinate point
+     +   y = y coordinate point
      +/
     this(int x, int y) {
         this.x = x;
@@ -121,15 +128,24 @@ struct Rect {
 
     @disable this();
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Rect` from a vanilla `SDL_Rect` from bindbc-sdl
+     + 
+     + Params:
+     +   sdlRect = the `SDL_Rect` struct
      +/
     this(SDL_Rect sdlRect) {
         this._sdlRect = sdlRect;
     }
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Rect` by feeding in the `x`, `y`, `w`idth, and `h`eight of the rectangle
+     + 
+     + Params:
+     +   x = top-left x coordinate point of the rectangle
+     +   y = top-left y coordinate point of the rectangle
+     +   w = rectangle width
+     +   h = rectangle height
      +/
     this(int x, int y, int w, int h) {
         this.x = x;
@@ -138,9 +154,14 @@ struct Rect {
         this.h = h;
     }
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Rect` by feeding in a `dsdl2.Point` as the `xy`, then `w`idth and `h`eight of the
      + rectangle
+     + 
+     + Params:
+     +   xy = top-left point of the rectangle
+     +   w  = rectangle width
+     +   h  = rectangle height
      +/
     this(Point xy, int w, int h) {
         this.x = xy.x;
@@ -196,7 +217,7 @@ struct Rect {
      + Wraps `SDL_PointInRect` which sees whether the coordinate of a `dsdl2.Point` is inside the `dsdl2.Rect`
      + 
      + Params:
-     +   point = `dsdl2.Point` to be checked its collision of with the `dsdl2.Rect` instance
+     +   point = the `dsdl2.Point` to be checked its collision of with the `dsdl2.Rect` instance
      + Returns: `true` if it is within, otherwise `false`
      +/
     bool collide(Point point) const {
@@ -302,6 +323,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         /++
          + Constructs a `dsdl2.FPoint` from a vanilla `SDL_FPoint` from bindbc-sdl
+         +
+         + Params:
+         +   sdlFPoint = the `dsdl2.FPoint` struct
          +/
         this(SDL_FPoint sdlFPoint) {
             this._sdlFPoint = sdlFPoint;
@@ -309,6 +333,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         /++
          + Constructs a `dsdl2.FPoint` by feeding in an `x` and `y` pair
+         + 
+         + Params:
+         +     x = x coordinate point
+         +     y = y coordinate point
          +/
         this(float x, float y) {
             this.x = x;
@@ -388,15 +416,24 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         @disable this();
 
-        /++
+        /++ 
          + Constructs a `dsdl2.FRect` from a vanilla `SDL_FRect` from bindbc-sdl
+         + 
+         + Params:
+         +   sdlFRect = the `SDL_FRect` struct
          +/
         this(SDL_FRect sdlFRect) {
             this._sdlFRect = sdlFRect;
         }
 
-        /++
+        /++ 
          + Constructs a `dsdl2.FRect` by feeding in the `x`, `y`, `w`idth, and `h`eight of the rectangle
+         + 
+         + Params:
+         +   x = top-left x coordinate point of the rectangle
+         +   y = top-left y coordinate point of the rectangle
+         +   w = rectangle width
+         +   h = rectangle height
          +/
         this(float x, float y, float w, float h) {
             this.x = x;
@@ -405,9 +442,14 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             this.h = h;
         }
 
-        /++
-         + Constructs a `dsdl2.FRect` by feeding in a `dsdl2.FPoint` as the `xy`, then `w`idth and `h`eight of the
-         + rectangle
+        /++ 
+         + Constructs a `dsdl2.FRect` by feeding in a `dsdl2.FPoint` as the `xy`, then `w`idth and `h`eight of
+         + the rectangle
+         + 
+         + Params:
+         +   xy = top-left point of the rectangle
+         +   w  = rectangle width
+         +   h  = rectangle height
          +/
         this(FPoint xy, float w, float h) {
             this.x = xy.x;
@@ -470,7 +512,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + is inside the `dsdl2.FRect`
              + 
              + Params:
-             +   point = `dsdl2.FPoint` to be checked its collision of with the `dsdl2.FRect` instance
+             +   point = the `dsdl2.FPoint` to be checked its collision of with the `dsdl2.FRect` instance
              + Returns: `true` if it is within, otherwise `false`
              +/
             bool collide(FPoint point) const

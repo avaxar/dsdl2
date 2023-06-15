@@ -14,6 +14,7 @@
 			"versions": ["SDL_2_26"]
 		}
 	},
+	"homepage": "https://github.com/avaxar/dsdl2",
 	"importPaths": [
 		"source"
 	],

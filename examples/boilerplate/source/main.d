@@ -2,7 +2,7 @@ import std.stdio;
 static import dsdl2;
 
 void main() {
-	dsdl2.loadSO();
+    dsdl2.loadSO();
     dsdl2.init();
     writeln("Version of SDL used: ", dsdl2.getVersion());
 
@@ -19,6 +19,9 @@ void main() {
     assert(rect1.collide(rect2));
     assert(rect1.intersect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
 
+    const auto rgba = dsdl2.PixelFormat.rgba8888;
+    assert(rgba.map(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
+    assert(rgba.get(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
+
     dsdl2.quit();
 }
-
