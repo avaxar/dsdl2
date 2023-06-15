@@ -144,7 +144,7 @@ void quit(const SubSystem[] subsystems) {
  + Wraps `SDL_WasInit` which checks whether a specified subsystem is already initialized
  + 
  + Params:
- +     subsystem = `dsdl2.SubSystem` to be checked of its status of initialization
+ +     subsystem = the `dsdl2.SubSystem` to be checked of its status of initialization
  +
  + Returns: `true` if initialized, otherwise `false`
  +/
@@ -175,13 +175,21 @@ struct Version {
 
     /++ 
      + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
+     + 
+     + Params:
+     +   sdlVersion = the `SDL_version` struct
      +/
     this(SDL_version sdlVersion) {
         this._sdlVersion = sdlVersion;
     }
 
-    /++
+    /++ 
      + Constructs a `dsdl2.Version` by feeding in `major`, `minor`, and `patch` version numbers
+     + 
+     + Params:
+     +   major = major version number
+     +   minor = minor version number
+     +   patch = patch verion number
      +/
     this(ubyte major, ubyte minor, ubyte patch) {
         this.major = major;
@@ -189,7 +197,7 @@ struct Version {
         this.patch = patch;
     }
 
-    /++
+    /++ 
      + Compares two `dsdl2.Version`s from chronology
      +/
     int opCmp(Version other) const {
@@ -269,7 +277,9 @@ bool setHint(string name, string value, HintPriority priority = HintPriority.nor
 }
 
 static if (sdlSupport >= SDLSupport.v2_26) {
-    /// Wraps `SDL_ResetHints` (from SDL 2.26) which resets any user-set hints given to SDL2 to default
+    /++
+     + Wraps `SDL_ResetHints` (from SDL 2.26) which resets any user-set hints given to SDL2 to default
+     +/
     void resetHints()
     in {
         assert(getVersion() >= Version(2, 26, 0));
