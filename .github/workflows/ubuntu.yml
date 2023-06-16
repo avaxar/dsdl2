@@ -1,0 +1,72 @@
+name: Ubuntu
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "README.md"
+      - "LICENSE.md"
+      - ".gitignore"
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "README.md"
+      - "LICENSE.md"
+      - ".gitignore"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Ubuntu ${{matrix.arch}} with ${{matrix.dc}}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false # If a particular matrix build fails, don't skip the rest.
+      matrix:
+        arch: ["x64", "x86"]
+        dc: ["dmd-latest", "ldc-latest"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup D for development
+        uses: dlang-community/setup-dlang@v1.3.0
+        with:
+          compiler: ${{matrix.dc}}
+
+      - name: Install SDL2 dependencies
+        run: |
+          deps=""
+          for dep in sdl2 sdl2-image sdl2-mixer sdl2-ttf; do
+            deps="$deps lib${dep}-dev${apt_suffix}"
+          done
+
+          sudo apt update --fix-missing
+          sudo apt upgrade -y
+
+          echo Installing: $deps
+          sudo apt install $deps -y
+
+      - name: Build for SDL 2.0.0
+        run: dub build
+
+      - name: Test for SDL 2.0.0
+        run: dub test
+
+      - name: Build for SDL 2.26.0
+        run: |
+          if [[ "${{matrix.dc}}" == "dmd-latest" ]]; then
+              DFLAGS="-version=SDL_2_26" dub build
+          elif [[ "${{matrix.dc}}" == "ldc-latest" ]]; then
+              DFLAGS="--d-version=SDL_2_26" dub build
+          fi
+
+      - name: Test for SDL 2.24.0 (Available version in system)
+        run: |
+          if [[ "${{matrix.dc}}" == "dmd-latest" ]]; then
+              DFLAGS="-version=SDL_2_24" dub test
+          elif [[ "${{matrix.dc}}" == "ldc-latest" ]]; then
+              DFLAGS="--d-version=SDL_2_24" dub test
+          fi
