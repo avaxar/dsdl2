@@ -299,7 +299,12 @@ static if (sdlSupport >= SDLSupport.v2_26) {
  + Returns: value of the given `name` of the hint
  +/
 string getHint(string name) @trusted {
-    return SDL_GetHint(name.toStringz()).to!string.idup;
+    if (const(char)* hint = SDL_GetHint(name.toStringz())) {
+        return hint.to!string.idup;
+    }
+    else {
+        return "";
+    }
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_5) {
