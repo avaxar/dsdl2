@@ -70,3 +70,14 @@ jobs:
           elif [[ "${{matrix.dc}}" == "ldc-latest" ]]; then
               DFLAGS="--d-version=SDL_2_24" dub test
           fi
+
+      - name: Build examples
+        run: |
+          for folder in examples/*; do
+            if [ -d "$folder" ]; then
+              cd $folder
+              echo Building $folder...
+              dub build
+              cd ../..
+            fi
+          done
