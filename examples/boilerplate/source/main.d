@@ -18,12 +18,12 @@ void main() {
     auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
     auto rect2 = dsdl2.FRect(-1.0, -1.0, 3.0, 3.0);
 
-    assert(rect1.collide(rect2));
-    assert(rect1.intersect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
+    assert(rect1.hasIntersection(rect2));
+    assert(rect1.intersectRect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
 
     const auto rgba = dsdl2.PixelFormat.rgba8888;
-    assert(rgba.map(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
-    assert(rgba.get(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
+    assert(rgba.mapRGBA(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
+    assert(rgba.getRGBA(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
 
     dsdl2.quit();
 }
