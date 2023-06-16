@@ -145,7 +145,7 @@ void quit(const SubSystem[] subsystems) @trusted {
  + Wraps `SDL_WasInit` which checks whether a specified subsystem is already initialized
  + 
  + Params:
- +     subsystem = the `dsdl2.SubSystem` to be checked of its status of initialization
+ +     subsystem = the `dsdl2.SubSystem` to check for the status of initialization
  +
  + Returns: `true` if initialized, otherwise `false`
  +/

@@ -100,7 +100,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      + Wraps `SDL_SetPrimarySelectionText` which puts a string of text into the primary selection
      + 
      + Params:
-     +   text = `string` to be put into the primary selection
+     +   text = `string` to put into the primary selection
      + 
     + Throws: `dsdl2.SDLException` on fail when putting the string into the primary selection
      +/

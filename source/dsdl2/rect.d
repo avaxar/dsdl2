@@ -218,7 +218,7 @@ struct Rect {
      + Wraps `SDL_PointInRect` which sees whether the coordinate of a `dsdl2.Point` is inside the `dsdl2.Rect`
      + 
      + Params:
-     +   point = the `dsdl2.Point` to be checked its collision of with the `dsdl2.Rect` instance
+     +   point = the `dsdl2.Point` to check its collision of with the `dsdl2.Rect` instance
      + Returns: `true` if it is within, otherwise `false`
      +/
     bool pointInRect(Point point) const @trusted {
@@ -229,7 +229,7 @@ struct Rect {
      + Wraps `SDL_HasIntersection` which sees whether two `dsdl2.Rect`s intersect each other
      +
      + Params:
-     +   other = other `dsdl2.Rect` to be checked its intersection of with the `dsdl2.Rect`
+     +   other = other `dsdl2.Rect` to check its intersection of with the `dsdl2.Rect`
      + Returns: `true` if both have intersection with each other, otherwise `false`
      +/
     bool hasIntersection(Rect other) const @trusted {
@@ -240,7 +240,7 @@ struct Rect {
      + Wraps `SDL_IntersectRectAndLine` which sees whether a line intersects with the `dsdl2.Rect`
      + 
      + Params:
-     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to be checked of its
+     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to check its
      +          intersection of with the `dsdl2.Rect`
      + Returns: `true` if it intersects, otherwise `false`
      +/
@@ -270,7 +270,7 @@ struct Rect {
      + Wraps `SDL_IntersectRectAndLine` which attempts to clip a line segment in the boundaries of the `dsdl2.Rect`
      + 
      + Params:
-     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to be clipped from 
+     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to clip from 
      +          its intersection with the `dsdl2.Rect`
      + Returns: non-null `Nullable!(Point[2])` as the clipped line if there is an intersection, otherwise a null one
      +/
@@ -289,7 +289,7 @@ struct Rect {
      + Wraps `SDL_UnionRect` which creates a `dsdl2.Rect` of the minimum size to enclose two given `dsdl2.Rect`s
      +
      + Params:
-     +   other = other `dsdl2.Rect` to be unified with the `dsdl2.Rect`
+     +   other = other `dsdl2.Rect` to unify with the `dsdl2.Rect`
      + Returns: `dsdl2.Rect` of the minimum size to enclose the `dsdl2.Rect` and `other`
      +/
     Rect unify(Rect other) const @trusted {
@@ -513,7 +513,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + is inside the `dsdl2.FRect`
              + 
              + Params:
-             +   point = the `dsdl2.FPoint` to be checked its collision of with the `dsdl2.FRect` instance
+             +   point = the `dsdl2.FPoint` to check its collision of with the `dsdl2.FRect` instance
              + Returns: `true` if it is within, otherwise `false`
              +/
             bool pointInRect(FPoint point) const @trusted
@@ -529,7 +529,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + each other
              +
              + Params:
-             +   rect = other `dsdl2.FRect` to be checked its intersection of with the `dsdl2.FRect`
+             +   rect = other `dsdl2.FRect` to check its intersection of with the `dsdl2.FRect`
              + Returns: `true` if both have intersection with each other, otherwise `false`
              +/
             bool hasIntersection(FRect rect) const @trusted
@@ -545,8 +545,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + `dsdl2.FRect`
              + 
              + Params:
-             +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to be checked
-             +          of its intersection of with the `dsdl2.FRect`
+             +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to check
+             +          its intersection of with the `dsdl2.FRect`
              + Returns: `true` if it intersects, otherwise `false`
              +/
             bool hasLineIntersection(FPoint[2] line) const @trusted
@@ -585,8 +585,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + boundaries of the `dsdl2.FRect`
              + 
              + Params:
-             +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to be
-             +          clipped from its intersection with the `dsdl2.FRect`
+             +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to clip from
+             +          its intersection with the `dsdl2.FRect`
              + Returns: non-null `Nullable!(FPoint[2])` as the clipped line if there is an intersection,
              +          otherwise a null one
              +/
@@ -610,7 +610,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + enclose two given `dsdl2.FRect`s
              +
              + Params:
-             +   other = other `dsdl2.FRect` to be unified with the `dsdl2.FRect`
+             +   other = other `dsdl2.FRect` to unify with the `dsdl2.FRect`
              + Returns: `dsdl2.FRect` of the minimum size to enclose the `dsdl2.FRect` and `other`
              +/
             FRect unify(FRect other) const @trusted
