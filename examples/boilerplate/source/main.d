@@ -1,3 +1,5 @@
+@safe:
+
 import std.stdio;
 static import dsdl2;
 
