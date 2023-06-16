@@ -69,8 +69,8 @@ struct Color {
 }
 
 /++ 
- + A D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to be used along with
- + indexed `dsdl2.PixelFormat` instances
+ + A D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to use along with indexed
+ + `dsdl2.PixelFormat` instances
  + 
  + Examples:
  + ---
@@ -113,7 +113,7 @@ final class Palette {
      + Constructs a `dsdl2.Palette` from an array of `dsdl2.Color`s
      + 
      + Params:
-     +   colors = an array/slice of `dsdl2.Color`s to be put in the `dsdl2.Palette`
+     +   colors = an array/slice of `dsdl2.Color`s to put in the `dsdl2.Palette`
      +/
     this(const Color[] colors) @trusted {
         this._sdlPalette = SDL_AllocPalette(cast(int) colors.length);
@@ -317,7 +317,7 @@ final class PixelFormat {
      + 
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (indexed)
-     +   palette            = the `dsdl2.Palette` class instance to be bound of its color palette
+     +   palette            = the `dsdl2.Palette` class instance to bind as the color palette
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum, Palette palette) @trusted
     in {
@@ -450,7 +450,7 @@ final class PixelFormat {
      + Wraps `SDL_SetPixelFormatPalette` which sets the `dsdl2.Palette` for indexed `dsdl2.PixelFormat`s`
      + 
      + Params:
-     +   palette = the `dsdl2.Palette` class instance to be bound of its color palette
+     +   palette = the `dsdl2.Palette` class instance to bind as the color palette
      +/
     void setPalette(Palette palette) @trusted
     in {
