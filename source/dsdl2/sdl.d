@@ -5,6 +5,7 @@
  +/
 
 module dsdl2.sdl;
+@safe:
 
 import bindbc.sdl;
 
@@ -20,7 +21,7 @@ class SDLException : Exception {
         super(msg, file, line);
     }
 
-    this(string file = __FILE__, size_t line = __LINE__) {
+    this(string file = __FILE__, size_t line = __LINE__) @trusted {
         super(SDL_GetError().to!string.idup, file, line);
     }
 }
@@ -45,7 +46,7 @@ else {
      + Throws: `dsdl2.SDLException` if library not found. If the library was found, but the version was incompatible,
      +         a warning through `stdin` would be issued.
      +/
-    void loadSO(string libName = null) {
+    void loadSO(string libName = null) @trusted {
         SDLSupport current = libName is null ? loadSDL() : loadSDL(libName.toStringz());
         if (current == sdlSupport) {
             return;
@@ -106,7 +107,7 @@ else {
  + 
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
  +/
-void init(const SubSystem[] subsystems = [SubSystem.everything]) {
+void init(const SubSystem[] subsystems = [SubSystem.everything]) @trusted {
     uint flags;
     foreach (SubSystem sub; subsystems) {
         flags |= sub;
@@ -121,7 +122,7 @@ void init(const SubSystem[] subsystems = [SubSystem.everything]) {
 /++
  + Wraps `SDL_Quit` which entirely deinitializes SDL2
  +/
-void quit() {
+void quit() @trusted {
     SDL_Quit();
 }
 
@@ -131,7 +132,7 @@ void quit() {
  + Params:
  +     subsystems = an array of `dsdl2.SubSystem`s to deinitialize
  +/
-void quit(const SubSystem[] subsystems) {
+void quit(const SubSystem[] subsystems) @trusted {
     uint flags;
     foreach (SubSystem sub; subsystems) {
         flags |= sub;
@@ -148,7 +149,7 @@ void quit(const SubSystem[] subsystems) {
  +
  + Returns: `true` if initialized, otherwise `false`
  +/
-bool wasInit(SubSystem subsystem) {
+bool wasInit(SubSystem subsystem) @trusted {
     return SDL_WasInit(subsystem) != 0;
 }
 
@@ -236,7 +237,7 @@ struct Version {
  + 
  + Returns: `dsdl2.Version` of the version of the linked SDL2 library
  +/
-Version getVersion() {
+Version getVersion() @trusted {
     Version ver;
     SDL_GetVersion(&ver._sdlVersion);
     return ver;
@@ -247,7 +248,7 @@ Version getVersion() {
  +
  + Returns: `string` of the revision code
  +/
-string getRevision() {
+string getRevision() @trusted {
     return SDL_GetRevision().to!string.idup;
 }
 
@@ -272,7 +273,7 @@ enum HintPriority : SDL_HintPriority {
  + 
  + Returns: `true` if the hint was set, `false` otherwise
  +/
-bool setHint(string name, string value, HintPriority priority = HintPriority.normal) {
+bool setHint(string name, string value, HintPriority priority = HintPriority.normal) @trusted {
     return SDL_SetHintWithPriority(name.toStringz(), value.toStringz(), priority) == SDL_TRUE;
 }
 
@@ -280,7 +281,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
     /++
      + Wraps `SDL_ResetHints` (from SDL 2.26) which resets any user-set hints given to SDL2 to default
      +/
-    void resetHints()
+    void resetHints() @trusted
     in {
         assert(getVersion() >= Version(2, 26, 0));
     }
@@ -297,7 +298,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
  + 
  + Returns: value of the given `name` of the hint
  +/
-string getHint(string name) {
+string getHint(string name) @trusted {
     return SDL_GetHint(name.toStringz()).to!string.idup;
 }
 
@@ -311,7 +312,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
      + 
      + Returns: `bool` value of the given `name` of the hint or `defaultValue` if the hint wasn't set
      +/
-    bool getHintBool(string name, bool defaultValue = false)
+    bool getHintBool(string name, bool defaultValue = false) @trusted
     in {
         assert(getVersion() >= Version(2, 0, 5));
     }

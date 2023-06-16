@@ -5,6 +5,7 @@
  +/
 
 module dsdl2.rect;
+@safe:
 
 import bindbc.sdl;
 import dsdl2.sdl;
@@ -118,8 +119,8 @@ struct Point {
  + auto rect1 = dsdl2.Rect(-2, -2, 3, 3);
  + auto rect2 = dsdl2.Rect(-1, -1, 3, 3);
  +
- + assert(rect1.collide(rect2));
- + assert(rect1.intersect(rect2).get == dsdl2.Rect(-1, -1, 2, 2));
+ + assert(rect1.hasIntersection(rect2));
+ + assert(rect1.intersectRect(rect2).get == dsdl2.Rect(-1, -1, 2, 2));
  + ---
  +/
 struct Rect {
@@ -209,7 +210,7 @@ struct Rect {
      + 
      + Returns: `true` if it is empty, otherwise `false`
      +/
-    bool empty() const {
+    bool empty() const @trusted {
         return SDL_RectEmpty(&this._sdlRect);
     }
 
@@ -220,7 +221,7 @@ struct Rect {
      +   point = the `dsdl2.Point` to be checked its collision of with the `dsdl2.Rect` instance
      + Returns: `true` if it is within, otherwise `false`
      +/
-    bool collide(Point point) const {
+    bool pointInRect(Point point) const @trusted {
         return SDL_PointInRect(&point._sdlPoint, &this._sdlRect);
     }
 
@@ -228,11 +229,11 @@ struct Rect {
      + Wraps `SDL_HasIntersection` which sees whether two `dsdl2.Rect`s intersect each other
      +
      + Params:
-     +   rect = other `dsdl2.Rect` to be checked its intersection of with the `dsdl2.Rect`
+     +   other = other `dsdl2.Rect` to be checked its intersection of with the `dsdl2.Rect`
      + Returns: `true` if both have intersection with each other, otherwise `false`
      +/
-    bool collide(Rect rect) const {
-        return SDL_HasIntersection(&this._sdlRect, &rect._sdlRect) == SDL_TRUE;
+    bool hasIntersection(Rect other) const @trusted {
+        return SDL_HasIntersection(&this._sdlRect, &other._sdlRect) == SDL_TRUE;
     }
 
     /++ 
@@ -243,7 +244,7 @@ struct Rect {
      +          intersection of with the `dsdl2.Rect`
      + Returns: `true` if it intersects, otherwise `false`
      +/
-    bool collide(Point[2] line) const {
+    bool hasLineIntersection(Point[2] line) const @trusted {
         return SDL_IntersectRectAndLine(&this._sdlRect, &line[0].x, &line[0].y, &line[1].x, &line[1]
             .y) == SDL_TRUE;
     }
@@ -255,7 +256,7 @@ struct Rect {
      +   other = other `dsdl2.Rect` with which the `dsdl2.Rect` is intersected
      + Returns: non-null `Nullable!Rect` instance if intersection is present, otherwise a null one
      +/
-    Nullable!Rect intersect(Rect other) const {
+    Nullable!Rect intersectRect(Rect other) const @trusted {
         Rect intersection = void;
         if (SDL_IntersectRect(&this._sdlRect, &other._sdlRect, &intersection._sdlRect) == SDL_TRUE) {
             return intersection.nullable;
@@ -273,7 +274,7 @@ struct Rect {
      +          its intersection with the `dsdl2.Rect`
      + Returns: non-null `Nullable!(Point[2])` as the clipped line if there is an intersection, otherwise a null one
      +/
-    Nullable!(Point[2]) intersect(Point[2] line) const {
+    Nullable!(Point[2]) intersectLine(Point[2] line) const @trusted {
         if (SDL_IntersectRectAndLine(&this._sdlRect, &line[0].x, &line[0].y, &line[1].x, &line[1]
                 .y) == SDL_TRUE) {
             Point[2] intersection = [line[0], line[1]];
@@ -291,7 +292,7 @@ struct Rect {
      +   other = other `dsdl2.Rect` to be unified with the `dsdl2.Rect`
      + Returns: `dsdl2.Rect` of the minimum size to enclose the `dsdl2.Rect` and `other`
      +/
-    Rect unify(Rect other) const {
+    Rect unify(Rect other) const @trusted {
         Rect union_ = void;
         SDL_UnionRect(&this._sdlRect, &other._sdlRect, &union_._sdlRect);
         return union_;
@@ -406,8 +407,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
      + auto rect2 = dsdl2.FRect(-1.0, -1.0, 3.0, 3.0);
      +
-     + assert(rect1.collide(rect2));
-     + assert(rect1.intersect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
+     + assert(rect1.hasIntersection(rect2));
+     + assert(rect1.intersectRect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
      + ---
      +/
     struct FRect {
@@ -487,7 +488,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++ 
          + Gets the `x` and `y` of the `dsdl2.FRect` as a `dsdl2.FPoint`
          + 
-         + Returns: `dsdl2.FPoint` of the `x` and `y` attributes
+         + Returns: `dsdl2.FPoint` ofbitsPerPixel the `x` and `y` attributes
          +/
         FPoint xy() const {
             return FPoint(this.x, this.y);
@@ -499,7 +500,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + 
              + Returns: `true` if it is empty, otherwise `false`
              +/
-            bool empty() const
+            bool empty() const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -515,7 +516,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              +   point = the `dsdl2.FPoint` to be checked its collision of with the `dsdl2.FRect` instance
              + Returns: `true` if it is within, otherwise `false`
              +/
-            bool collide(FPoint point) const
+            bool pointInRect(FPoint point) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -531,7 +532,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              +   rect = other `dsdl2.FRect` to be checked its intersection of with the `dsdl2.FRect`
              + Returns: `true` if both have intersection with each other, otherwise `false`
              +/
-            bool collide(FRect rect) const
+            bool hasIntersection(FRect rect) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -548,7 +549,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              +          of its intersection of with the `dsdl2.FRect`
              + Returns: `true` if it intersects, otherwise `false`
              +/
-            bool collide(FPoint[2] line) const
+            bool hasLineIntersection(FPoint[2] line) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -565,7 +566,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              +   other = other `dsdl2.FRect` with which the `dsdl2.FRect` is intersected
              + Returns: non-null `Nullable!FRect` instance if intersection is present, otherwise a null one
              +/
-            Nullable!FRect intersect(FRect other) const
+            Nullable!FRect intersectRect(FRect other) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -589,7 +590,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              + Returns: non-null `Nullable!(FPoint[2])` as the clipped line if there is an intersection,
              +          otherwise a null one
              +/
-            Nullable!(FPoint[2]) intersect(FPoint[2] line) const
+            Nullable!(FPoint[2]) intersectLine(FPoint[2] line) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
@@ -612,7 +613,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
              +   other = other `dsdl2.FRect` to be unified with the `dsdl2.FRect`
              + Returns: `dsdl2.FRect` of the minimum size to enclose the `dsdl2.FRect` and `other`
              +/
-            FRect unify(FRect other) const
+            FRect unify(FRect other) const @trusted
             in {
                 assert(getVersion() >= Version(2, 0, 22));
             }
