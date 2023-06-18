@@ -30,8 +30,16 @@ import std.typecons : Nullable, nullable;
  + --- 
  +/
 struct Point {
-    SDL_Point _sdlPoint;
-    alias _sdlPoint this;
+    // The union implementation lets providing documentation to each fields.
+    // alias _sdlPoint this;
+    union {
+        SDL_Point _sdlPoint; /// Internal `SDL_Point` struct
+        int[2] array; /// Static array proxy of `x` and `y`
+        struct {
+            int x; /// X coordinate point
+            int y; /// Y coordinate point
+        }
+    }
 
     @disable this();
 
@@ -124,8 +132,22 @@ struct Point {
  + ---
  +/
 struct Rect {
-    SDL_Rect _sdlRect;
-    alias _sdlRect this;
+    // The union implementation lets providing documentation to each fields.
+    // alias _sdlRect this;
+    union {
+        SDL_Rect _sdlRect; /// Internal `SDL_Rect` struct
+        struct {
+            int x; /// Top-left X coordinate point of the `dsdl2.Rect`
+            int y; /// Top-left Y coordinate point of the `dsdl2.Rect`
+            int w; /// Rectangle width
+            int h; /// Rectangle height
+        }
+
+        struct {
+            Point point; /// `dsdl2.Point` proxy of `x` and `y`
+            int[2] size; /// Static array proxy of `w` and `h`
+        }
+    }
 
     @disable this();
 
@@ -160,13 +182,13 @@ struct Rect {
      + rectangle
      + 
      + Params:
-     +   xy = top-left point of the rectangle
-     +   w  = rectangle width
-     +   h  = rectangle height
+     +   point = top-left point of the rectangle
+     +   w     = rectangle width
+     +   h     = rectangle height
      +/
-    this(Point xy, int w, int h) {
-        this.x = xy.x;
-        this.y = xy.y;
+    this(Point point, int w, int h) {
+        this.x = point.x;
+        this.y = point.y;
         this.w = w;
         this.h = h;
     }
@@ -194,15 +216,6 @@ struct Rect {
      +/
     string toString() const {
         return "dsdl2.Rect(%d, %d, %d, %d)".format(this.x, this.y, this.w, this.h);
-    }
-
-    /++ 
-     + Gets the `x` and `y` of the `dsdl2.Rect` as a `dsdl2.Point`
-     + 
-     + Returns: `dsdl2.Point` of the `x` and `y` attributes
-     +/
-    Point xy() const {
-        return Point(this.x, this.y);
     }
 
     /++ 
@@ -317,8 +330,16 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + --- 
      +/
     struct FPoint {
-        SDL_FPoint _sdlFPoint;
-        alias _sdlFPoint this;
+        // The union implementation lets providing documentation to each fields.
+        // alias _sdlFPoint this;
+        union {
+            SDL_FPoint _sdlFPoint; /// Internal `SDL_FPoint` struct
+            float[2] array; /// Static array proxy of `x` and `y`
+            struct {
+                float x; /// X coordinate point
+                float y; /// Y coordinate point
+            }
+        }
 
         @disable this();
 
@@ -412,7 +433,23 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + ---
      +/
     struct FRect {
-        SDL_FRect _sdlFRect;
+        // The union implementation lets providing documentation to each fields.
+        // alias _sdlFRect this;
+        union {
+            SDL_FRect _sdlFRect; /// Internal `SDL_FRect` struct
+            struct {
+                float x; /// Top-left X coordinate point of the `dsdl2.FRect`
+                float y; /// Top-left Y coordinate point of the `dsdl2.FRect`
+                float w; /// Rectangle width
+                float h; /// Rectangle height
+            }
+
+            struct {
+                FPoint point; /// `dsdl2.FPoint` proxy of `x` and `y`
+                float[2] size; /// Static array proxy of `w` and `h`
+            }
+        }
+
         alias _sdlFRect this;
 
         @disable this();
@@ -448,13 +485,13 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + the rectangle
          + 
          + Params:
-         +   xy = top-left point of the rectangle
-         +   w  = rectangle width
-         +   h  = rectangle height
+         +   point = top-left point of the rectangle
+         +   w     = rectangle width
+         +   h     = rectangle height
          +/
-        this(FPoint xy, float w, float h) {
-            this.x = xy.x;
-            this.y = xy.y;
+        this(FPoint point, float w, float h) {
+            this.x = point.x;
+            this.y = point.y;
             this.w = w;
             this.h = h;
         }
@@ -483,15 +520,6 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +/
         string toString() const {
             return "dsdl2.FRect(%d, %d, %d, %d)".format(this.x, this.y, this.w, this.h);
-        }
-
-        /++ 
-         + Gets the `x` and `y` of the `dsdl2.FRect` as a `dsdl2.FPoint`
-         + 
-         + Returns: `dsdl2.FPoint` ofbitsPerPixel the `x` and `y` attributes
-         +/
-        FPoint xy() const {
-            return FPoint(this.x, this.y);
         }
 
         static if (sdlSupport >= SDLSupport.v2_0_22) {

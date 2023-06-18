@@ -171,8 +171,16 @@ bool wasInit(SubSystem subsystem) @trusted {
  + ---
  +/
 struct Version {
-    SDL_version _sdlVersion;
-    alias _sdlVersion this;
+    // The union implementation lets providing documentation to each fields.
+    // alias _sdlVersion this;
+    union {
+        SDL_version _sdlVersion; /// Internal `SDL_version` struct
+        struct {
+            ubyte major; /// Major version number
+            ubyte minor; /// Minor version number
+            ubyte patch; /// Patch version number
+        }
+    }
 
     /++ 
      + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
