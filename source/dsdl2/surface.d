@@ -18,7 +18,7 @@ import dsdl2.rect;
  +/
 final class Surface {
     private PixelFormat pixelFormatRef = null;
-    @system SDL_Surface* _sdlSurface = null;
+    @system SDL_Surface* _sdlSurface = null; /// Internal `SDL_Surface` pointer
 
     /++ 
      + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl

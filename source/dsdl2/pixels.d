@@ -27,8 +27,17 @@ import std.format : format;
  + ---
  +/
 struct Color {
-    SDL_Color _sdlColor;
-    alias _sdlColor this;
+    // The union implementation lets providing documentation to each fields.
+    // alias _sdlColor this;
+    union {
+        SDL_Color _sdlColor; /// Internal `SDL_Color` struct
+        struct {
+            ubyte r; /// Red color channel value (0-255)
+            ubyte g; /// Green color channel value (0-255)
+            ubyte b; /// Blue color channel value (0-255)
+            ubyte a; /// Alpha transparency channel value (0-255)
+        }
+    }
 
     @disable this();
 
@@ -80,7 +89,7 @@ struct Color {
  + ---
  +/
 final class Palette {
-    @system SDL_Palette* _sdlPalette = null;
+    @system SDL_Palette* _sdlPalette = null; /// Internal `SDL_Palette` pointer
 
     /++ 
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
@@ -277,7 +286,7 @@ final class PixelFormat {
     }
 
     private Palette paletteRef = null;
-    @system SDL_PixelFormat* _sdlPixelFormat = null;
+    @system SDL_PixelFormat* _sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
 
     /++ 
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
