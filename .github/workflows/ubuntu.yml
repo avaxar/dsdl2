@@ -58,21 +58,26 @@ jobs:
       - name: Build for SDL 2.26.0
         run: |
           if [[ "${{matrix.dc}}" == "dmd-latest" ]]; then
-              DFLAGS="-version=SDL_2_26" dub build
+            DFLAGS="-version=SDL_2_26" dub build
           elif [[ "${{matrix.dc}}" == "ldc-latest" ]]; then
-              DFLAGS="--d-version=SDL_2_26" dub build
+            DFLAGS="--d-version=SDL_2_26" dub build
           fi
 
       - name: Test for SDL 2.24.0 (Available version in system)
         run: |
           if [[ "${{matrix.dc}}" == "dmd-latest" ]]; then
-              DFLAGS="-version=SDL_2_24" dub test
+            DFLAGS="-version=SDL_2_24" dub test
           elif [[ "${{matrix.dc}}" == "ldc-latest" ]]; then
-              DFLAGS="--d-version=SDL_2_24" dub test
+            DFLAGS="--d-version=SDL_2_24" dub test
           fi
 
       - name: Generate ddox
-        run: dub build -b ddox
+        run: |
+          if [[ "${{matrix.dc}}" == "dmd-latest" ]]; then
+            dub build -b ddox
+          else
+            echo Step skipped.
+          fi
 
       - name: Build examples
         run: |

@@ -110,8 +110,14 @@ final class Palette {
      + 
      + Params:
      +   ncolors = amount of `dsdl2.Color`s to allocate in the `dsdl2.Palette`
+     + 
+     + Throws: `dsdl2.SDLException` if allocation failed.
      +/
-    this(int ncolors) @trusted {
+    this(int ncolors) @trusted
+    in {
+        assert(ncolors >= 0);
+    }
+    do {
         this._sdlPalette = SDL_AllocPalette(ncolors);
         if (this._sdlPalette is null) {
             throw new SDLException;
@@ -123,6 +129,8 @@ final class Palette {
      + 
      + Params:
      +   colors = an array/slice of `dsdl2.Color`s to put in the `dsdl2.Palette`
+     +
+     + Throws: `dsdl2.SDLException` if allocation failed.
      +/
     this(const Color[] colors) @trusted {
         this._sdlPalette = SDL_AllocPalette(cast(int) colors.length);
@@ -216,8 +224,10 @@ final class PixelFormat {
         return pixelFormat;
     }
 
-    static PixelFormat _instantiateIndexed(SDL_PixelFormatEnum sdlPixelFormatEnum)(Palette palette)
+    static PixelFormat _instantiateIndexed(SDL_PixelFormatEnum sdlPixelFormatEnum, ubyte minMinorVer = 0,
+        ubyte minPatchVer = 0)(Palette palette)
     in {
+        assert(getVersion() >= Version(2, minMinorVer, minPatchVer));
         assert(palette !is null);
     }
     do {
@@ -231,11 +241,16 @@ final class PixelFormat {
     static alias index1msb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX1MSB; /// ditto
     static alias index4lsb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX4LSB; /// ditto
     static alias index4msb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX4MSB; /// ditto
+    static alias index8 = _instantiateIndexed!SDL_PIXELFORMAT_INDEX8; /// ditto
+    static alias yv12 = _instantiateIndexed!SDL_PIXELFORMAT_YV12; /// ditto
+    static alias iyuv = _instantiateIndexed!SDL_PIXELFORMAT_IYUV; /// ditto
+    static alias yuy2 = _instantiateIndexed!SDL_PIXELFORMAT_YUY2; /// ditto
+    static alias uyvy = _instantiateIndexed!SDL_PIXELFORMAT_UYVY; /// ditto
+    static alias yvyu = _instantiateIndexed!SDL_PIXELFORMAT_YVYU; /// ditto
 
     /++ 
      + Retrieves one of the `dsdl2.PixelFormat` multiton presets
      +/
-    static alias index8 = _multiton!SDL_PIXELFORMAT_INDEX8;
     static alias rgb332 = _multiton!SDL_PIXELFORMAT_RGB332; /// ditto
     static alias rgb444 = _multiton!SDL_PIXELFORMAT_RGB444; /// ditto
     static alias rgb555 = _multiton!SDL_PIXELFORMAT_RGB555; /// ditto
@@ -261,18 +276,13 @@ final class PixelFormat {
     static alias abgr8888 = _multiton!SDL_PIXELFORMAT_ABGR8888; /// ditto
     static alias bgra8888 = _multiton!SDL_PIXELFORMAT_BGRA8888; /// ditto
     static alias argb2101010 = _multiton!SDL_PIXELFORMAT_ARGB2101010; /// ditto
-    static alias yv12 = _multiton!SDL_PIXELFORMAT_YV12; /// ditto
-    static alias iyuv = _multiton!SDL_PIXELFORMAT_IYUV; /// ditto
-    static alias yuy2 = _multiton!SDL_PIXELFORMAT_YUY2; /// ditto
-    static alias uyvy = _multiton!SDL_PIXELFORMAT_UYVY; /// ditto
-    static alias yvyu = _multiton!SDL_PIXELFORMAT_YVYU; /// ditto
 
     static if (sdlSupport >= SDLSupport.v2_0_4) {
         /++ 
-         + Retrieves one of the `dsdl2.PixelFormat` multiton presets (from SDL 2.0.4)
+         + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s (from SDL 2.0.4)
          +/
-        static alias nv12 = _multiton!(SDL_PIXELFORMAT_NV12, 0, 4);
-        static alias nv21 = _multiton!(SDL_PIXELFORMAT_NV21, 0, 4); /// ditto
+        static alias nv12 = _instantiateIndexed!(SDL_PIXELFORMAT_NV12, 0, 4);
+        static alias nv21 = _instantiateIndexed!(SDL_PIXELFORMAT_NV21, 0, 4); /// ditto
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_5) {
@@ -307,6 +317,8 @@ final class PixelFormat {
      + 
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (non-indexed)
+     + 
+     + Throws: `dsdl2.SDLException` if allocation failed.
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum) @trusted
     in {
@@ -327,6 +339,8 @@ final class PixelFormat {
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (indexed)
      +   palette            = the `dsdl2.Palette` class instance to bind as the color palette
+     + 
+     + Throws: `dsdl2.SDLException` if allocation or palette-setting failed.
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum, Palette palette) @trusted
     in {
@@ -356,8 +370,14 @@ final class PixelFormat {
      +   greenMask = bit mask of the green color channel
      +   blueMask  = bit mask of the blue color channel
      +   alphaMask = bit mask of the alpha channel
+     + 
+     + Throws: `dsdl2.SDLException` if pixel format conversion not possible.
      +/
-    this(int bitDepth, uint redMask, uint greenMask, uint blueMask, uint alphaMask) @trusted {
+    this(int bitDepth, uint redMask, uint greenMask, uint blueMask, uint alphaMask) @trusted
+    in {
+        assert(bitDepth > 0);
+    }
+    do {
         uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitDepth, redMask, greenMask, blueMask, alphaMask);
         if (sdlPixelFormatEnum == SDL_PIXELFORMAT_UNKNOWN) {
             throw new SDLException("Pixel format conversion is not possible", __FILE__, __LINE__);
