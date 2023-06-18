@@ -71,6 +71,9 @@ jobs:
               DFLAGS="--d-version=SDL_2_24" dub test
           fi
 
+      - name: Generate ddox
+        run: dub build -b ddox
+
       - name: Build examples
         run: |
           for folder in examples/*; do
