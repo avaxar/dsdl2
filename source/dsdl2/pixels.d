@@ -90,19 +90,22 @@ struct Color {
  +/
 final class Palette {
     @system SDL_Palette* _sdlPalette = null; /// Internal `SDL_Palette` pointer
+    private bool isOwner = true;
 
     /++ 
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
      + 
      + Params:
      +   sdlPalette = the `SDL_Palette` pointer to manage
+     +   owns       = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
      +/
-    this(SDL_Palette* sdlPalette) @system
+    this(SDL_Palette* sdlPalette, bool owns = true) @system
     in {
         assert(sdlPalette !is null);
     }
     do {
         this._sdlPalette = sdlPalette;
+        this.isOwner = owns;
     }
 
     /++ 
@@ -110,8 +113,7 @@ final class Palette {
      + 
      + Params:
      +   ncolors = amount of `dsdl2.Color`s to allocate in the `dsdl2.Palette`
-     + 
-     + Throws: `dsdl2.SDLException` if allocation failed.
+     + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(int ncolors) @trusted
     in {
@@ -129,8 +131,7 @@ final class Palette {
      + 
      + Params:
      +   colors = an array/slice of `dsdl2.Color`s to put in the `dsdl2.Palette`
-     +
-     + Throws: `dsdl2.SDLException` if allocation failed.
+     + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(const Color[] colors) @trusted {
         this._sdlPalette = SDL_AllocPalette(cast(int) colors.length);
@@ -144,7 +145,9 @@ final class Palette {
     }
 
     ~this() @trusted {
-        SDL_FreePalette(this._sdlPalette);
+        if (this.isOwner) {
+            SDL_FreePalette(this._sdlPalette);
+        }
     }
 
     @trusted invariant {
@@ -243,10 +246,7 @@ final class PixelFormat {
     static alias index4msb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX4MSB; /// ditto
     static alias index8 = _instantiateIndexed!SDL_PIXELFORMAT_INDEX8; /// ditto
     static alias yv12 = _instantiateIndexed!SDL_PIXELFORMAT_YV12; /// ditto
-    static alias iyuv = _instantiateIndexed!SDL_PIXELFORMAT_IYUV; /// ditto
     static alias yuy2 = _instantiateIndexed!SDL_PIXELFORMAT_YUY2; /// ditto
-    static alias uyvy = _instantiateIndexed!SDL_PIXELFORMAT_UYVY; /// ditto
-    static alias yvyu = _instantiateIndexed!SDL_PIXELFORMAT_YVYU; /// ditto
 
     /++ 
      + Retrieves one of the `dsdl2.PixelFormat` multiton presets
@@ -277,6 +277,10 @@ final class PixelFormat {
     static alias bgra8888 = _multiton!SDL_PIXELFORMAT_BGRA8888; /// ditto
     static alias argb2101010 = _multiton!SDL_PIXELFORMAT_ARGB2101010; /// ditto
 
+    static alias iyuv = _multiton!SDL_PIXELFORMAT_IYUV; /// ditto
+    static alias uyvy = _multiton!SDL_PIXELFORMAT_UYVY; /// ditto
+    static alias yvyu = _multiton!SDL_PIXELFORMAT_YVYU; /// ditto
+
     static if (sdlSupport >= SDLSupport.v2_0_4) {
         /++ 
          + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s (from SDL 2.0.4)
@@ -297,19 +301,22 @@ final class PixelFormat {
 
     private Palette paletteRef = null;
     @system SDL_PixelFormat* _sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
+    private bool isOwner = true;
 
     /++ 
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
      + 
      + Params:
      +   sdlPixelFormat = the `SDL_PixelFormat` pointer to manage
+     +   owns           = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
      +/
-    this(SDL_PixelFormat* sdlPixelFormat) @system
+    this(SDL_PixelFormat* sdlPixelFormat, bool owns = true) @system
     in {
         assert(sdlPixelFormat !is null);
     }
     do {
         this._sdlPixelFormat = sdlPixelFormat;
+        this.isOwner = owns;
     }
 
     /++ 
@@ -317,8 +324,7 @@ final class PixelFormat {
      + 
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (non-indexed)
-     + 
-     + Throws: `dsdl2.SDLException` if allocation failed.
+     + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum) @trusted
     in {
@@ -339,8 +345,7 @@ final class PixelFormat {
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (indexed)
      +   palette            = the `dsdl2.Palette` class instance to bind as the color palette
-     + 
-     + Throws: `dsdl2.SDLException` if allocation or palette-setting failed.
+     + Throws: `dsdl2.SDLException` if allocation or palette-setting failed
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum, Palette palette) @trusted
     in {
@@ -366,19 +371,16 @@ final class PixelFormat {
      + 
      + Params:
      +   bitDepth  = bit depth of a pixel (size of one pixel in bits) 
-     +   redMask   = bit mask of the red color channel
-     +   greenMask = bit mask of the green color channel
-     +   blueMask  = bit mask of the blue color channel
-     +   alphaMask = bit mask of the alpha channel
-     + 
-     + Throws: `dsdl2.SDLException` if pixel format conversion not possible.
+     +   rgbaMasks = bit masks for the red, green, blue, and alpha channels
+     + Throws: `dsdl2.SDLException` if pixel format conversion not possible
      +/
-    this(int bitDepth, uint redMask, uint greenMask, uint blueMask, uint alphaMask) @trusted
+    this(int bitDepth, uint[4] rgbaMasks) @trusted
     in {
         assert(bitDepth > 0);
     }
     do {
-        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitDepth, redMask, greenMask, blueMask, alphaMask);
+        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitDepth, rgbaMasks[0], rgbaMasks[1], rgbaMasks[2],
+        rgbaMasks[3]);
         if (sdlPixelFormatEnum == SDL_PIXELFORMAT_UNKNOWN) {
             throw new SDLException("Pixel format conversion is not possible", __FILE__, __LINE__);
         }
@@ -387,7 +389,9 @@ final class PixelFormat {
     }
 
     ~this() @trusted {
-        SDL_FreeFormat(this._sdlPixelFormat);
+        if (this.isOwner) {
+            SDL_FreeFormat(this._sdlPixelFormat);
+        }
     }
 
     @trusted invariant {
@@ -407,15 +411,23 @@ final class PixelFormat {
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        if (SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormat.format)) {
+        if (SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormatEnum)) {
             return "dsdl2.PixelFormat(%s, %s)".format(
-                SDL_GetPixelFormatName(
-                    this._sdlPixelFormat.format), this.paletteRef);
+                SDL_GetPixelFormatName(this._sdlPixelFormatEnum), this.paletteRef);
         }
         else {
             return "dsdl2.PixelFormat(%s)".format(
-                SDL_GetPixelFormatName(this._sdlPixelFormat.format));
+                SDL_GetPixelFormatName(this._sdlPixelFormatEnum));
         }
+    }
+
+    /++ 
+     + Gets the `SDL_PixelFormatEnum` of the underlying `SDL_PixelFormat`
+     + 
+     + Returns: `SDL_PixelFormatEnum` enumeration from bindbc-sdl
+     +/
+    SDL_PixelFormatEnum _sdlPixelFormatEnum() const nothrow @trusted {
+        return this._sdlPixelFormat.format;
     }
 
     /++ 
@@ -425,7 +437,6 @@ final class PixelFormat {
      + 
      + Params:
      +   pixel = the pixel `uint` value to convert
-     + 
      + Returns: the `dsdl2.Color` struct of the given `pixel` value
      +/
     Color getRGB(uint pixel) const @trusted {
@@ -440,7 +451,6 @@ final class PixelFormat {
      + 
      + Params:
      +   pixel = the pixel `uint` value to convert
-     + 
      + Returns: the `dsdl2.Color` struct of the given `pixel` value
      +/
     Color getRGBA(uint pixel) const @trusted {
@@ -455,7 +465,6 @@ final class PixelFormat {
      + 
      + Params:
      +   color = the `dsdl2.Color` struct to convert
-     + 
      + Returns: the converted pixel value
      +/
     uint mapRGB(Color color) const @trusted {
@@ -468,7 +477,6 @@ final class PixelFormat {
      + 
      + Params:
      +   color = the `dsdl2.Color` struct to convert
-     + 
      + Returns: the converted pixel value
      +/
     uint mapRGBA(Color color) const @trusted {
@@ -483,7 +491,7 @@ final class PixelFormat {
      +/
     void setPalette(Palette palette) @trusted
     in {
-        assert(this.isIndexed());
+        assert(this.isIndexed);
         assert(palette !is null);
     }
     do {
@@ -501,7 +509,7 @@ final class PixelFormat {
      +/
     inout(Palette) getPalette() inout @trusted
     in {
-        assert(this.isIndexed());
+        assert(this.isIndexed);
     }
     do {
         return this.paletteRef;
@@ -517,6 +525,15 @@ final class PixelFormat {
     }
 
     /++ 
+     + Gets the how many bytes needed to represent a pixel in the `dsdl2.PixelFormat`
+     + 
+     + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
+     +/
+    uint bytesPerPixel() const @trusted {
+        return this._sdlPixelFormat.BytesPerPixel;
+    }
+
+    /++ 
      + Wraps `SDL_PixelFormatEnumToMasks` which gets the bit mask for all four channels of the `dsdl2.PixelFormat`
      + 
      + Returns: an array of 4 bit masks for each channel (red, green, blue, and alpha)
@@ -525,7 +542,7 @@ final class PixelFormat {
         uint[4] rgbaMasks = void;
         int bitDepth = void;
 
-        if (SDL_PixelFormatEnumToMasks(this._sdlPixelFormat.format, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
+        if (SDL_PixelFormatEnumToMasks(this._sdlPixelFormatEnum, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
             &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
             throw new SDLException;
         }
@@ -539,7 +556,7 @@ final class PixelFormat {
      + Returns: `true` if it is indexed, otherwise `false`
      +/
     bool isIndexed() const @trusted {
-        return SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormat.format);
+        return SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormatEnum);
     }
 
     /++ 
@@ -548,7 +565,7 @@ final class PixelFormat {
      + Returns: `true` if it can have an alpha channel, otherwise `false`
      +/
     bool hasAlpha() const @trusted {
-        return SDL_ISPIXELFORMAT_ALPHA(this._sdlPixelFormat.format);
+        return SDL_ISPIXELFORMAT_ALPHA(this._sdlPixelFormatEnum);
     }
 
     /++ 
@@ -557,6 +574,6 @@ final class PixelFormat {
      + Returns: `true` if it is unique, otherwise `false`
      +/
     bool isFourCC() const @trusted {
-        return SDL_ISPIXELFORMAT_FOURCC(this._sdlPixelFormat.format) != 0;
+        return SDL_ISPIXELFORMAT_FOURCC(this._sdlPixelFormatEnum) != 0;
     }
 }
