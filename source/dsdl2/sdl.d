@@ -42,7 +42,6 @@ else {
      + 
      + Params:
      +     libName = base SDL SO/DLL file name or path to look for (By default, it looks through the path)
-     + 
      + Throws: `dsdl2.SDLException` if library not found. If the library was found, but the version was incompatible,
      +         a warning through `stdin` would be issued.
      +/
@@ -104,7 +103,6 @@ else {
  + 
  + Params:
  +     subsystems = an array of `dsdl2.SubSystem` to initialize (By default, `dsdl2.SubSystem.everything`)
- + 
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
  +/
 void init(const SubSystem[] subsystems = [SubSystem.everything]) @trusted {
@@ -146,7 +144,6 @@ void quit(const SubSystem[] subsystems) @trusted {
  + 
  + Params:
  +     subsystem = the `dsdl2.SubSystem` to check for the status of initialization
- +
  + Returns: `true` if initialized, otherwise `false`
  +/
 bool wasInit(SubSystem subsystem) @trusted {
@@ -303,7 +300,6 @@ static if (sdlSupport >= SDLSupport.v2_26) {
  +
  + Params:
  +     name = name of the hint
- + 
  + Returns: value of the given `name` of the hint
  +/
 string getHint(string name) @trusted {
@@ -322,7 +318,6 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
      + Params:
      +     name         = name of the hint
      +     defaultValue = default returned value if the hint wasn't set
-     + 
      + Returns: `bool` value of the given `name` of the hint or `defaultValue` if the hint wasn't set
      +/
     bool getHintBool(string name, bool defaultValue = false) @trusted

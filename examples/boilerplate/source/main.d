@@ -8,22 +8,14 @@ void main() {
     dsdl2.init();
     writeln("Version of SDL used: ", dsdl2.getVersion());
 
-    auto a = dsdl2.FPoint(1.0, 2.0);
-    auto b = a + a;
-    assert(b == dsdl2.FPoint(2.0, 4.0));
+    auto surf = new dsdl2.Surface([800, 600], dsdl2.PixelFormat.rgb24);
 
-    auto c = a * 2.0;
-    assert(b == c);
+    ubyte[] arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+    auto yess = new dsdl2.Surface(arr, [2, 2], 8, dsdl2.PixelFormat.rgba32);
 
-    auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
-    auto rect2 = dsdl2.FRect(-1.0, -1.0, 3.0, 3.0);
-
-    assert(rect1.hasIntersection(rect2));
-    assert(rect1.intersectRect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
-
-    const auto rgba = dsdl2.PixelFormat.rgba8888;
-    assert(rgba.mapRGBA(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
-    assert(rgba.getRGBA(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
+    writeln(yess.getAt([1, 1]));
+    yess.setAt([1, 1], dsdl2.Color(42, 69, 42, 69));
+    writeln(yess.getAt([1, 1]));
 
     dsdl2.quit();
 }

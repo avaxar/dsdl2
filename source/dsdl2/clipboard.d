@@ -16,10 +16,9 @@ import std.string : toStringz;
 
 /++ 
  + Wraps `SDL_GetClipboardText` which gets the text stored in the clipboard
- + 
- + Throws: `dsdl2.SDLException` if the clipboard text failed to allocate on SDL's side
- + 
+ +  
  + Returns: clipboard text content
+ + Throws: `dsdl2.SDLException` if the clipboard text failed to allocate on SDL's side
  +/
 string getClipboard() @trusted {
     char* clipboard = SDL_GetClipboardText();
@@ -48,7 +47,6 @@ bool hasClipboard() @trusted {
  + 
  + Params:
  +   text = `string` to put into the clipboard
- + 
  + Throws: `dsdl2.SDLException` on fail when putting the string into the clipboard
  +/
 void setClipboard(string text) @trusted {
@@ -61,9 +59,8 @@ static if (sdlSupport >= SDLSupport.v2_26) {
     /++ 
      + Wraps `SDL_GetPrimarySelectionText` which gets the text stored in the primary selection
      + 
-     + Throws: `dsdl2.SDLException` if the primary selection text failed to allocate on SDL's side
-     + 
      + Returns: primary selection text content
+     + Throws: `dsdl2.SDLException` if the primary selection text failed to allocate on SDL's side
      +/
     string getPrimarySelectionText() @trusted
     in {
@@ -101,8 +98,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      + 
      + Params:
      +   text = `string` to put into the primary selection
-     + 
-    + Throws: `dsdl2.SDLException` on fail when putting the string into the primary selection
+     + Throws: `dsdl2.SDLException` on fail when putting the string into the primary selection
      +/
     void setPrimarySelection(string text) @trusted
     in {
