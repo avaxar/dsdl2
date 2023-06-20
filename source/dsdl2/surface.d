@@ -20,8 +20,6 @@ import std.format : format;
  +/
 final class Surface {
     private PixelFormat pixelFormatProxy = null;
-    private Palette paletteRef = null;
-
     @system SDL_Surface* _sdlSurface = null; /// Internal `SDL_Surface` pointer
     private bool isOwner = true;
 
@@ -105,16 +103,16 @@ final class Surface {
      + which wraps `SDL_CreateRGBSurface` 
      + 
      + Params:
-     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
-     +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette  = `dsdl2.Palette` to use
+     +   size         = size (width and height) of the `dsdl2.Surface` in pixels
+     +   bitDepth     = bit depth of the palette index (1, 4, or 8)
+     +   boundPalette = `dsdl2.Palette` to use
      + Throws: `dsdl2.Exception` if allocation failed or palette-setting failed
      +/
-    this(int[2] size, int bitDepth, Palette palette) @trusted
+    this(int[2] size, int bitDepth, Palette boundPalette) @trusted
     in {
         assert(size[0] > 0 && size[1] > 0);
         assert(bitDepth == 1 || bitDepth == 4 || bitDepth == 8);
-        assert(palette !is null);
+        assert(boundPalette !is null);
     }
     do {
         this._sdlSurface = SDL_CreateRGBSurface(0, size[0], size[1], bitDepth, 0, 0, 0, 0);
@@ -123,34 +121,30 @@ final class Surface {
         }
 
         this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false);
-        this.paletteRef = palette;
-
-        if (SDL_SetSurfacePalette(this._sdlSurface, palette._sdlPalette) != 0) {
-            throw new SDLException;
-        }
+        this.palette = boundPalette;
     }
 
     /++ 
      + Constructs a blank indexed palette-using `dsdl2.Surface` from an array of `pixels`
      + 
      + Params:
-     +   pixels   = array of pixel data (copied internally)
-     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch    = skips in bytes per line/row of the `dsdl2.Surface`
-     +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette  = `dsdl2.Palette` to use
+     +   pixels        = array of pixel data (copied internally)
+     +   size          = size (width and height) of the `dsdl2.Surface` in pixels
+     +   pitch         = skips in bytes per line/row of the `dsdl2.Surface`
+     +   bitDepth      = bit depth of the palette index (1, 4, or 8)
+     +   boundPalette  = `dsdl2.Palette` to use
      + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
      +/
-    this(void[] pixels, int[2] size, int pitch, int bitDepth, Palette palette) @trusted
+    this(void[] pixels, int[2] size, int pitch, int bitDepth, Palette boundPalette) @trusted
     in {
         assert(pixels !is null);
         assert(size[0] > 0 && size[1] > 0);
         assert(pitch * 8 >= size[0] * bitDepth);
         assert(pixels.length == pitch * size[1]);
-        assert(palette !is null);
+        assert(boundPalette !is null);
     }
     do {
-        this(size, bitDepth, palette);
+        this(size, bitDepth, boundPalette);
 
         size_t lineBitSize = size[0] * bitDepth;
         size_t lineSize = lineBitSize / 8 + (lineBitSize % 8 != 0);
@@ -189,7 +183,7 @@ final class Surface {
      + 
      + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Surface`
      +/
-    const(PixelFormat) pixelFormat() const @trusted {
+    const(PixelFormat) pixelFormat() const @property @trusted {
         return this.pixelFormatProxy;
     }
 
@@ -198,7 +192,7 @@ final class Surface {
      + 
      + Returns: width of the `dsdl2.Surface` in pixels 
      +/
-    uint width() const @trusted {
+    uint width() const @property @trusted {
         return this._sdlSurface.w;
     }
 
@@ -207,7 +201,7 @@ final class Surface {
      + 
      + Returns: height of the `dsdl2.Surface` in pixels 
      +/
-    uint height() const @trusted {
+    uint height() const @property @trusted {
         return this._sdlSurface.h;
     }
 
@@ -216,7 +210,7 @@ final class Surface {
      + 
      + Returns: array of width and height of the `dsdl2.Surface` in pixels 
      +/
-    uint[2] size() const @trusted {
+    uint[2] size() const @property @trusted {
         return [this._sdlSurface.w, this._sdlSurface.h];
     }
 
@@ -225,8 +219,28 @@ final class Surface {
      + 
      + Returns: pitch of the `dsdl2.Surface` in bytes 
      +/
-    size_t pitch() const @trusted {
+    size_t pitch() const @property @trusted {
         return this._sdlSurface.pitch;
+    }
+
+    inout(Palette) palette() inout @property @trusted
+    in {
+        assert(this.pixelFormat.isIndexed);
+    }
+    do {
+        return this.pixelFormatProxy.palette;
+    }
+
+    void palette(Palette boundPalette) @property @trusted
+    in {
+        assert(this.pixelFormat.isIndexed);
+    }
+    do {
+        if (SDL_SetSurfacePalette(this._sdlSurface, boundPalette._sdlPalette) != 0) {
+            throw new SDLException;
+        }
+
+        this.pixelFormatProxy.palette = boundPalette;
     }
 
     /++ 
@@ -376,7 +390,7 @@ final class Surface {
      + 
      + Returns: clipping `dsdl2.Rect` of the `dsdl2.Surface`
      +/
-    Rect getClipRect() const @trusted {
+    Rect clipRect() const @property @trusted {
         Rect rect = void;
         SDL_GetClipRect(cast(SDL_Surface*) this._sdlSurface, &rect._sdlRect);
         return rect;
@@ -388,14 +402,15 @@ final class Surface {
      + Params:
      +   rect = `dsdl2.Rect` to set as the clipping rectangle
      +/
-    void setClipRect(Rect rect) @trusted {
+    void clipRect(Rect rect) @property @trusted {
         SDL_SetClipRect(this._sdlSurface, &rect._sdlRect);
     }
 
     /++ 
-     + Acts as `SDL_SetClipRect(surface, NULL)` which removes the clipping `dsdl2.Rect` of the `dsdl2.Surface`
+     + Acts as `SDL_SetClipRect(surface, NULL)` which removes the clipping `dsdl2.Rect` of the 
+     + `dsdl2.Surface`
      +/
-    void resetClipRect() @trusted {
+    void clipRect(typeof(null) _) @property @trusted {
         SDL_SetClipRect(this._sdlSurface, null);
     }
 }
