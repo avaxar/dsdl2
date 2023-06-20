@@ -62,7 +62,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      + Returns: primary selection text content
      + Throws: `dsdl2.SDLException` if the primary selection text failed to allocate on SDL's side
      +/
-    string getPrimarySelectionText() @trusted
+    string getPrimarySelection() @trusted
     in {
         assert(getVersion() >= Version(2, 26, 0));
     }

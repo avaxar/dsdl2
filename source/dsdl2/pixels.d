@@ -196,7 +196,7 @@ final class Palette {
      + 
      + Returns: number of `dsdl2.Color`s
      +/
-    size_t length() const @trusted {
+    size_t length() const @property @trusted {
         return this._sdlPalette.ncolors;
     }
 }
@@ -207,7 +207,7 @@ final class Palette {
  + 
  + Examples:
  + ---
- + const auto rgba = dsdl2.PixelFormat.rgba8888
+ + const auto rgba = dsdl2.PixelFormat.rgba32
  + assert(rgba.map(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
  + assert(rgba.get(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
  + ---
@@ -317,6 +317,10 @@ final class PixelFormat {
     do {
         this._sdlPixelFormat = sdlPixelFormat;
         this.isOwner = owns;
+
+        if (this._sdlPixelFormat.palette != null) {
+            this.paletteRef = new Palette(this._sdlPixelFormat.palette, false);
+        }
     }
 
     /++ 
@@ -484,30 +488,11 @@ final class PixelFormat {
     }
 
     /++ 
-     + Wraps `SDL_SetPixelFormatPalette` which sets the `dsdl2.Palette` for indexed `dsdl2.PixelFormat`s`
-     + 
-     + Params:
-     +   palette = the `dsdl2.Palette` class instance to bind as the color palette
-     +/
-    void setPalette(Palette palette) @trusted
-    in {
-        assert(this.isIndexed);
-        assert(palette !is null);
-    }
-    do {
-        if (SDL_SetPixelFormatPalette(this._sdlPixelFormat, palette._sdlPalette) != 0) {
-            throw new SDLException;
-        }
-
-        this.paletteRef = palette;
-    }
-
-    /++ 
      + Gets the `dsdl2.Palette` bounds to the indexed `dsdl2.PixelFormat`
      + 
      + Returns: the bound `dsdl2.Palette`
      +/
-    inout(Palette) getPalette() inout @trusted
+    inout(Palette) palette() inout @property @trusted
     in {
         assert(this.isIndexed);
     }
@@ -516,11 +501,30 @@ final class PixelFormat {
     }
 
     /++ 
+     + (Setter) Wraps `SDL_SetPixelFormatPalette` which sets the `dsdl2.Palette` for indexed `dsdl2.PixelFormat`s`
+     + 
+     + Params:
+     +   boundPalette = the `dsdl2.Palette` class instance to bind as the color palette
+     +/
+    void palette(Palette boundPalette) @property @trusted
+    in {
+        assert(this.isIndexed);
+        assert(boundPalette !is null);
+    }
+    do {
+        if (SDL_SetPixelFormatPalette(this._sdlPixelFormat, boundPalette._sdlPalette) != 0) {
+            throw new SDLException;
+        }
+
+        this.paletteRef = boundPalette;
+    }
+
+    /++ 
      + Gets the bit depth (size of a pixel in bits) of the `dsdl2.PixelFormat`
      + 
      + Returns: the bit depth of the `dsdl2.PixelFormat`
      +/
-    uint bitDepth() const @trusted {
+    uint bitDepth() const @property @trusted {
         return this._sdlPixelFormat.BitsPerPixel;
     }
 
@@ -529,7 +533,7 @@ final class PixelFormat {
      + 
      + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
      +/
-    uint bytesPerPixel() const @trusted {
+    uint bytesPerPixel() const @property @trusted {
         return this._sdlPixelFormat.BytesPerPixel;
     }
 
@@ -555,7 +559,7 @@ final class PixelFormat {
      + 
      + Returns: `true` if it is indexed, otherwise `false`
      +/
-    bool isIndexed() const @trusted {
+    bool isIndexed() const @property @trusted {
         return SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormatEnum);
     }
 
@@ -564,7 +568,7 @@ final class PixelFormat {
      + 
      + Returns: `true` if it can have an alpha channel, otherwise `false`
      +/
-    bool hasAlpha() const @trusted {
+    bool hasAlpha() const @property @trusted {
         return SDL_ISPIXELFORMAT_ALPHA(this._sdlPixelFormatEnum);
     }
 
@@ -573,7 +577,7 @@ final class PixelFormat {
      + 
      + Returns: `true` if it is unique, otherwise `false`
      +/
-    bool isFourCC() const @trusted {
+    bool isFourCC() const @property @trusted {
         return SDL_ISPIXELFORMAT_FOURCC(this._sdlPixelFormatEnum) != 0;
     }
 }
