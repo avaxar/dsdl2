@@ -10,6 +10,7 @@ module dsdl2.pixels;
 import bindbc.sdl;
 import dsdl2.sdl;
 
+import std.conv : to;
 import std.format : format;
 
 /++ 
@@ -39,7 +40,7 @@ struct Color {
         }
     }
 
-    @disable this();
+    this() @disable;
 
     /++ 
      + Constructs a `dsdl2.Color` from a vanilla `SDL_Color` from bindbc-sdl
@@ -115,11 +116,7 @@ final class Palette {
      +   ncolors = amount of `dsdl2.Color`s to allocate in the `dsdl2.Palette`
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
-    this(int ncolors) @trusted
-    in {
-        assert(ncolors >= 0);
-    }
-    do {
+    this(uint ncolors) @trusted {
         this._sdlPalette = SDL_AllocPalette(ncolors);
         if (this._sdlPalette is null) {
             throw new SDLException;
@@ -134,7 +131,7 @@ final class Palette {
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(const Color[] colors) @trusted {
-        this._sdlPalette = SDL_AllocPalette(cast(int) colors.length);
+        this._sdlPalette = SDL_AllocPalette(colors.length.to!int);
         if (this._sdlPalette is null) {
             throw new SDLException;
         }
@@ -238,7 +235,8 @@ final class PixelFormat {
     }
 
     /++ 
-     + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s
+     + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s from `SDL_PIXELFORMAT_*` enumeration
+     + constants
      +/
     static alias index1lsb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX1LSB;
     static alias index1msb = _instantiateIndexed!SDL_PIXELFORMAT_INDEX1MSB; /// ditto
@@ -249,7 +247,7 @@ final class PixelFormat {
     static alias yuy2 = _instantiateIndexed!SDL_PIXELFORMAT_YUY2; /// ditto
 
     /++ 
-     + Retrieves one of the `dsdl2.PixelFormat` multiton presets
+     + Retrieves one of the `dsdl2.PixelFormat` multiton presets from `SDL_PIXELFORMAT_*` enumeration constants
      +/
     static alias rgb332 = _multiton!SDL_PIXELFORMAT_RGB332; /// ditto
     static alias rgb444 = _multiton!SDL_PIXELFORMAT_RGB444; /// ditto
@@ -283,7 +281,8 @@ final class PixelFormat {
 
     static if (sdlSupport >= SDLSupport.v2_0_4) {
         /++ 
-         + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s (from SDL 2.0.4)
+         + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s from `SDL_PIXELFORMAT_*`
+         + enumeration constants (from SDL 2.0.4)
          +/
         static alias nv12 = _instantiateIndexed!(SDL_PIXELFORMAT_NV12, 0, 4);
         static alias nv21 = _instantiateIndexed!(SDL_PIXELFORMAT_NV21, 0, 4); /// ditto
@@ -291,7 +290,8 @@ final class PixelFormat {
 
     static if (sdlSupport >= SDLSupport.v2_0_5) {
         /++ 
-         + Retrieves one of the `dsdl2.PixelFormat` multiton presets (from SDL 2.0.5)
+         + Retrieves one of the `dsdl2.PixelFormat` multiton presets from `SDL_PIXELFORMAT_*` enumeration constants
+         + (from SDL 2.0.5)
          +/
         static alias rgba32 = _multiton!(SDL_PIXELFORMAT_RGBA32, 0, 5);
         static alias argb32 = _multiton!(SDL_PIXELFORMAT_ARGB32, 0, 5); /// ditto
@@ -378,7 +378,7 @@ final class PixelFormat {
      +   rgbaMasks = bit masks for the red, green, blue, and alpha channels
      + Throws: `dsdl2.SDLException` if pixel format conversion not possible
      +/
-    this(int bitDepth, uint[4] rgbaMasks) @trusted
+    this(ubyte bitDepth, uint[4] rgbaMasks) @trusted
     in {
         assert(bitDepth > 0);
     }
@@ -524,7 +524,7 @@ final class PixelFormat {
      + 
      + Returns: the bit depth of the `dsdl2.PixelFormat`
      +/
-    uint bitDepth() const @property @trusted {
+    ubyte bitDepth() const @property @trusted {
         return this._sdlPixelFormat.BitsPerPixel;
     }
 
@@ -533,7 +533,7 @@ final class PixelFormat {
      + 
      + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
      +/
-    uint bytesPerPixel() const @property @trusted {
+    ubyte bytesPerPixel() const @property @trusted {
         return this._sdlPixelFormat.BytesPerPixel;
     }
 
