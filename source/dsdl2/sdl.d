@@ -68,33 +68,41 @@ else {
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
     /++
-     + Wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     + A D enumeration which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
      +/
     enum SubSystem : uint {
+        /++
+         + Wraps `SDL_INIT_*` enumeration constants
+         +/
         timer = SDL_INIT_TIMER,
-        audio = SDL_INIT_AUDIO,
-        video = SDL_INIT_VIDEO,
-        joystick = SDL_INIT_JOYSTICK,
-        haptic = SDL_INIT_HAPTIC,
-        gameController = SDL_INIT_GAMECONTROLLER,
-        events = SDL_INIT_EVENTS,
-        everything = SDL_INIT_EVERYTHING,
-        sensor = SDL_INIT_SENSOR,
-        noparachute = SDL_INIT_NOPARACHUTE,
+        audio = SDL_INIT_AUDIO, /// ditto
+        video = SDL_INIT_VIDEO, /// ditto
+        joystick = SDL_INIT_JOYSTICK, /// ditto
+        haptic = SDL_INIT_HAPTIC, /// ditto
+        gameController = SDL_INIT_GAMECONTROLLER, /// ditto
+        events = SDL_INIT_EVENTS, /// ditto
+        everything = SDL_INIT_EVERYTHING, /// ditto
+        sensor = SDL_INIT_SENSOR, /// ditto
+        noparachute = SDL_INIT_NOPARACHUTE, /// ditto
     }
 }
 else {
-    /// ditto
+    /++
+     + A D enumeration which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     +/
     enum SubSystem : uint {
+        /++
+         + Wraps `SDL_INIT_*` enumeration constants
+         +/
         timer = SDL_INIT_TIMER,
-        audio = SDL_INIT_AUDIO,
-        video = SDL_INIT_VIDEO,
-        joystick = SDL_INIT_JOYSTICK,
-        haptic = SDL_INIT_HAPTIC,
-        gameController = SDL_INIT_GAMECONTROLLER,
-        events = SDL_INIT_EVENTS,
-        everything = SDL_INIT_EVERYTHING,
-        noparachute = SDL_INIT_NOPARACHUTE,
+        audio = SDL_INIT_AUDIO, /// ditto
+        video = SDL_INIT_VIDEO, /// ditto
+        joystick = SDL_INIT_JOYSTICK, /// ditto
+        haptic = SDL_INIT_HAPTIC, /// ditto
+        gameController = SDL_INIT_GAMECONTROLLER, /// ditto
+        events = SDL_INIT_EVENTS, /// ditto
+        everything = SDL_INIT_EVERYTHING, /// ditto
+        noparachute = SDL_INIT_NOPARACHUTE, /// ditto
     }
 }
 
@@ -152,10 +160,6 @@ bool wasInit(SubSystem subsystem) @trusted {
 
 /++ 
  + A D struct that wraps `SDL_version` containing version information
- + 
- + `dsdl2.Version` is able to contain SDL version information, composed of `major`, `minor`, and `patch`,
- + each corresponding to the three numbers in a version. This wrapper adds the ability to compare versions
- + using the comparison operator, and to format versions into string using the `.format()` method.
  +
  + Examples:
  + ---
@@ -263,9 +267,12 @@ string getRevision() @trusted {
  + Notes: `SDL_HINT_DEFAULT` and `SDL_HINT_OVERRIDE` are named as `low` and `high` respectively.
  +/
 enum HintPriority : SDL_HintPriority {
+    /++
+     + Wraps `SDL_HINT_*` enumeration constants
+     +/
     low = SDL_HINT_DEFAULT,
-    normal = SDL_HINT_NORMAL,
-    high = SDL_HINT_OVERRIDE
+    normal = SDL_HINT_NORMAL, /// ditto
+    high = SDL_HINT_OVERRIDE /// ditto
 }
 
 /++

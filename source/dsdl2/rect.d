@@ -41,7 +41,7 @@ struct Point {
         }
     }
 
-    @disable this();
+    this() @disable;
 
     /++ 
      + Constructs a `dsdl2.Point` from a vanilla `SDL_Point` from bindbc-sdl
@@ -149,7 +149,7 @@ struct Rect {
         }
     }
 
-    @disable this();
+    this() @disable;
 
     /++ 
      + Constructs a `dsdl2.Rect` from a vanilla `SDL_Rect` from bindbc-sdl
@@ -341,7 +341,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             }
         }
 
-        @disable this();
+        this() @disable;
 
         /++
          + Constructs a `dsdl2.FPoint` from a vanilla `SDL_FPoint` from bindbc-sdl
@@ -452,7 +452,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         alias _sdlFRect this;
 
-        @disable this();
+        this() @disable;
 
         /++ 
          + Constructs a `dsdl2.FRect` from a vanilla `SDL_FRect` from bindbc-sdl
