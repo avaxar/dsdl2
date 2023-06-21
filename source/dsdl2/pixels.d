@@ -1,7 +1,7 @@
 /++
  + Authors: Avaxar <avaxar@nekkl.org>
  + Copyright: Copyright © 2023, Avaxar
- + License: $(LINK2 https://mit-license.org/, MIT License)
+ + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
 module dsdl2.pixels;
@@ -533,7 +533,7 @@ final class PixelFormat {
      + 
      + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
      +/
-    ubyte bytesPerPixel() const @property @trusted {
+    size_t bytesPerPixel() const @property @trusted {
         return this._sdlPixelFormat.BytesPerPixel;
     }
 
