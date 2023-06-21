@@ -22,6 +22,7 @@ import std.format : format;
  + `dsdl2.Surface` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
  + RAM according to its defined `dsdl2.PixelFormat`.
  + 
+ + Examples:
  + ---
  + auto surface = new dsdl2.Surface([100, 100], dsdl2.PixelFormat.rgba32);
  + surface.fill(dsdl2.Color(24, 24, 24));
@@ -35,6 +36,8 @@ final class Surface {
     private PixelFormat pixelFormatProxy = null;
     @system SDL_Surface* _sdlSurface = null; /// Internal `SDL_Surface` pointer
     private bool isOwner = true;
+    private void* refPtr = null;
+    private bool isNumb = false;
 
     /++ 
      + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
@@ -42,15 +45,27 @@ final class Surface {
      + Params:
      +   sdlSurface = the `SDL_Surface` pointer to manage
      +   owns       = whether the instance owns the given `SDL_Surface*` and should destroy it on its own
+     +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
      +/
-    this(SDL_Surface* sdlSurface, bool owns = true) @system
+    this(SDL_Surface* sdlSurface, bool owns = true, void* userRef = null) @system
     in {
         assert(sdlSurface !is null);
     }
     do {
         this._sdlSurface = sdlSurface;
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false);
+        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
         this.isOwner = owns;
+        this.refPtr = userRef;
+    }
+
+    /++ 
+     + Numbs `invariant` for destruction
+     +/
+    void numb() @system {
+        debug {
+            this.isNumb = true;
+            this.pixelFormatProxy.numb();
+        }
     }
 
     /++ 
@@ -76,7 +91,7 @@ final class Surface {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false);
+        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
     }
 
     /++ 
@@ -131,7 +146,7 @@ final class Surface {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false);
+        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
         this.palette = boundPalette;
     }
 
@@ -169,11 +184,16 @@ final class Surface {
 
     ~this() @trusted {
         if (this.isOwner) {
+            this.numb();
             SDL_FreeSurface(this._sdlSurface);
         }
     }
 
     @trusted invariant {
+        if (this.isNumb) {
+            return;
+        }
+
         assert(this._sdlSurface !is null);
         assert(this.pixelFormatProxy !is null);
     }
@@ -404,9 +424,9 @@ final class Surface {
      +/
     Color mod() const @property @trusted {
         Color multipliers = void;
-        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this._sdlSurface, &multipliers.r, &multipliers.g,
-            &multipliers.b);
-        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this._sdlSurface, &multipliers.a);
+        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this._sdlSurface, &multipliers._sdlColor.r,
+            &multipliers._sdlColor.g, &multipliers._sdlColor.b);
+        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this._sdlSurface, &multipliers._sdlColor.a);
         return multipliers;
     }
 

@@ -1,10 +1,10 @@
 # dsdl2
 
- An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs, accompanied with the [bindbc-sdl](https://bindbc-sdl.dub.pm) binding.
+ An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs, accompanied with the [bindbc-sdl](https://code.dlang.org/packages/bindbc-sdl) binding.
 
 ## Use
 
- The recommended way of using this library in your project is to add it to your dub project. dsdl2 has been published in the [dub package registry](https://dsdl2.dub.pm). A simple `dub add dsdl2` would do.
+ The recommended way of using this library in your project is to add it to your dub project. dsdl2 has been published in the [dub package registry](https://code.dlang.org/packages/dsdl2). A simple `dub add dsdl2` would do.
 
 ## Documentation
 
