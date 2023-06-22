@@ -15,7 +15,7 @@ import std.conv : to;
 import std.format : format;
 
 /++ 
- + A D struct that wraps `SDL_Color` containing 4 bytes for storing color values of 3 color channels and 1 alpha
+ + D struct that wraps `SDL_Color` containing 4 bytes for storing color values of 3 color channels and 1 alpha
  + channel.
  + 
  + `dsdl2.Color` stores unsigned `byte`-sized (0-255) `r`ed, `g`reen, `b`lue color, and `a`lpha channel values.
@@ -117,7 +117,7 @@ struct Color {
 }
 
 /++ 
- + A D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to use along with indexed
+ + D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to use along with indexed
  + `dsdl2.PixelFormat` instances
  + 
  + Examples:
@@ -246,7 +246,7 @@ final class Palette {
 }
 
 /++ 
- + A D class that wraps `SDL_PixelFormat` defining the color and alpha channel bit layout in the internal
+ + D class that wraps `SDL_PixelFormat` defining the color and alpha channel bit layout in the internal
  + representation of a pixel
  + 
  + Examples:
@@ -296,7 +296,7 @@ final class PixelFormat {
     /++ 
      + Retrieves one of the `dsdl2.PixelFormat` multiton presets from `SDL_PIXELFORMAT_*` enumeration constants
      +/
-    static alias rgb332 = _multiton!SDL_PIXELFORMAT_RGB332; /// ditto
+    static alias rgb332 = _multiton!SDL_PIXELFORMAT_RGB332;
     static alias rgb444 = _multiton!SDL_PIXELFORMAT_RGB444; /// ditto
     static alias rgb555 = _multiton!SDL_PIXELFORMAT_RGB555; /// ditto
     static alias bgr555 = _multiton!SDL_PIXELFORMAT_BGR555; /// ditto

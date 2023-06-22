@@ -14,7 +14,7 @@ import std.format : format;
 import std.typecons : Nullable, nullable;
 
 /++ 
- + A D struct that wraps `SDL_Point` containing 2D integer coordinate pair
+ + D struct that wraps `SDL_Point` containing 2D integer coordinate pair
  + 
  + `dsdl2.Point` stores signed `int`eger `x` and `y` coordinate points. This wrapper also implements vector-like
  + operator overloading.
@@ -134,7 +134,7 @@ struct Point {
 }
 
 /++ 
- + A D struct that wraps `SDL_Rect` representing a rectangle of integer 2D coordinate and dimension
+ + D struct that wraps `SDL_Rect` representing a rectangle of integer 2D coordinate and dimension
  + 
  + `dsdl2.Rect` stores signed `int`eger `x` and `y` coordinate points, as well as `w`idth and `h`eight which
  + specifies the rectangle's dimension. `x` and `y` symbolize the top-left coordinate of the rectangle, and
@@ -371,7 +371,7 @@ struct Rect {
 
 static if (sdlSupport >= SDLSupport.v2_0_10) {
     /++ 
-     + A D struct that wraps `SDL_FPoint` (from SDL 2.0.10) containing 2D floating point coordinate pair
+     + D struct that wraps `SDL_FPoint` (from SDL 2.0.10) containing 2D floating point coordinate pair
      + 
      + `dsdl2.FPoint` stores `float`ing point `x` and `y` coordinate points. This wrapper also implements 
      + vector-like operator overloading.
@@ -491,7 +491,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
     }
 
     /++ 
-     + A D struct that wraps `SDL_FRect` (from SDL 2.0.10) representing a rectangle of floating point 2D
+     + D struct that wraps `SDL_FRect` (from SDL 2.0.10) representing a rectangle of floating point 2D
      + coordinate and dimension
      + 
      + `dsdl2.FRect` stores `float`ing point `x` and `y` coordinate points, as well as `w`idth and `h`eight which
