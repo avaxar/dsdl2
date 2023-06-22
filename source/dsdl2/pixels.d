@@ -10,6 +10,7 @@ module dsdl2.pixels;
 import bindbc.sdl;
 import dsdl2.sdl;
 
+import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 
@@ -130,7 +131,6 @@ final class Palette {
     @system SDL_Palette* _sdlPalette = null; /// Internal `SDL_Palette` pointer
     private bool isOwner = true;
     private void* refPtr = null;
-    private bool isNumb = false;
 
     /++ 
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
@@ -148,15 +148,6 @@ final class Palette {
         this._sdlPalette = sdlPalette;
         this.isOwner = owns;
         this.refPtr = userRef;
-    }
-
-    /++ 
-     + Numbs `invariant` for destruction
-     +/
-    void numb() @system {
-        debug {
-            this.isNumb = true;
-        }
     }
 
     /++ 
@@ -198,7 +189,9 @@ final class Palette {
     }
 
     @trusted invariant {
-        if (this.isNumb) {
+        // Instance might be in an invalid state due to holding a non-owned externally-freed object when
+        // destructed in an unpredictable order.
+        if (!this.isOwner && GC.inFinalizer) {
             return;
         }
 
@@ -357,7 +350,6 @@ final class PixelFormat {
     @system SDL_PixelFormat* _sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
     private bool isOwner = true;
     private void* refPtr = null;
-    private bool isNumb = false;
 
     /++ 
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
@@ -378,18 +370,6 @@ final class PixelFormat {
 
         if (this._sdlPixelFormat.palette != null) {
             this.paletteRef = new Palette(this._sdlPixelFormat.palette, false, cast(void*) this);
-        }
-    }
-
-    /++ 
-     + Numbs `invariant` for destruction
-     +/
-    void numb() @system {
-        debug {
-            this.isNumb = true;
-            if (this.paletteRef !is null) {
-                this.paletteRef.numb();
-            }
         }
     }
 
@@ -464,13 +444,14 @@ final class PixelFormat {
 
     ~this() @trusted {
         if (this.isOwner) {
-            this.numb();
             SDL_FreeFormat(this._sdlPixelFormat);
         }
     }
 
     @trusted invariant {
-        if (this.isNumb) {
+        // Instance might be in an invalid state due to holding a non-owned externally-freed object when
+        // destructed in an unpredictable order.
+        if (!this.isOwner && GC.inFinalizer) {
             return;
         }
 
