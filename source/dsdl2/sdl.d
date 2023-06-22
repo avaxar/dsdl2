@@ -52,7 +52,7 @@ else {
         }
 
         Version wanted;
-        wanted._sdlVersion = sdlSupport;
+        wanted.sdlVersion = sdlSupport;
 
         if (current == SDLSupport.badLibrary) {
             import std.stdio : writeln;
@@ -172,16 +172,7 @@ bool wasInit(SubSystem subsystem) @trusted {
  + ---
  +/
 struct Version {
-    // The union implementation lets providing documentation to each fields.
-    // alias _sdlVersion this;
-    union {
-        SDL_version _sdlVersion; /// Internal `SDL_version` struct
-        struct {
-            ubyte major; /// Major version number
-            ubyte minor; /// Minor version number
-            ubyte patch; /// Patch version number
-        }
-    }
+    SDL_version sdlVersion; /// Internal `SDL_version` struct
 
     /++ 
      + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
@@ -190,7 +181,7 @@ struct Version {
      +   sdlVersion = the `SDL_version` struct
      +/
     this(SDL_version sdlVersion) {
-        this._sdlVersion = sdlVersion;
+        this.sdlVersion = sdlVersion;
     }
 
     /++ 
@@ -202,9 +193,9 @@ struct Version {
      +   patch = patch verion number
      +/
     this(ubyte major, ubyte minor, ubyte patch) {
-        this.major = major;
-        this.minor = minor;
-        this.patch = patch;
+        this.sdlVersion.major = major;
+        this.sdlVersion.minor = minor;
+        this.sdlVersion.patch = patch;
     }
 
     /++ 
@@ -232,6 +223,44 @@ struct Version {
     }
 
     /++ 
+     + Proxy to the major version value of the `dsdl2.Version`
+     + 
+     + Returns: major version value value of the `dsdl2.Version`
+     +/
+    ref inout(ubyte) major() return inout @property {
+        return this.sdlVersion.major;
+    }
+
+    /++ 
+     + Proxy to the minor version value of the `dsdl2.Version`
+     + 
+     + Returns: minor version value value of the `dsdl2.Version`
+     +/
+    ref inout(ubyte) minor() return inout @property {
+        return this.sdlVersion.minor;
+    }
+
+    /++ 
+     + Proxy to the patch version value of the `dsdl2.Version`
+     + 
+     + Returns: patch version value value of the `dsdl2.Version`
+     +/
+    ref inout(ubyte) patch() return inout @property {
+        return this.sdlVersion.patch;
+    }
+
+    /++ 
+     + Gets the static array representation of the `dsdl2.Version`
+     + 
+     + Returns: `major`, `minor`, `patch` as an array
+     +/
+    ubyte[3] array() const @property {
+        return [
+            this.sdlVersion.major, this.sdlVersion.minor, this.sdlVersion.patch
+        ];
+    }
+
+    /++ 
      + Formats the `dsdl2.Version` into `string`: `"<major>.<minor>.<patch>"`
      + 
      + Returns: the formatted `string`
@@ -248,7 +277,7 @@ struct Version {
  +/
 Version getVersion() @trusted {
     Version ver;
-    SDL_GetVersion(&ver._sdlVersion);
+    SDL_GetVersion(&ver.sdlVersion);
     return ver;
 }
 

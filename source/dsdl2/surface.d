@@ -35,27 +35,27 @@ import std.format : format;
  +/
 final class Surface {
     private PixelFormat pixelFormatProxy = null;
-    @system SDL_Surface* _sdlSurface = null; /// Internal `SDL_Surface` pointer
+    @system SDL_Surface* sdlSurface = null; /// Internal `SDL_Surface` pointer
     private bool isOwner = true;
-    private void* refPtr = null;
+    private void* userRef = null;
 
     /++ 
      + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
      + 
      + Params:
      +   sdlSurface = the `SDL_Surface` pointer to manage
-     +   owns       = whether the instance owns the given `SDL_Surface*` and should destroy it on its own
+     +   isOwner    = whether the instance owns the given `SDL_Surface*` and should destroy it on its own
      +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
      +/
-    this(SDL_Surface* sdlSurface, bool owns = true, void* userRef = null) @system
+    this(SDL_Surface* sdlSurface, bool isOwner = true, void* userRef = null) @system
     in {
         assert(sdlSurface !is null);
     }
     do {
-        this._sdlSurface = sdlSurface;
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
-        this.isOwner = owns;
-        this.refPtr = userRef;
+        this.sdlSurface = sdlSurface;
+        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
+        this.isOwner = isOwner;
+        this.userRef = userRef;
     }
 
     /++ 
@@ -75,13 +75,13 @@ final class Surface {
     do {
         uint[4] masks = rgbPixelFormat.toMasks();
 
-        this._sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitDepth,
+        this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitDepth,
         masks[0], masks[1], masks[2], masks[3]);
-        if (this._sdlSurface is null) {
+        if (this.sdlSurface is null) {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
+        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
     }
 
     /++ 
@@ -110,7 +110,7 @@ final class Surface {
 
         foreach (line; 0 .. size[1]) {
             ubyte* srcLine = cast(ubyte*) pixels.ptr + line * pitch;
-            ubyte* destLine = cast(ubyte*) this._sdlSurface.pixels + line * this.pitch;
+            ubyte* destLine = cast(ubyte*) this.sdlSurface.pixels + line * this.pitch;
             destLine[0 .. lineSize] = srcLine[0 .. lineSize];
         }
     }
@@ -120,61 +120,61 @@ final class Surface {
      + which wraps `SDL_CreateRGBSurface` 
      + 
      + Params:
-     +   size         = size (width and height) of the `dsdl2.Surface` in pixels
-     +   bitDepth     = bit depth of the palette index (1, 4, or 8)
-     +   boundPalette = `dsdl2.Palette` to use
+     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
+     +   bitDepth = bit depth of the palette index (1, 4, or 8)
+     +   palette  = `dsdl2.Palette` to use
      + Throws: `dsdl2.Exception` if allocation failed or palette-setting failed
      +/
-    this(uint[2] size, ubyte bitDepth, Palette boundPalette) @trusted
+    this(uint[2] size, ubyte bitDepth, Palette palette) @trusted
     in {
         assert(bitDepth == 1 || bitDepth == 4 || bitDepth == 8);
-        assert(boundPalette !is null);
+        assert(palette !is null);
     }
     do {
-        this._sdlSurface = SDL_CreateRGBSurface(0, size[0], size[1], bitDepth, 0, 0, 0, 0);
-        if (this._sdlSurface is null) {
+        this.sdlSurface = SDL_CreateRGBSurface(0, size[0], size[1], bitDepth, 0, 0, 0, 0);
+        if (this.sdlSurface is null) {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
-        this.palette = boundPalette;
+        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
+        this.palette = palette;
     }
 
     /++ 
      + Constructs a blank indexed palette-using `dsdl2.Surface` from an array of `pixels`
      + 
      + Params:
-     +   pixels        = array of pixel data (copied internally)
-     +   size          = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch         = skips in bytes per line/row of the `dsdl2.Surface`
-     +   bitDepth      = bit depth of the palette index (1, 4, or 8)
-     +   boundPalette  = `dsdl2.Palette` to use
+     +   pixels   = array of pixel data (copied internally)
+     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
+     +   pitch    = skips in bytes per line/row of the `dsdl2.Surface`
+     +   bitDepth = bit depth of the palette index (1, 4, or 8)
+     +   palette  = `dsdl2.Palette` to use
      + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
      +/
-    this(void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette boundPalette) @trusted
+    this(void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette palette) @trusted
     in {
         assert(pixels !is null);
         assert(size[0] > 0 && size[1] > 0);
         assert(pitch * 8 >= size[0] * bitDepth);
         assert(pixels.length == pitch * size[1]);
-        assert(boundPalette !is null);
+        assert(palette !is null);
     }
     do {
-        this(size, bitDepth, boundPalette);
+        this(size, bitDepth, palette);
 
         size_t lineBitSize = size[0] * bitDepth;
         size_t lineSize = lineBitSize / 8 + (lineBitSize % 8 != 0);
 
         foreach (line; 0 .. size[1]) {
             ubyte* srcLine = cast(ubyte*) pixels.ptr + line * pitch;
-            ubyte* destLine = cast(ubyte*) this._sdlSurface.pixels + line * this.pitch;
+            ubyte* destLine = cast(ubyte*) this.sdlSurface.pixels + line * this.pitch;
             destLine[0 .. lineSize] = srcLine[0 .. lineSize];
         }
     }
 
     ~this() @trusted {
         if (this.isOwner) {
-            SDL_FreeSurface(this._sdlSurface);
+            SDL_FreeSurface(this.sdlSurface);
         }
     }
 
@@ -185,7 +185,7 @@ final class Surface {
             return;
         }
 
-        assert(this._sdlSurface !is null);
+        assert(this.sdlSurface !is null);
         assert(this.pixelFormatProxy !is null);
     }
 
@@ -215,7 +215,7 @@ final class Surface {
      + Returns: width of the `dsdl2.Surface` in pixels 
      +/
     uint width() const @property @trusted {
-        return this._sdlSurface.w;
+        return this.sdlSurface.w;
     }
 
     /++ 
@@ -224,7 +224,7 @@ final class Surface {
      + Returns: height of the `dsdl2.Surface` in pixels 
      +/
     uint height() const @property @trusted {
-        return this._sdlSurface.h;
+        return this.sdlSurface.h;
     }
 
     /++ 
@@ -233,7 +233,7 @@ final class Surface {
      + Returns: array of width and height of the `dsdl2.Surface` in pixels 
      +/
     uint[2] size() const @property @trusted {
-        return [this._sdlSurface.w, this._sdlSurface.h];
+        return [this.sdlSurface.w, this.sdlSurface.h];
     }
 
     /++ 
@@ -242,7 +242,7 @@ final class Surface {
      + Returns: pitch of the `dsdl2.Surface` in bytes 
      +/
     size_t pitch() const @property @trusted {
-        return this._sdlSurface.pitch;
+        return this.sdlSurface.pitch;
     }
 
     inout(Palette) palette() inout @property @trusted
@@ -253,16 +253,16 @@ final class Surface {
         return this.pixelFormatProxy.palette;
     }
 
-    void palette(Palette boundPalette) @property @trusted
+    void palette(Palette newPalette) @property @trusted
     in {
         assert(this.pixelFormat.isIndexed);
     }
     do {
-        if (SDL_SetSurfacePalette(this._sdlSurface, boundPalette._sdlPalette) != 0) {
+        if (SDL_SetSurfacePalette(this.sdlSurface, newPalette.sdlPalette) != 0) {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy.palette = boundPalette;
+        this.pixelFormatProxy.palette = newPalette;
     }
 
     /++ 
@@ -278,7 +278,7 @@ final class Surface {
         assert(xy[1] < this.height);
     }
     do {
-        const ubyte* row = cast(ubyte*) this._sdlSurface.pixels + xy[1] * this.pitch;
+        const ubyte* row = cast(ubyte*) this.sdlSurface.pixels + xy[1] * this.pitch;
 
         if (this.pixelFormat.bitDepth >= 8) {
             const ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
@@ -292,7 +292,7 @@ final class Surface {
             ubyte pixelByte = *(row + (xy[0] * this.pixelFormat.bitDepth) / 8);
             ubyte bitOffset = (xy[0] * this.pixelFormat.bitDepth) % 8;
 
-            switch (this.pixelFormat._sdlPixelFormatEnum) {
+            switch (this.pixelFormat.sdlPixelFormatEnum) {
             case SDL_PIXELFORMAT_INDEX1LSB:
                 return (pixelByte & (0b00000001 << bitOffset)) != 0;
 
@@ -327,7 +327,7 @@ final class Surface {
         }
     }
     do {
-        ubyte* row = cast(ubyte*) this._sdlSurface.pixels + xy[1] * this.pitch;
+        ubyte* row = cast(ubyte*) this.sdlSurface.pixels + xy[1] * this.pitch;
 
         if (this.pixelFormat.bitDepth >= 8) {
             ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
@@ -338,7 +338,7 @@ final class Surface {
             ubyte* pixelPtr = row + (xy[0] * this.pixelFormat.bitDepth) / 8;
             ubyte bitOffset = (xy[0] * this.pixelFormat.bitDepth) % 8;
 
-            switch (this.pixelFormat._sdlPixelFormatEnum) {
+            switch (this.pixelFormat.sdlPixelFormatEnum) {
             case SDL_PIXELFORMAT_INDEX1LSB:
                 *pixelPtr &= !(0b00000001 << bitOffset);
                 *pixelPtr |= value << bitOffset;
@@ -415,9 +415,9 @@ final class Surface {
      +/
     Color mod() const @property @trusted {
         Color multipliers = void;
-        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this._sdlSurface, &multipliers._sdlColor.r,
-            &multipliers._sdlColor.g, &multipliers._sdlColor.b);
-        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this._sdlSurface, &multipliers._sdlColor.a);
+        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this.sdlSurface, &multipliers.sdlColor.r,
+            &multipliers.sdlColor.g, &multipliers.sdlColor.b);
+        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this.sdlSurface, &multipliers.sdlColor.a);
         return multipliers;
     }
 
@@ -426,12 +426,12 @@ final class Surface {
      + `SDL_SetSurfaceAlphaMod`
      + 
      + Params:
-     +   multipliers = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha
-     +                 multiplier
+     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha
+     +            multiplier
      +/
-    void mod(Color multipliers) @property @trusted {
-        SDL_SetSurfaceColorMod(this._sdlSurface, multipliers.r, multipliers.g, multipliers.b);
-        SDL_SetSurfaceAlphaMod(this._sdlSurface, multipliers.a);
+    void mod(Color newMod) @property @trusted {
+        SDL_SetSurfaceColorMod(this.sdlSurface, newMod.r, newMod.g, newMod.b);
+        SDL_SetSurfaceAlphaMod(this.sdlSurface, newMod.a);
     }
 
     /++ 
@@ -440,20 +440,19 @@ final class Surface {
      + Returns: color multipliers of the `dsdl2.Surface`
      +/
     ubyte[3] colorMod() const @property @trusted {
-        ubyte[3] multipliers = void;
-        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this._sdlSurface, &multipliers[0], &multipliers[1],
-        &multipliers[2]);
-        return multipliers;
+        ubyte[3] colorMod = void;
+        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this.sdlSurface, &colorMod[0], &colorMod[1], &colorMod[2]);
+        return colorMod;
     }
 
     /++ 
      + Wraps `SDL_SetSurfaceColorMod` which sets the color multipliers of the `dsdl2.Surface`
      + 
      + Params:
-     +   multipliers = an array of `ubyte`s representing red, green, and blue multipliers (each 0-255)
+     +   newColorMod = an array of `ubyte`s representing red, green, and blue multipliers (each 0-255)
      +/
-    void colorMod(ubyte[3] multipliers) @property @trusted {
-        SDL_SetSurfaceColorMod(this._sdlSurface, multipliers[0], multipliers[1], multipliers[2]);
+    void colorMod(ubyte[3] newColorMod) @property @trusted {
+        SDL_SetSurfaceColorMod(this.sdlSurface, newColorMod[0], newColorMod[1], newColorMod[2]);
     }
 
     /++ 
@@ -462,19 +461,19 @@ final class Surface {
      + Returns: alpha multiplier of the `dsdl2.Surface`
      +/
     ubyte alphaMod() const @property @trusted {
-        ubyte multiplier = void;
-        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this._sdlSurface, &multiplier);
-        return multiplier;
+        ubyte alphaMod = void;
+        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this.sdlSurface, &alphaMod);
+        return alphaMod;
     }
 
     /++ 
      + Wraps `SDL_SetSurfaceAlphaMod` which sets the alpha multiplier of the `dsdl2.Surface`
      + 
      + Params:
-     +   multiplier = alpha multiplier (0-255)
+     +   newAlphaMod = alpha multiplier (0-255)
      +/
-    void alphaMod(ubyte multiplier) @property @trusted {
-        SDL_SetSurfaceAlphaMod(this._sdlSurface, multiplier);
+    void alphaMod(ubyte newAlphaMod) @property @trusted {
+        SDL_SetSurfaceAlphaMod(this.sdlSurface, newAlphaMod);
     }
 
     /++ 
@@ -484,7 +483,7 @@ final class Surface {
      +/
     Rect clipRect() const @property @trusted {
         Rect rect = void;
-        SDL_GetClipRect(cast(SDL_Surface*) this._sdlSurface, &rect._sdlRect);
+        SDL_GetClipRect(cast(SDL_Surface*) this.sdlSurface, &rect.sdlRect);
         return rect;
     }
 
@@ -495,7 +494,7 @@ final class Surface {
      +   rect = `dsdl2.Rect` to set as the clipping rectangle
      +/
     void clipRect(Rect rect) @property @trusted {
-        SDL_SetClipRect(this._sdlSurface, &rect._sdlRect);
+        SDL_SetClipRect(this.sdlSurface, &rect.sdlRect);
     }
 
     /++ 
@@ -503,7 +502,7 @@ final class Surface {
      + `dsdl2.Surface`
      +/
     void clipRect(typeof(null) _) @property @trusted {
-        SDL_SetClipRect(this._sdlSurface, null);
+        SDL_SetClipRect(this.sdlSurface, null);
     }
 
     /++ 
@@ -514,7 +513,7 @@ final class Surface {
      +/
     Color colorKey() const @property @trusted {
         uint key = void;
-        if (SDL_GetColorKey(cast(SDL_Surface*) this._sdlSurface, &key) != 0) {
+        if (SDL_GetColorKey(cast(SDL_Surface*) this.sdlSurface, &key) != 0) {
             throw new SDLException;
         }
 
@@ -531,11 +530,11 @@ final class Surface {
      + color transparent
      + 
      + Params:
-     +   pixelKey = pixel value of the color key that get transparency
+     +   newPixelKey = pixel value of the color key that get transparency
      + Throws: `dsdl2.SDLException` if color key unable to set
      +/
-    void colorKey(uint pixelKey) @property @trusted {
-        if (SDL_SetColorKey(this._sdlSurface, SDL_TRUE, pixelKey) != 0) {
+    void colorKey(uint newPixelKey) @property @trusted {
+        if (SDL_SetColorKey(this.sdlSurface, SDL_TRUE, newPixelKey) != 0) {
             throw new SDLException;
         }
     }
@@ -545,15 +544,15 @@ final class Surface {
      + color transparent
      + 
      + Params:
-     +   key = `dsdl2.Color` specifying pixels that get transparency
+     +   newColorKey = `dsdl2.Color` specifying pixels that get transparency
      + Throws: `dsdl2.SDLException` if color key unable to set
      +/
-    void colorKey(Color key) @property @trusted {
+    void colorKey(Color newColorKey) @property @trusted {
         if (this.pixelFormat.hasAlpha) {
-            this.colorKey = this.pixelFormat.mapRGBA(key);
+            this.colorKey = this.pixelFormat.mapRGBA(newColorKey);
         }
         else {
-            this.colorKey = this.pixelFormat.mapRGB(key);
+            this.colorKey = this.pixelFormat.mapRGB(newColorKey);
         }
     }
 
@@ -561,7 +560,7 @@ final class Surface {
      + Acts as `SDL_SetColorKey(surface, NULL)` which disables color-keying
      +/
     void colorKey(typeof(null) _) @property @trusted {
-        if (SDL_SetColorKey(this._sdlSurface, SDL_FALSE, 0) != 0) {
+        if (SDL_SetColorKey(this.sdlSurface, SDL_FALSE, 0) != 0) {
             throw new SDLException;
         }
     }
@@ -577,7 +576,7 @@ final class Surface {
             assert(getVersion() >= Version(2, 0, 9));
         }
         do {
-            return SDL_HasColorKey(cast(SDL_Surface*) this._sdlSurface) == SDL_TRUE;
+            return SDL_HasColorKey(cast(SDL_Surface*) this.sdlSurface) == SDL_TRUE;
         }
     }
 
@@ -588,23 +587,23 @@ final class Surface {
      + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to get
      +/
     BlendMode blendMode() const @property @trusted {
-        BlendMode mode = void;
-        if (SDL_GetSurfaceBlendMode(cast(SDL_Surface*) this._sdlSurface, &mode._sdlBlendMode) != 0) {
+        BlendMode blendMode = void;
+        if (SDL_GetSurfaceBlendMode(cast(SDL_Surface*) this.sdlSurface, &blendMode.sdlBlendMode) != 0) {
             throw new SDLException;
         }
 
-        return mode;
+        return blendMode;
     }
 
     /++ 
      + Wraps `SDL_SetSurfaceBlendMode` which sets the `dsdl2.Surface`'s `dsdl2.BlendMode` defining blitting
      + 
      + Params:
-     +   mode = `dsdl2.BlendMode` to set
+     +   newBlendMode = `dsdl2.BlendMode` to set
      + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to set
      +/
-    void blendMode(BlendMode mode) @property @trusted {
-        if (SDL_SetSurfaceBlendMode(this._sdlSurface, mode._sdlBlendMode) != 0) {
+    void blendMode(BlendMode newBlendMode) @property @trusted {
+        if (SDL_SetSurfaceBlendMode(this.sdlSurface, newBlendMode.sdlBlendMode) != 0) {
             throw new SDLException;
         }
     }
@@ -625,9 +624,9 @@ final class Surface {
     }
     do {
         auto target = new Surface([this.width, this.height], rgbPixelFormat);
-        if (SDL_ConvertPixels(this.width, this.height, this.pixelFormat._sdlPixelFormatEnum,
-                this._sdlSurface.pixels, this.pitch.to!int, target.pixelFormat._sdlPixelFormatEnum,
-                target._sdlSurface.pixels, target.pitch.to!int) != 0) {
+        if (SDL_ConvertPixels(this.width, this.height, this.pixelFormat.sdlPixelFormatEnum,
+                this.sdlSurface.pixels, this.pitch.to!int, target.pixelFormat.sdlPixelFormatEnum,
+                target.sdlSurface.pixels, target.pitch.to!int) != 0) {
             throw new SDLException;
         }
 
@@ -641,7 +640,7 @@ final class Surface {
      +   pixel = pixel value of the color to fill the entire `dsdl2.Surface`
      +/
     void fill(uint pixel) @trusted {
-        if (SDL_FillRect(this._sdlSurface, null, pixel) != 0) {
+        if (SDL_FillRect(this.sdlSurface, null, pixel) != 0) {
             throw new SDLException;
         }
     }
@@ -670,7 +669,7 @@ final class Surface {
      + Throws: `dsdl2.SDLException` if rectangle failed to draw
      +/
     void fillRect(Rect rect, uint pixel) @trusted {
-        if (SDL_FillRect(this._sdlSurface, &rect._sdlRect, pixel) != 0) {
+        if (SDL_FillRect(this.sdlSurface, &rect.sdlRect, pixel) != 0) {
             throw new SDLException;
         }
     }
@@ -702,7 +701,7 @@ final class Surface {
      + Throws: `dsdl2.SDLException` if the rectangles failed to draw
      +/
     void fillRects(const Rect[] rects, uint pixel) @trusted {
-        if (SDL_FillRects(this._sdlSurface, cast(SDL_Rect*) rects.ptr, rects.length.to!int, pixel) != 0) {
+        if (SDL_FillRects(this.sdlSurface, cast(SDL_Rect*) rects.ptr, rects.length.to!int, pixel) != 0) {
             throw new SDLException;
         }
     }
@@ -735,7 +734,7 @@ final class Surface {
      +/
     void blit(Point destPoint, const Surface source) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
-        if (SDL_BlitSurface(cast(SDL_Surface*) source._sdlSurface, null, this._sdlSurface, &dstrect) != 0) {
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface, &dstrect) != 0) {
             throw new SDLException;
         }
     }
@@ -751,7 +750,7 @@ final class Surface {
      +/
     void blit(Point destPoint, const Surface source, Rect sourceRect) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
-        if (SDL_BlitSurface(cast(SDL_Surface*) source._sdlSurface, &sourceRect._sdlRect, this._sdlSurface,
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &sourceRect.sdlRect, this.sdlSurface,
                 &dstrect) != 0) {
             throw new SDLException;
         }
@@ -766,8 +765,8 @@ final class Surface {
      +   source   = `dsdl2.Surface` to blit/draw
      +/
     void blitScaled(Rect destRect, const Surface source) @trusted {
-        if (SDL_BlitScaled(cast(SDL_Surface*) source._sdlSurface, null, this._sdlSurface,
-                &destRect._sdlRect) != 0) {
+        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface,
+                &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
     }
@@ -782,8 +781,8 @@ final class Surface {
      +   sourceRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blitScaled(Rect destRect, const Surface source, Rect sourceRect) @trusted {
-        if (SDL_BlitSurface(cast(SDL_Surface*) source._sdlSurface, &sourceRect._sdlRect, this._sdlSurface,
-                &destRect._sdlRect) != 0) {
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &sourceRect.sdlRect, this.sdlSurface,
+                &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
     }
