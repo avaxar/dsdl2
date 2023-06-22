@@ -30,7 +30,7 @@ import std.typecons : Nullable, nullable;
  + --- 
  +/
 struct Point {
-    SDL_Point _sdlPoint; /// Internal `SDL_Point` struct
+    SDL_Point sdlPoint; /// Internal `SDL_Point` struct
 
     this() @disable;
 
@@ -41,7 +41,7 @@ struct Point {
      +   sdlPoint = the `dsdl2.Point` struct
      +/
     this(SDL_Point sdlPoint) {
-        this._sdlPoint = sdlPoint;
+        this.sdlPoint = sdlPoint;
     }
 
     /++ 
@@ -52,8 +52,8 @@ struct Point {
      +   y = y coordinate point
      +/
     this(int x, int y) {
-        this._sdlPoint.x = x;
-        this._sdlPoint.y = y;
+        this.sdlPoint.x = x;
+        this.sdlPoint.y = y;
     }
 
     /++
@@ -111,7 +111,7 @@ struct Point {
      + Returns: X value of the `dsdl2.Point`
      +/
     ref inout(int) x() return inout @property {
-        return this._sdlPoint.x;
+        return this.sdlPoint.x;
     }
 
     /++ 
@@ -120,7 +120,7 @@ struct Point {
      + Returns: Y value of the `dsdl2.Point`
      +/
     ref inout(int) y() return inout @property {
-        return this._sdlPoint.y;
+        return this.sdlPoint.y;
     }
 
     /++ 
@@ -129,7 +129,7 @@ struct Point {
      + Returns: X and Y as an array
      +/
     int[2] array() const @property {
-        return [this._sdlPoint.x, this._sdlPoint.y];
+        return [this.sdlPoint.x, this.sdlPoint.y];
     }
 }
 
@@ -150,7 +150,7 @@ struct Point {
  + ---
  +/
 struct Rect {
-    SDL_Rect _sdlRect; /// Internal `SDL_Rect` struct
+    SDL_Rect sdlRect; /// Internal `SDL_Rect` struct
 
     this() @disable;
 
@@ -161,7 +161,7 @@ struct Rect {
      +   sdlRect = the `SDL_Rect` struct
      +/
     this(SDL_Rect sdlRect) {
-        this._sdlRect = sdlRect;
+        this.sdlRect = sdlRect;
     }
 
     /++ 
@@ -174,10 +174,10 @@ struct Rect {
      +   height = rectangle height
      +/
     this(int x, int y, int width, int height) {
-        this._sdlRect.x = x;
-        this._sdlRect.y = y;
-        this._sdlRect.w = width;
-        this._sdlRect.h = height;
+        this.sdlRect.x = x;
+        this.sdlRect.y = y;
+        this.sdlRect.w = width;
+        this.sdlRect.h = height;
     }
 
     /++ 
@@ -190,10 +190,10 @@ struct Rect {
      +   height = rectangle height
      +/
     this(Point point, int width, int height) {
-        this._sdlRect.x = point.x;
-        this._sdlRect.y = point.y;
-        this._sdlRect.w = width;
-        this._sdlRect.h = height;
+        this.sdlRect.x = point.x;
+        this.sdlRect.y = point.y;
+        this.sdlRect.w = width;
+        this.sdlRect.h = height;
     }
 
     /++ 
@@ -227,7 +227,7 @@ struct Rect {
      + Returns: X value of the `dsdl2.Rect`
      +/
     ref inout(int) x() return inout @property {
-        return this._sdlRect.x;
+        return this.sdlRect.x;
     }
 
     /++ 
@@ -236,7 +236,7 @@ struct Rect {
      + Returns: Y value of the `dsdl2.Rect`
      +/
     ref inout(int) y() return inout @property {
-        return this._sdlRect.y;
+        return this.sdlRect.y;
     }
 
     /++ 
@@ -245,7 +245,7 @@ struct Rect {
      + Returns: `dsdl2.Point` with X and Y of the `dsdl2.Rect`
      +/
     Point point() const @property {
-        return Point(this._sdlRect.x, this._sdlRect.y);
+        return Point(this.sdlRect.x, this.sdlRect.y);
     }
 
     /++ 
@@ -254,7 +254,7 @@ struct Rect {
      + Returns: width of the `dsdl2.Rect`
      +/
     ref inout(int) width() return inout @property {
-        return this._sdlRect.w;
+        return this.sdlRect.w;
     }
 
     /++ 
@@ -263,7 +263,7 @@ struct Rect {
      + Returns: height of the `dsdl2.Rect`
      +/
     ref inout(int) height() return inout @property {
-        return this._sdlRect.h;
+        return this.sdlRect.h;
     }
 
     /++ 
@@ -272,7 +272,7 @@ struct Rect {
      + Returns: width and height as an array
      +/
     int[2] size() const @property {
-        return [this._sdlRect.w, this._sdlRect.h];
+        return [this.sdlRect.w, this.sdlRect.h];
     }
 
     /++ 
@@ -281,7 +281,7 @@ struct Rect {
      + Returns: `true` if it is empty, otherwise `false`
      +/
     bool empty() const @trusted {
-        return SDL_RectEmpty(&this._sdlRect);
+        return SDL_RectEmpty(&this.sdlRect);
     }
 
     /++ 
@@ -292,7 +292,7 @@ struct Rect {
      + Returns: `true` if it is within, otherwise `false`
      +/
     bool pointInRect(Point point) const @trusted {
-        return SDL_PointInRect(&point._sdlPoint, &this._sdlRect);
+        return SDL_PointInRect(&point.sdlPoint, &this.sdlRect);
     }
 
     /++ 
@@ -303,7 +303,7 @@ struct Rect {
      + Returns: `true` if both have intersection with each other, otherwise `false`
      +/
     bool hasIntersection(Rect other) const @trusted {
-        return SDL_HasIntersection(&this._sdlRect, &other._sdlRect) == SDL_TRUE;
+        return SDL_HasIntersection(&this.sdlRect, &other.sdlRect) == SDL_TRUE;
     }
 
     /++ 
@@ -315,8 +315,8 @@ struct Rect {
      + Returns: `true` if it intersects, otherwise `false`
      +/
     bool hasLineIntersection(Point[2] line) const @trusted {
-        return SDL_IntersectRectAndLine(&this._sdlRect, &line[0]._sdlPoint.x, &line[0]._sdlPoint.y,
-        &line[1]._sdlPoint.x, &line[1]._sdlPoint.y) == SDL_TRUE;
+        return SDL_IntersectRectAndLine(&this.sdlRect, &line[0].sdlPoint.x, &line[0].sdlPoint.y,
+        &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
     }
 
     /++ 
@@ -328,7 +328,7 @@ struct Rect {
      +/
     Nullable!Rect intersectRect(Rect other) const @trusted {
         Rect intersection = void;
-        if (SDL_IntersectRect(&this._sdlRect, &other._sdlRect, &intersection._sdlRect) == SDL_TRUE) {
+        if (SDL_IntersectRect(&this.sdlRect, &other.sdlRect, &intersection.sdlRect) == SDL_TRUE) {
             return intersection.nullable;
         }
         else {
@@ -345,8 +345,8 @@ struct Rect {
      + Returns: non-null `Nullable!(Point[2])` as the clipped line if there is an intersection, otherwise a null one
      +/
     Nullable!(Point[2]) intersectLine(Point[2] line) const @trusted {
-        if (SDL_IntersectRectAndLine(&this._sdlRect, &line[0]._sdlPoint.x, &line[0]._sdlPoint.y,
-            &line[1]._sdlPoint.x, &line[1]._sdlPoint.y) == SDL_TRUE) {
+        if (SDL_IntersectRectAndLine(&this.sdlRect, &line[0].sdlPoint.x, &line[0].sdlPoint.y,
+            &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE) {
             Point[2] intersection = [line[0], line[1]];
             return intersection.nullable;
         }
@@ -364,7 +364,7 @@ struct Rect {
      +/
     Rect unify(Rect other) const @trusted {
         Rect union_ = void;
-        SDL_UnionRect(&this._sdlRect, &other._sdlRect, &union_._sdlRect);
+        SDL_UnionRect(&this.sdlRect, &other.sdlRect, &union_.sdlRect);
         return union_;
     }
 }
@@ -387,7 +387,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + --- 
      +/
     struct FPoint {
-        SDL_FPoint _sdlFPoint; /// Internal `SDL_FPoint` struct
+        SDL_FPoint sdlFPoint; /// Internal `SDL_FPoint` struct
 
         this() @disable;
 
@@ -398,7 +398,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +   sdlFPoint = the `dsdl2.FPoint` struct
          +/
         this(SDL_FPoint sdlFPoint) {
-            this._sdlFPoint = sdlFPoint;
+            this.sdlFPoint = sdlFPoint;
         }
 
         /++
@@ -468,7 +468,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: X value of the `dsdl2.Point`
          +/
         ref inout(float) x() return inout @property {
-            return this._sdlFPoint.x;
+            return this.sdlFPoint.x;
         }
 
         /++ 
@@ -477,7 +477,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: Y value of the `dsdl2.Point`
          +/
         ref inout(float) y() return inout @property {
-            return this._sdlFPoint.y;
+            return this.sdlFPoint.y;
         }
 
         /++ 
@@ -486,7 +486,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: X and Y as an array
          +/
         float[2] array() const @property {
-            return [this._sdlFPoint.x, this._sdlFPoint.y];
+            return [this.sdlFPoint.x, this.sdlFPoint.y];
         }
     }
 
@@ -508,9 +508,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + ---
      +/
     struct FRect {
-        SDL_FRect _sdlFRect; /// Internal `SDL_FRect` struct
+        SDL_FRect sdlFRect; /// Internal `SDL_FRect` struct
 
-        alias _sdlFRect this;
+        alias sdlFRect this;
 
         this() @disable;
 
@@ -521,7 +521,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +   sdlFRect = the `SDL_FRect` struct
          +/
         this(SDL_FRect sdlFRect) {
-            this._sdlFRect = sdlFRect;
+            this.sdlFRect = sdlFRect;
         }
 
         /++ 
@@ -534,10 +534,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +   height = rectangle height
          +/
         this(float x, float y, float width, float height) {
-            this._sdlFRect.x = x;
-            this._sdlFRect.y = y;
-            this._sdlFRect.w = width;
-            this._sdlFRect.h = height;
+            this.sdlFRect.x = x;
+            this.sdlFRect.y = y;
+            this.sdlFRect.w = width;
+            this.sdlFRect.h = height;
         }
 
         /++ 
@@ -550,10 +550,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +   height = rectangle height
          +/
         this(FPoint point, float width, float height) {
-            this._sdlFRect.x = point.x;
-            this._sdlFRect.y = point.y;
-            this._sdlFRect.w = width;
-            this._sdlFRect.h = height;
+            this.sdlFRect.x = point.x;
+            this.sdlFRect.y = point.y;
+            this.sdlFRect.w = width;
+            this.sdlFRect.h = height;
         }
 
         /++ 
@@ -588,7 +588,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: X value of the `dsdl2.FRect`
          +/
         ref inout(float) x() return inout @property {
-            return this._sdlFRect.x;
+            return this.sdlFRect.x;
         }
 
         /++ 
@@ -597,7 +597,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: Y value of the `dsdl2.FRect`
          +/
         ref inout(float) y() return inout @property {
-            return this._sdlFRect.y;
+            return this.sdlFRect.y;
         }
 
         /++ 
@@ -606,7 +606,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: `dsdl2.FPoint` with X and Y of the `dsdl2.FRect`
          +/
         FPoint point() const @property {
-            return FPoint(this._sdlFRect.x, this._sdlFRect.y);
+            return FPoint(this.sdlFRect.x, this.sdlFRect.y);
         }
 
         /++ 
@@ -615,7 +615,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: width of the `dsdl2.FRect`
          +/
         ref inout(float) width() return inout @property {
-            return this._sdlFRect.w;
+            return this.sdlFRect.w;
         }
 
         /++ 
@@ -624,7 +624,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: height of the `dsdl2.Rect`
          +/
         ref inout(float) height() return inout @property {
-            return this._sdlFRect.h;
+            return this.sdlFRect.h;
         }
 
         /++ 
@@ -633,7 +633,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Returns: width and height as an array
          +/
         float[2] size() const @property {
-            return [this._sdlFRect.w, this._sdlFRect.h];
+            return [this.sdlFRect.w, this.sdlFRect.h];
         }
 
         static if (sdlSupport >= SDLSupport.v2_0_22) {
@@ -647,7 +647,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 assert(getVersion() >= Version(2, 0, 22));
             }
             do {
-                return SDL_FRectEmpty(&this._sdlFRect);
+                return SDL_FRectEmpty(&this.sdlFRect);
             }
 
             /++ 
@@ -663,7 +663,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 assert(getVersion() >= Version(2, 0, 22));
             }
             do {
-                return SDL_PointInFRect(&point._sdlFPoint, &this._sdlFRect);
+                return SDL_PointInFRect(&point.sdlFPoint, &this.sdlFRect);
             }
 
             /++ 
@@ -679,7 +679,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 assert(getVersion() >= Version(2, 0, 22));
             }
             do {
-                return SDL_HasIntersectionF(&this._sdlFRect, &rect._sdlFRect) == SDL_TRUE;
+                return SDL_HasIntersectionF(&this.sdlFRect, &rect.sdlFRect) == SDL_TRUE;
             }
 
             /++ 
@@ -696,8 +696,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 assert(getVersion() >= Version(2, 0, 22));
             }
             do {
-                return SDL_IntersectFRectAndLine(&this._sdlFRect, &line[0]._sdlFPoint.x, &line[0]._sdlFPoint.y,
-                &line[1]._sdlFPoint.x, &line[1]._sdlFPoint.y) == SDL_TRUE;
+                return SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
+                &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
             }
 
             /++ 
@@ -714,7 +714,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             }
             do {
                 FRect intersection = void;
-                if (SDL_IntersectFRect(&this._sdlFRect, &other._sdlFRect, &intersection._sdlFRect) == SDL_TRUE) {
+                if (SDL_IntersectFRect(&this.sdlFRect, &other.sdlFRect, &intersection.sdlFRect) == SDL_TRUE) {
                     return intersection.nullable;
                 }
                 else {
@@ -737,8 +737,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 assert(getVersion() >= Version(2, 0, 22));
             }
             do {
-                if (SDL_IntersectFRectAndLine(&this._sdlFRect, &line[0]._sdlFPoint.x, &line[0]._sdlFPoint.y,
-                    &line[1]._sdlFPoint.x, &line[1]._sdlFPoint.y) == SDL_TRUE) {
+                if (SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
+                    &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE) {
                     FPoint[2] intersection = [line[0], line[1]];
                     return intersection.nullable;
                 }
@@ -761,7 +761,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             }
             do {
                 FRect union_ = void;
-                SDL_UnionFRect(&this._sdlFRect, &other._sdlFRect, &union_._sdlFRect);
+                SDL_UnionFRect(&this.sdlFRect, &other.sdlFRect, &union_.sdlFRect);
                 return union_;
             }
         }

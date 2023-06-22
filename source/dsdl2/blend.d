@@ -63,7 +63,7 @@ struct BlendMode {
         static immutable mul = BlendMode(SDL_BLENDMODE_MUL); /// ditto
     }
 
-    SDL_BlendMode _sdlBlendMode; /// Internal `SDL_BlendMode` enumeration
+    SDL_BlendMode sdlBlendMode; /// Internal `SDL_BlendMode` enumeration
 
     this() @disable;
 
@@ -74,7 +74,7 @@ struct BlendMode {
      +   sdlBlendMode = the `SDL_BlendMode` enumeration
      +/
     this(SDL_BlendMode sdlBlendMode) {
-        this._sdlBlendMode = sdlBlendMode;
+        this.sdlBlendMode = sdlBlendMode;
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_6) {
@@ -98,9 +98,9 @@ struct BlendMode {
         }
         do {
 
-            this._sdlBlendMode = SDL_ComposeCustomBlendMode(srcColorFactor, dstColorFactor, colorOperation,
+            this.sdlBlendMode = SDL_ComposeCustomBlendMode(srcColorFactor, dstColorFactor, colorOperation,
                 srcAlphaFactor, dstAlphaFactor, alphaOperation);
-            if (this._sdlBlendMode != SDL_BLENDMODE_INVALID) {
+            if (this.sdlBlendMode != SDL_BLENDMODE_INVALID) {
                 throw new SDLException("Invalid BlendMode composition", __FILE__, __LINE__);
             }
         }
@@ -108,7 +108,7 @@ struct BlendMode {
 
     invariant {
         static if (sdlSupport >= SDLSupport.v2_0_6) {
-            assert(this._sdlBlendMode != SDL_BLENDMODE_INVALID);
+            assert(this.sdlBlendMode != SDL_BLENDMODE_INVALID);
         }
     }
 
@@ -118,6 +118,6 @@ struct BlendMode {
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.BlendMode(%d)".format(this._sdlBlendMode);
+        return "dsdl2.BlendMode(%d)".format(this.sdlBlendMode);
     }
 }

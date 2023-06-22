@@ -29,7 +29,7 @@ import std.format : format;
  + ---
  +/
 struct Color {
-    SDL_Color _sdlColor; /// Internal `SDL_Color` struct
+    SDL_Color sdlColor; /// Internal `SDL_Color` struct
 
     this() @disable;
 
@@ -40,7 +40,7 @@ struct Color {
      +   sdlColor = the `SDL_Color` struct
      +/
     this(SDL_Color sdlColor) {
-        this._sdlColor = sdlColor;
+        this.sdlColor = sdlColor;
     }
 
     /++ 
@@ -53,10 +53,10 @@ struct Color {
      +   a = alpha transparency channel value (0-255 / transparent-opaque)
      +/
     this(ubyte r, ubyte g, ubyte b, ubyte a = 255) {
-        this._sdlColor.r = r;
-        this._sdlColor.g = g;
-        this._sdlColor.b = b;
-        this._sdlColor.a = a;
+        this.sdlColor.r = r;
+        this.sdlColor.g = g;
+        this.sdlColor.b = b;
+        this.sdlColor.a = a;
     }
 
     /++
@@ -74,7 +74,7 @@ struct Color {
      + Returns: red color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) r() return inout @property {
-        return this._sdlColor.r;
+        return this.sdlColor.r;
     }
 
     /++ 
@@ -83,7 +83,7 @@ struct Color {
      + Returns: green color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) g() return inout @property {
-        return this._sdlColor.g;
+        return this.sdlColor.g;
     }
 
     /++ 
@@ -92,7 +92,7 @@ struct Color {
      + Returns: blue color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) b() return inout @property {
-        return this._sdlColor.b;
+        return this.sdlColor.b;
     }
 
     /++ 
@@ -101,7 +101,7 @@ struct Color {
      + Returns: alpha transparency value of the `dsdl2.Point`
      +/
     ref inout(ubyte) a() return inout @property {
-        return this._sdlColor.a;
+        return this.sdlColor.a;
     }
 
     /++ 
@@ -111,7 +111,7 @@ struct Color {
      +/
     ubyte[4] array() const @property {
         return [
-            this._sdlColor.r, this._sdlColor.g, this._sdlColor.b, this._sdlColor.a
+            this.sdlColor.r, this.sdlColor.g, this.sdlColor.b, this.sdlColor.a
         ];
     }
 }
@@ -128,26 +128,26 @@ struct Color {
  + ---
  +/
 final class Palette {
-    @system SDL_Palette* _sdlPalette = null; /// Internal `SDL_Palette` pointer
+    @system SDL_Palette* sdlPalette = null; /// Internal `SDL_Palette` pointer
     private bool isOwner = true;
-    private void* refPtr = null;
+    private void* userRef = null;
 
     /++ 
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
      + 
      + Params:
      +   sdlPalette = the `SDL_Palette` pointer to manage
-     +   owns       = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
+     +   isOwner    = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
      +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
      +/
-    this(SDL_Palette* sdlPalette, bool owns = true, void* userRef = null) @system
+    this(SDL_Palette* sdlPalette, bool isOwner = true, void* userRef = null) @system
     in {
         assert(sdlPalette !is null);
     }
     do {
-        this._sdlPalette = sdlPalette;
-        this.isOwner = owns;
-        this.refPtr = userRef;
+        this.sdlPalette = sdlPalette;
+        this.isOwner = isOwner;
+        this.userRef = userRef;
     }
 
     /++ 
@@ -158,8 +158,8 @@ final class Palette {
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(uint ncolors) @trusted {
-        this._sdlPalette = SDL_AllocPalette(ncolors.to!int);
-        if (this._sdlPalette is null) {
+        this.sdlPalette = SDL_AllocPalette(ncolors.to!int);
+        if (this.sdlPalette is null) {
             throw new SDLException;
         }
     }
@@ -172,19 +172,19 @@ final class Palette {
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
     this(const Color[] colors) @trusted {
-        this._sdlPalette = SDL_AllocPalette(colors.length.to!int);
-        if (this._sdlPalette is null) {
+        this.sdlPalette = SDL_AllocPalette(colors.length.to!int);
+        if (this.sdlPalette is null) {
             throw new SDLException;
         }
 
         foreach (i, const ref Color color; colors) {
-            this._sdlPalette.colors[i] = color._sdlColor;
+            this.sdlPalette.colors[i] = color.sdlColor;
         }
     }
 
     ~this() @trusted {
         if (this.isOwner) {
-            SDL_FreePalette(this._sdlPalette);
+            SDL_FreePalette(this.sdlPalette);
         }
     }
 
@@ -195,7 +195,7 @@ final class Palette {
             return;
         }
 
-        assert(this._sdlPalette !is null);
+        assert(this.sdlPalette !is null);
     }
 
     /++ 
@@ -206,7 +206,7 @@ final class Palette {
         assert(0 <= i && i < this.length);
     }
     do {
-        return *cast(inout(Color*))&this._sdlPalette.colors[i];
+        return *cast(inout(Color*))&this.sdlPalette.colors[i];
     }
 
     /++ 
@@ -241,7 +241,7 @@ final class Palette {
      + Returns: number of `dsdl2.Color`s
      +/
     size_t length() const @property @trusted {
-        return this._sdlPalette.ncolors;
+        return this.sdlPalette.ncolors;
     }
 }
 
@@ -347,29 +347,29 @@ final class PixelFormat {
     }
 
     private Palette paletteRef = null;
-    @system SDL_PixelFormat* _sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
+    @system SDL_PixelFormat* sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
     private bool isOwner = true;
-    private void* refPtr = null;
+    private void* userRef = null;
 
     /++ 
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
      + 
      + Params:
      +   sdlPixelFormat = the `SDL_PixelFormat` pointer to manage
-     +   owns           = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
+     +   isOwner        = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
      +   userRef        = optional pointer to maintain reference link, avoiding GC cleanup
      +/
-    this(SDL_PixelFormat* sdlPixelFormat, bool owns = true, void* userRef = null) @system
+    this(SDL_PixelFormat* sdlPixelFormat, bool isOwner = true, void* userRef = null) @system
     in {
         assert(sdlPixelFormat !is null);
     }
     do {
-        this._sdlPixelFormat = sdlPixelFormat;
-        this.isOwner = owns;
-        this.refPtr = userRef;
+        this.sdlPixelFormat = sdlPixelFormat;
+        this.isOwner = isOwner;
+        this.userRef = userRef;
 
-        if (this._sdlPixelFormat.palette != null) {
-            this.paletteRef = new Palette(this._sdlPixelFormat.palette, false, cast(void*) this);
+        if (this.sdlPixelFormat.palette != null) {
+            this.paletteRef = new Palette(this.sdlPixelFormat.palette, false, cast(void*) this);
         }
     }
 
@@ -386,8 +386,8 @@ final class PixelFormat {
         assert(!SDL_ISPIXELFORMAT_INDEXED(sdlPixelFormatEnum));
     }
     do {
-        this._sdlPixelFormat = SDL_AllocFormat(sdlPixelFormatEnum);
-        if (this._sdlPixelFormat is null) {
+        this.sdlPixelFormat = SDL_AllocFormat(sdlPixelFormatEnum);
+        if (this.sdlPixelFormat is null) {
             throw new SDLException;
         }
     }
@@ -407,12 +407,12 @@ final class PixelFormat {
         assert(palette !is null);
     }
     do {
-        this._sdlPixelFormat = SDL_AllocFormat(sdlPixelFormatEnum);
-        if (this._sdlPixelFormat is null) {
+        this.sdlPixelFormat = SDL_AllocFormat(sdlPixelFormatEnum);
+        if (this.sdlPixelFormat is null) {
             throw new SDLException;
         }
 
-        if (SDL_SetPixelFormatPalette(this._sdlPixelFormat, palette._sdlPalette) != 0) {
+        if (SDL_SetPixelFormatPalette(this.sdlPixelFormat, palette.sdlPalette) != 0) {
             throw new SDLException;
         }
 
@@ -444,7 +444,7 @@ final class PixelFormat {
 
     ~this() @trusted {
         if (this.isOwner) {
-            SDL_FreeFormat(this._sdlPixelFormat);
+            SDL_FreeFormat(this.sdlPixelFormat);
         }
     }
 
@@ -455,15 +455,15 @@ final class PixelFormat {
             return;
         }
 
-        assert(this._sdlPixelFormat !is null);
+        assert(this.sdlPixelFormat !is null);
         if (this.isOwner) {
-            assert(this._sdlPixelFormat.format != SDL_PIXELFORMAT_UNKNOWN);
+            assert(this.sdlPixelFormat.format != SDL_PIXELFORMAT_UNKNOWN);
         }
 
-        if (SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormat.format)) {
+        if (SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormat.format)) {
             assert(this.paletteRef !is null);
             if (this.isOwner) {
-                assert(this._sdlPixelFormat.palette !is null);
+                assert(this.sdlPixelFormat.palette !is null);
             }
         }
     }
@@ -475,13 +475,13 @@ final class PixelFormat {
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        if (SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormatEnum)) {
+        if (SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum)) {
             return "dsdl2.PixelFormat(%s, %s)".format(
-                SDL_GetPixelFormatName(this._sdlPixelFormatEnum), this.paletteRef);
+                SDL_GetPixelFormatName(this.sdlPixelFormatEnum), this.paletteRef);
         }
         else {
             return "dsdl2.PixelFormat(%s)".format(
-                SDL_GetPixelFormatName(this._sdlPixelFormatEnum));
+                SDL_GetPixelFormatName(this.sdlPixelFormatEnum));
         }
     }
 
@@ -490,8 +490,8 @@ final class PixelFormat {
      + 
      + Returns: `SDL_PixelFormatEnum` enumeration from bindbc-sdl
      +/
-    SDL_PixelFormatEnum _sdlPixelFormatEnum() const nothrow @trusted {
-        return this._sdlPixelFormat.format;
+    SDL_PixelFormatEnum sdlPixelFormatEnum() const nothrow @trusted {
+        return this.sdlPixelFormat.format;
     }
 
     /++ 
@@ -505,8 +505,8 @@ final class PixelFormat {
      +/
     Color getRGB(uint pixel) const @trusted {
         Color color = Color(0, 0, 0, 255);
-        SDL_GetRGB(pixel, this._sdlPixelFormat, &color._sdlColor.r, &color._sdlColor.g, &color
-                ._sdlColor.b);
+        SDL_GetRGB(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g, &color
+                .sdlColor.b);
         return color;
     }
 
@@ -520,8 +520,8 @@ final class PixelFormat {
      +/
     Color getRGBA(uint pixel) const @trusted {
         Color color = void;
-        SDL_GetRGBA(pixel, this._sdlPixelFormat, &color._sdlColor.r, &color._sdlColor.g, &color._sdlColor.b,
-            &color._sdlColor.a);
+        SDL_GetRGBA(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g, &color.sdlColor.b,
+            &color.sdlColor.a);
         return color;
     }
 
@@ -534,8 +534,8 @@ final class PixelFormat {
      + Returns: the converted pixel value
      +/
     uint mapRGB(Color color) const @trusted {
-        return SDL_MapRGB(this._sdlPixelFormat, color._sdlColor.r, color._sdlColor.g, color
-                ._sdlColor.b);
+        return SDL_MapRGB(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g, color
+                .sdlColor.b);
     }
 
     /++ 
@@ -547,8 +547,8 @@ final class PixelFormat {
      + Returns: the converted pixel value
      +/
     uint mapRGBA(Color color) const @trusted {
-        return SDL_MapRGBA(this._sdlPixelFormat, color._sdlColor.r, color._sdlColor.g, color._sdlColor.b,
-            color._sdlColor.a);
+        return SDL_MapRGBA(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g, color.sdlColor.b,
+            color.sdlColor.a);
     }
 
     /++ 
@@ -568,19 +568,19 @@ final class PixelFormat {
      + Wraps `SDL_SetPixelFormatPalette` which sets the `dsdl2.Palette` for indexed `dsdl2.PixelFormat`s`
      + 
      + Params:
-     +   boundPalette = the `dsdl2.Palette` class instance to bind as the color palette
+     +   newPalette = the `dsdl2.Palette` class instance to bind as the color palette
      +/
-    void palette(Palette boundPalette) @property @trusted
+    void palette(Palette newPalette) @property @trusted
     in {
         assert(this.isIndexed);
-        assert(boundPalette !is null);
+        assert(newPalette !is null);
     }
     do {
-        if (SDL_SetPixelFormatPalette(this._sdlPixelFormat, boundPalette._sdlPalette) != 0) {
+        if (SDL_SetPixelFormatPalette(this.sdlPixelFormat, newPalette.sdlPalette) != 0) {
             throw new SDLException;
         }
 
-        this.paletteRef = boundPalette;
+        this.paletteRef = newPalette;
     }
 
     /++ 
@@ -589,7 +589,7 @@ final class PixelFormat {
      + Returns: the bit depth of the `dsdl2.PixelFormat`
      +/
     ubyte bitDepth() const @property @trusted {
-        return this._sdlPixelFormat.BitsPerPixel;
+        return this.sdlPixelFormat.BitsPerPixel;
     }
 
     /++ 
@@ -598,7 +598,7 @@ final class PixelFormat {
      + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
      +/
     size_t bytesPerPixel() const @property @trusted {
-        return this._sdlPixelFormat.BytesPerPixel;
+        return this.sdlPixelFormat.BytesPerPixel;
     }
 
     /++ 
@@ -610,7 +610,7 @@ final class PixelFormat {
         uint[4] rgbaMasks = void;
         int bitDepth = void;
 
-        if (SDL_PixelFormatEnumToMasks(this._sdlPixelFormatEnum, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
+        if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
             &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
             throw new SDLException;
         }
@@ -624,7 +624,7 @@ final class PixelFormat {
      + Returns: `true` if it is indexed, otherwise `false`
      +/
     bool isIndexed() const @property @trusted {
-        return SDL_ISPIXELFORMAT_INDEXED(this._sdlPixelFormatEnum);
+        return SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum);
     }
 
     /++ 
@@ -633,7 +633,7 @@ final class PixelFormat {
      + Returns: `true` if it can have an alpha channel, otherwise `false`
      +/
     bool hasAlpha() const @property @trusted {
-        return SDL_ISPIXELFORMAT_ALPHA(this._sdlPixelFormatEnum);
+        return SDL_ISPIXELFORMAT_ALPHA(this.sdlPixelFormatEnum);
     }
 
     /++ 
@@ -642,6 +642,6 @@ final class PixelFormat {
      + Returns: `true` if it is unique, otherwise `false`
      +/
     bool isFourCC() const @property @trusted {
-        return SDL_ISPIXELFORMAT_FOURCC(this._sdlPixelFormatEnum) != 0;
+        return SDL_ISPIXELFORMAT_FOURCC(this.sdlPixelFormatEnum) != 0;
     }
 }
