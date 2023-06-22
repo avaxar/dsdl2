@@ -14,7 +14,7 @@ import std.format : format;
 
 static if (sdlSupport >= SDLSupport.v2_0_6) {
     /++ 
-     + A D enumeration that wraps `SDL_BlendOperation` defining blending operations
+     + D enum that wraps `SDL_BlendOperation` defining blending operations
      +/
     enum BlendOperation {
         /++
@@ -28,7 +28,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
     }
 
     /++ 
-     + A D enumeration that wraps `SDL_BlendFactor` defining blending multipliers
+     + D enum that wraps `SDL_BlendFactor` defining blending multipliers
      +/
     enum BlendFactor {
         /++
@@ -48,7 +48,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
 }
 
 /++ 
- + A D struct that wraps `SDL_BlendMode` defining how blending should be done when an image is drawn on top of
+ + D struct that wraps `SDL_BlendMode` defining how blending should be done when an image is drawn on top of
  + another
  +/
 struct BlendMode {

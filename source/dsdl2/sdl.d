@@ -68,7 +68,7 @@ else {
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
     /++
-     + A D enumeration which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     + D enum which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
      +/
     enum SubSystem : uint {
         /++
@@ -88,7 +88,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
 }
 else {
     /++
-     + A D enumeration which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     + D enum which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
      +/
     enum SubSystem : uint {
         /++
@@ -159,7 +159,7 @@ bool wasInit(SubSystem subsystem) @trusted {
 }
 
 /++ 
- + A D struct that wraps `SDL_version` containing version information
+ + D struct that wraps `SDL_version` containing version information
  +
  + Examples:
  + ---
@@ -262,7 +262,7 @@ string getRevision() @trusted {
 }
 
 /++
- + A D enumeration that wraps `SDL_HintPriority`
+ + D enum that wraps `SDL_HintPriority`
  + 
  + Notes: `SDL_HINT_DEFAULT` and `SDL_HINT_OVERRIDE` are named as `low` and `high` respectively.
  +/

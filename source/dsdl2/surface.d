@@ -18,7 +18,7 @@ import std.conv : to;
 import std.format : format;
 
 /++ 
- + A D class that wraps `SDL_Surface` storing a 2D image in the RAM
+ + D class that wraps `SDL_Surface` storing a 2D image in the RAM
  + 
  + `dsdl2.Surface` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
  + RAM according to its defined `dsdl2.PixelFormat`.
