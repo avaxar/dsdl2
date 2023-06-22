@@ -13,6 +13,7 @@ import dsdl2.blend;
 import dsdl2.pixels;
 import dsdl2.rect;
 
+import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 
@@ -37,7 +38,6 @@ final class Surface {
     @system SDL_Surface* _sdlSurface = null; /// Internal `SDL_Surface` pointer
     private bool isOwner = true;
     private void* refPtr = null;
-    private bool isNumb = false;
 
     /++ 
      + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
@@ -56,16 +56,6 @@ final class Surface {
         this.pixelFormatProxy = new PixelFormat(this._sdlSurface.format, false, cast(void*) this);
         this.isOwner = owns;
         this.refPtr = userRef;
-    }
-
-    /++ 
-     + Numbs `invariant` for destruction
-     +/
-    void numb() @system {
-        debug {
-            this.isNumb = true;
-            this.pixelFormatProxy.numb();
-        }
     }
 
     /++ 
@@ -184,13 +174,14 @@ final class Surface {
 
     ~this() @trusted {
         if (this.isOwner) {
-            this.numb();
             SDL_FreeSurface(this._sdlSurface);
         }
     }
 
     @trusted invariant {
-        if (this.isNumb) {
+        // Instance might be in an invalid state due to holding a non-owned externally-freed object when
+        // destructed in an unpredictable order.
+        if (!this.isOwner && GC.inFinalizer) {
             return;
         }
 
