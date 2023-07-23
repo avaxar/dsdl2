@@ -68,7 +68,7 @@ else {
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
     /++
-     + D enum which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     + D enum that wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
      +/
     enum SubSystem : uint {
         /++
@@ -88,7 +88,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
 }
 else {
     /++
-     + D enum which wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
+     + D enum that wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
      +/
     enum SubSystem : uint {
         /++

@@ -23,5 +23,7 @@ import dsdl2.blend;
 import dsdl2.clipboard;
 import dsdl2.pixels;
 import dsdl2.rect;
+import dsdl2.renderer;
 import dsdl2.sdl;
 import dsdl2.surface;
+import dsdl2.window;
