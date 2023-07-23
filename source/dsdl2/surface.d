@@ -35,9 +35,10 @@ import std.format : format;
  +/
 final class Surface {
     private PixelFormat pixelFormatProxy = null;
-    @system SDL_Surface* sdlSurface = null; /// Internal `SDL_Surface` pointer
     private bool isOwner = true;
     private void* userRef = null;
+
+    @system SDL_Surface* sdlSurface = null; /// Internal `SDL_Surface` pointer
 
     /++ 
      + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
@@ -59,7 +60,7 @@ final class Surface {
     }
 
     /++ 
-     + Constructs a blank RGB(A) `dsdl2.Surface` with a set width, height, and `dsdl2.PixelFormat` which wraps
+     + Constructs a blank RGB(A) `dsdl2.Surface` with a set width, height, and `dsdl2.PixelFormat` that wraps
      + `SDL_CreateRGBSurface`
      + 
      + Params:
@@ -206,6 +207,12 @@ final class Surface {
      + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Surface`
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
+        // If the internal pixel format pointer happen to change, rewire the proxy.
+        if (this.pixelFormatProxy.sdlPixelFormat !is this.sdlSurface.format) {
+            (cast(Surface) this).pixelFormatProxy.sdlPixelFormat = cast(
+                SDL_PixelFormat*) this.sdlSurface.format;
+        }
+
         return this.pixelFormatProxy;
     }
 
@@ -250,7 +257,7 @@ final class Surface {
         assert(this.pixelFormat.isIndexed);
     }
     do {
-        return this.pixelFormatProxy.palette;
+        return (cast(inout PixelFormat) this.pixelFormat).palette;
     }
 
     void palette(Palette newPalette) @property @trusted
@@ -262,7 +269,7 @@ final class Surface {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy.palette = newPalette;
+        (cast(PixelFormat) this.pixelFormat).palette = newPalette;
     }
 
     /++ 
@@ -408,7 +415,7 @@ final class Surface {
     }
 
     /++ 
-     + Gets the color and alpha multipliers of the `dsdl2.Surface` which wraps `SDL_GetSurfaceColorMod` and
+     + Gets the color and alpha multipliers of the `dsdl2.Surface` that wraps `SDL_GetSurfaceColorMod` and
      + `SDL_GetSurfaceAlphaMod`
      + 
      + Returns: color and alpha multipliers of the `dsdl2.Surface`
@@ -422,7 +429,7 @@ final class Surface {
     }
 
     /++ 
-     + Sets the color and alpha multipliers of the `dsdl2.Surface` which wraps `SDL_SetSurfaceColorMod` and
+     + Sets the color and alpha multipliers of the `dsdl2.Surface` that wraps `SDL_SetSurfaceColorMod` and
      + `SDL_SetSurfaceAlphaMod`
      + 
      + Params:
@@ -440,9 +447,9 @@ final class Surface {
      + Returns: color multipliers of the `dsdl2.Surface`
      +/
     ubyte[3] colorMod() const @property @trusted {
-        ubyte[3] colorMod = void;
-        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this.sdlSurface, &colorMod[0], &colorMod[1], &colorMod[2]);
-        return colorMod;
+        ubyte[3] rgbMod = void;
+        SDL_GetSurfaceColorMod(cast(SDL_Surface*) this.sdlSurface, &rgbMod[0], &rgbMod[1], &rgbMod[2]);
+        return rgbMod;
     }
 
     /++ 
@@ -461,9 +468,9 @@ final class Surface {
      + Returns: alpha multiplier of the `dsdl2.Surface`
      +/
     ubyte alphaMod() const @property @trusted {
-        ubyte alphaMod = void;
-        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this.sdlSurface, &alphaMod);
-        return alphaMod;
+        ubyte aMod = void;
+        SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this.sdlSurface, &aMod);
+        return aMod;
     }
 
     /++ 
@@ -587,12 +594,12 @@ final class Surface {
      + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to get
      +/
     BlendMode blendMode() const @property @trusted {
-        BlendMode blendMode = void;
-        if (SDL_GetSurfaceBlendMode(cast(SDL_Surface*) this.sdlSurface, &blendMode.sdlBlendMode) != 0) {
+        BlendMode mode = void;
+        if (SDL_GetSurfaceBlendMode(cast(SDL_Surface*) this.sdlSurface, &mode.sdlBlendMode) != 0) {
             throw new SDLException;
         }
 
-        return blendMode;
+        return mode;
     }
 
     /++ 

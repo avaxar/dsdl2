@@ -128,9 +128,10 @@ struct Color {
  + ---
  +/
 final class Palette {
-    @system SDL_Palette* sdlPalette = null; /// Internal `SDL_Palette` pointer
     private bool isOwner = true;
     private void* userRef = null;
+
+    @system SDL_Palette* sdlPalette = null; /// Internal `SDL_Palette` pointer
 
     /++ 
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
@@ -347,9 +348,10 @@ final class PixelFormat {
     }
 
     private Palette paletteRef = null;
-    @system SDL_PixelFormat* sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
     private bool isOwner = true;
     private void* userRef = null;
+
+    @system SDL_PixelFormat* sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
 
     /++ 
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
