@@ -13,7 +13,7 @@ import dsdl2.sdl;
 import std.format : format;
 
 static if (sdlSupport >= SDLSupport.v2_0_6) {
-    /++ 
+    /++
      + D enum that wraps `SDL_BlendOperation` defining blending operations
      +/
     enum BlendOperation {
@@ -27,7 +27,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
         maximum = SDL_BLENDOPERATION_MAXIMUM, /// ditto
     }
 
-    /++ 
+    /++
      + D enum that wraps `SDL_BlendFactor` defining blending multipliers
      +/
     enum BlendFactor {
@@ -47,12 +47,12 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
     }
 }
 
-/++ 
+/++
  + D struct that wraps `SDL_BlendMode` defining how blending should be done when an image is drawn on top of
  + another
  +/
 struct BlendMode {
-    /++ 
+    /++
      + Preexisting builtin `dsdl2.BlendMode`s from `SDL_BLENDMODE_*` enumeration constants
      +/
     static immutable none = BlendMode(SDL_BLENDMODE_NONE);
@@ -67,9 +67,9 @@ struct BlendMode {
 
     this() @disable;
 
-    /++ 
+    /++
      + Constructs a `dsdl2.BlendMode` from a vanilla `SDL_BlendMode` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlBlendMode = the `SDL_BlendMode` enumeration
      +/
@@ -78,10 +78,10 @@ struct BlendMode {
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_6) {
-        /++ 
+        /++
          + Composes a custom `dsdl2.BlendMode` based on certain attributes for blending which wraps
-         + `SDL_ComposeCustomBlendMode`
-         + 
+         + `SDL_ComposeCustomBlendMode` (from SDL 2.0.6)
+         +
          + Params:
          +   srcColorFactor = multipliers to the color components of the source
          +   dstColorFactor = multipliers to the color components of the destination

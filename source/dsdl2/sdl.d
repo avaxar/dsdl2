@@ -36,10 +36,10 @@ else {
      + load any SDL2 shared libraries found. This function wraps bindbc-sdl's `loadSDL`. In the aforementioned
      + dynamic-linking mode, this function has to be called before any calls to SDL2 is made. Otherwise, the
      + program would cause a segfault.
-     + 
+     +
      + In static-linking mode (through `BindSDL_Static` or `BindBC_Static` version), this function doesn't exist,
      + thus will result in a compilation error when referenced.
-     + 
+     +
      + Params:
      +     libName = base SDL SO/DLL file name or path to look for (By default, it looks through the path)
      + Throws: `dsdl2.SDLException` if library not found. If the library was found, but the version was incompatible,
@@ -108,7 +108,7 @@ else {
 
 /++
  + Wraps `SDL_Init` which initializes selected subsystems
- + 
+ +
  + Params:
  +     subsystems = an array of `dsdl2.SubSystem` to initialize (By default, `dsdl2.SubSystem.everything`)
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
@@ -149,7 +149,7 @@ void quit(const SubSystem[] subsystems) @trusted {
 
 /++
  + Wraps `SDL_WasInit` which checks whether a specified subsystem is already initialized
- + 
+ +
  + Params:
  +     subsystem = the `dsdl2.SubSystem` to check for the status of initialization
  + Returns: `true` if initialized, otherwise `false`
@@ -158,7 +158,7 @@ bool wasInit(SubSystem subsystem) @trusted {
     return SDL_WasInit(subsystem) != 0;
 }
 
-/++ 
+/++
  + D struct that wraps `SDL_version` containing version information
  +
  + Examples:
@@ -166,7 +166,7 @@ bool wasInit(SubSystem subsystem) @trusted {
  + auto minimumVersion = dsdl2.Version(2, 0, 0);
  + auto ourVersion = dsdl2.getVersion();
  + assert(ourVersion >= minimumVersion);
- + 
+ +
  + import std.stdio;
  + writeln("We're currently using SDL version ", ourVersion.format());
  + ---
@@ -174,9 +174,9 @@ bool wasInit(SubSystem subsystem) @trusted {
 struct Version {
     SDL_version sdlVersion; /// Internal `SDL_version` struct
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlVersion = the `SDL_version` struct
      +/
@@ -184,9 +184,9 @@ struct Version {
         this.sdlVersion = sdlVersion;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Version` by feeding in `major`, `minor`, and `patch` version numbers
-     + 
+     +
      + Params:
      +   major = major version number
      +   minor = minor version number
@@ -198,7 +198,7 @@ struct Version {
         this.sdlVersion.patch = patch;
     }
 
-    /++ 
+    /++
      + Compares two `dsdl2.Version`s from chronology
      +/
     int opCmp(Version other) const {
@@ -222,36 +222,36 @@ struct Version {
         return "dsdl2.Version(%d, %d, %d)".format(this.major, this.minor, this.patch);
     }
 
-    /++ 
+    /++
      + Proxy to the major version value of the `dsdl2.Version`
-     + 
+     +
      + Returns: major version value value of the `dsdl2.Version`
      +/
     ref inout(ubyte) major() return inout @property {
         return this.sdlVersion.major;
     }
 
-    /++ 
+    /++
      + Proxy to the minor version value of the `dsdl2.Version`
-     + 
+     +
      + Returns: minor version value value of the `dsdl2.Version`
      +/
     ref inout(ubyte) minor() return inout @property {
         return this.sdlVersion.minor;
     }
 
-    /++ 
+    /++
      + Proxy to the patch version value of the `dsdl2.Version`
-     + 
+     +
      + Returns: patch version value value of the `dsdl2.Version`
      +/
     ref inout(ubyte) patch() return inout @property {
         return this.sdlVersion.patch;
     }
 
-    /++ 
+    /++
      + Gets the static array representation of the `dsdl2.Version`
-     + 
+     +
      + Returns: `major`, `minor`, `patch` as an array
      +/
     ubyte[3] array() const @property {
@@ -260,9 +260,9 @@ struct Version {
         ];
     }
 
-    /++ 
+    /++
      + Formats the `dsdl2.Version` into `string`: `"<major>.<minor>.<patch>"`
-     + 
+     +
      + Returns: the formatted `string`
      +/
     string format() const {
@@ -270,9 +270,9 @@ struct Version {
     }
 }
 
-/++ 
+/++
  + Wraps `SDL_GetVersion` which gets the version of the linked SDL2 library
- + 
+ +
  + Returns: `dsdl2.Version` of the version of the linked SDL2 library
  +/
 Version getVersion() @trusted {
@@ -281,7 +281,7 @@ Version getVersion() @trusted {
     return ver;
 }
 
-/++ 
+/++
  + Wraps `SDL_GetRevision` which returns the revision string of the linked SDL2 library
  +
  + Returns: `string` of the revision code
@@ -292,7 +292,7 @@ string getRevision() @trusted {
 
 /++
  + D enum that wraps `SDL_HintPriority`
- + 
+ +
  + Notes: `SDL_HINT_DEFAULT` and `SDL_HINT_OVERRIDE` are named as `low` and `high` respectively.
  +/
 enum HintPriority : SDL_HintPriority {
@@ -306,12 +306,12 @@ enum HintPriority : SDL_HintPriority {
 
 /++
  + Wraps `SDL_SetHintWithPriority` which provides giving a hint to SDL2 in runtime
- + 
+ +
  + Params:
  +     name     = name of the hint
  +     value    = value to set the hint as
  +     priority = priority of the hint configuration (by default, `dsdl2.HintPriority.normal`)
- + 
+ +
  + Returns: `true` if the hint was set, `false` otherwise
  +/
 bool setHint(string name, string value, HintPriority priority = HintPriority.normal) @trusted {

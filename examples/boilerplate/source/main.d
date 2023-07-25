@@ -8,7 +8,9 @@ void main() {
     dsdl2.init();
     writeln("Version of SDL used: ", dsdl2.getVersion());
 
-    dsdl2.Window window = new dsdl2.Window("bruh", [100, 100], [800, 600]);
+    dsdl2.Window window = new dsdl2.Window("bruh", [
+        dsdl2.WindowPos.centered, dsdl2.WindowPos.centered
+    ], [800, 600]);
     window.surface.fill(dsdl2.Color(255, 0, 0));
     window.update();
 
