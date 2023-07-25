@@ -13,9 +13,9 @@ import dsdl2.sdl;
 import std.format : format;
 import std.typecons : Nullable, nullable;
 
-/++ 
+/++
  + D struct that wraps `SDL_Point` containing 2D integer coordinate pair
- + 
+ +
  + `dsdl2.Point` stores signed `int`eger `x` and `y` coordinate points. This wrapper also implements vector-like
  + operator overloading.
  +
@@ -24,17 +24,17 @@ import std.typecons : Nullable, nullable;
  + auto a = dsdl2.Point(1, 2);
  + auto b = a + a;
  + assert(b == dsdl2.Point(2, 4));
- + 
+ +
  + auto c = a * 2;
  + assert(b == c);
- + --- 
+ + ---
  +/
 struct Point {
     SDL_Point sdlPoint; /// Internal `SDL_Point` struct
 
     this() @disable;
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Point` from a vanilla `SDL_Point` from bindbc-sdl
      +
      + Params:
@@ -44,9 +44,9 @@ struct Point {
         this.sdlPoint = sdlPoint;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Point` by feeding in an `x` and `y` pair
-     + 
+     +
      + Params:
      +   x = x coordinate point
      +   y = y coordinate point
@@ -105,27 +105,27 @@ struct Point {
         return "dsdl2.Point(%d, %d)".format(this.x, this.y);
     }
 
-    /++ 
+    /++
      + Proxy to the X value of the `dsdl2.Point`
-     + 
+     +
      + Returns: X value of the `dsdl2.Point`
      +/
     ref inout(int) x() return inout @property {
         return this.sdlPoint.x;
     }
 
-    /++ 
+    /++
      + Proxy to the Y value of the `dsdl2.Point`
-     + 
+     +
      + Returns: Y value of the `dsdl2.Point`
      +/
     ref inout(int) y() return inout @property {
         return this.sdlPoint.y;
     }
 
-    /++ 
+    /++
      + Gets the static array representation of the `dsdl2.Point`
-     + 
+     +
      + Returns: X and Y as an array
      +/
     int[2] array() const @property {
@@ -133,13 +133,13 @@ struct Point {
     }
 }
 
-/++ 
+/++
  + D struct that wraps `SDL_Rect` representing a rectangle of integer 2D coordinate and dimension
- + 
+ +
  + `dsdl2.Rect` stores signed `int`eger `x` and `y` coordinate points, as well as `w`idth and `h`eight which
  + specifies the rectangle's dimension. `x` and `y` symbolize the top-left coordinate of the rectangle, and
  + the `w`idth and `h`eight extend to the positive plane of both axes.
- + 
+ +
  + Examples:
  + ---
  + auto rect1 = dsdl2.Rect(-2, -2, 3, 3);
@@ -154,9 +154,9 @@ struct Rect {
 
     this() @disable;
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Rect` from a vanilla `SDL_Rect` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlRect = the `SDL_Rect` struct
      +/
@@ -164,9 +164,9 @@ struct Rect {
         this.sdlRect = sdlRect;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Rect` by feeding in the `x`, `y`, `width`, and `height` of the rectangle
-     + 
+     +
      + Params:
      +   x      = top-left x coordinate point of the rectangle
      +   y      = top-left y coordinate point of the rectangle
@@ -180,10 +180,10 @@ struct Rect {
         this.sdlRect.h = height;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Rect` by feeding in a `dsdl2.Point` as the `x` and `y`, then `width` and `height` of the
      + rectangle
-     + 
+     +
      + Params:
      +   point  = top-left point of the rectangle
      +   width  = rectangle width
@@ -196,14 +196,14 @@ struct Rect {
         this.sdlRect.h = height;
     }
 
-    /++ 
+    /++
      + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.Point`
      +/
     Rect opBinary(string op)(const Point offset) const {
         return Rect(this.xy + offset, this.w, this.h);
     }
 
-    /++ 
+    /++
      + Operator assignment overload template to move rectangle's position in-place by an `offset` as a `dsdl2.Point`
      +/
     ref inout(Point) opOpAssign(string op)(const Point offset) inout {
@@ -221,72 +221,72 @@ struct Rect {
         return "dsdl2.Rect(%d, %d, %d, %d)".format(this.x, this.y, this.width, this.height);
     }
 
-    /++ 
+    /++
      + Proxy to the X value of the `dsdl2.Rect`
-     + 
+     +
      + Returns: X value of the `dsdl2.Rect`
      +/
     ref inout(int) x() return inout @property {
         return this.sdlRect.x;
     }
 
-    /++ 
+    /++
      + Proxy to the Y value of the `dsdl2.Rect`
-     + 
+     +
      + Returns: Y value of the `dsdl2.Rect`
      +/
     ref inout(int) y() return inout @property {
         return this.sdlRect.y;
     }
 
-    /++ 
+    /++
      + Gets the `dsdl2.Point` representation for the X and Y of the `dsdl2.Rect`
-     + 
+     +
      + Returns: `dsdl2.Point` with X and Y of the `dsdl2.Rect`
      +/
     Point point() const @property {
         return Point(this.sdlRect.x, this.sdlRect.y);
     }
 
-    /++ 
+    /++
      + Proxy to the width of the `dsdl2.Rect`
-     + 
+     +
      + Returns: width of the `dsdl2.Rect`
      +/
     ref inout(int) width() return inout @property {
         return this.sdlRect.w;
     }
 
-    /++ 
+    /++
      + Proxy to the height of the `dsdl2.Rect`
-     + 
+     +
      + Returns: height of the `dsdl2.Rect`
      +/
     ref inout(int) height() return inout @property {
         return this.sdlRect.h;
     }
 
-    /++ 
+    /++
      + Gets the static array representation of the width and height of the `dsdl2.Rect`
-     + 
+     +
      + Returns: width and height as an array
      +/
     int[2] size() const @property {
         return [this.sdlRect.w, this.sdlRect.h];
     }
 
-    /++ 
+    /++
      + Wraps `SDL_RectEmpty` which checks if the `dsdl2.Rect` is an empty rectangle
-     + 
+     +
      + Returns: `true` if it is empty, otherwise `false`
      +/
     bool empty() const @trusted {
         return SDL_RectEmpty(&this.sdlRect);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_PointInRect` which sees whether the coordinate of a `dsdl2.Point` is inside the `dsdl2.Rect`
-     + 
+     +
      + Params:
      +   point = the `dsdl2.Point` to check its collision of with the `dsdl2.Rect` instance
      + Returns: `true` if it is within, otherwise `false`
@@ -295,7 +295,7 @@ struct Rect {
         return SDL_PointInRect(&point.sdlPoint, &this.sdlRect);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_HasIntersection` which sees whether two `dsdl2.Rect`s intersect each other
      +
      + Params:
@@ -306,9 +306,9 @@ struct Rect {
         return SDL_HasIntersection(&this.sdlRect, &other.sdlRect) == SDL_TRUE;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_IntersectRectAndLine` which sees whether a line intersects with the `dsdl2.Rect`
-     + 
+     +
      + Params:
      +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to check its
      +          intersection of with the `dsdl2.Rect`
@@ -319,9 +319,9 @@ struct Rect {
         &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_IntersectRect` which attempts to get the rectangle of intersection between two `dsdl2.Rect`s
-     + 
+     +
      + Params:
      +   other = other `dsdl2.Rect` with which the `dsdl2.Rect` is intersected
      + Returns: non-null `Nullable!Rect` instance if intersection is present, otherwise a null one
@@ -336,11 +336,11 @@ struct Rect {
         }
     }
 
-    /++ 
+    /++
      + Wraps `SDL_IntersectRectAndLine` which attempts to clip a line segment in the boundaries of the `dsdl2.Rect`
-     + 
+     +
      + Params:
-     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to clip from 
+     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to clip from
      +          its intersection with the `dsdl2.Rect`
      + Returns: non-null `Nullable!(Point[2])` as the clipped line if there is an intersection, otherwise a null one
      +/
@@ -355,7 +355,7 @@ struct Rect {
         }
     }
 
-    /++ 
+    /++
      + Wraps `SDL_UnionRect` which creates a `dsdl2.Rect` of the minimum size to enclose two given `dsdl2.Rect`s
      +
      + Params:
@@ -370,10 +370,10 @@ struct Rect {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_10) {
-    /++ 
+    /++
      + D struct that wraps `SDL_FPoint` (from SDL 2.0.10) containing 2D floating point coordinate pair
-     + 
-     + `dsdl2.FPoint` stores `float`ing point `x` and `y` coordinate points. This wrapper also implements 
+     +
+     + `dsdl2.FPoint` stores `float`ing point `x` and `y` coordinate points. This wrapper also implements
      + vector-like operator overloading.
      +
      + Examples:
@@ -381,10 +381,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
      + auto a = dsdl2.FPoint(1.0, 2.0);
      + auto b = a + a;
      + assert(b == dsdl2.FPoint(2.0, 4.0));
-     + 
+     +
      + auto c = a * 2.0;
      + assert(b == c);
-     + --- 
+     + ---
      +/
     struct FPoint {
         SDL_FPoint sdlFPoint; /// Internal `SDL_FPoint` struct
@@ -403,7 +403,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         /++
          + Constructs a `dsdl2.FPoint` by feeding in an `x` and `y` pair
-         + 
+         +
          + Params:
          +     x = x coordinate point
          +     y = y coordinate point
@@ -462,27 +462,27 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return "dsdl2.FPoint(%f, %f)".format(this.x, this.y);
         }
 
-        /++ 
+        /++
          + Proxy to the X value of the `dsdl2.FPoint`
-         + 
+         +
          + Returns: X value of the `dsdl2.Point`
          +/
         ref inout(float) x() return inout @property {
             return this.sdlFPoint.x;
         }
 
-        /++ 
+        /++
          + Proxy to the Y value of the `dsdl2.FPoint`
-         + 
+         +
          + Returns: Y value of the `dsdl2.Point`
          +/
         ref inout(float) y() return inout @property {
             return this.sdlFPoint.y;
         }
 
-        /++ 
+        /++
          + Gets the static array representation of the `dsdl2.FPoint`
-         + 
+         +
          + Returns: X and Y as an array
          +/
         float[2] array() const @property {
@@ -490,14 +490,14 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         }
     }
 
-    /++ 
+    /++
      + D struct that wraps `SDL_FRect` (from SDL 2.0.10) representing a rectangle of floating point 2D
      + coordinate and dimension
-     + 
+     +
      + `dsdl2.FRect` stores `float`ing point `x` and `y` coordinate points, as well as `w`idth and `h`eight which
      + specifies the rectangle's dimension. `x` and `y` symbolize the top-left coordinate of the rectangle, and
      + the `w`idth and `h`eight extend to the positive plane of both axes.
-     + 
+     +
      + Examples:
      + ---
      + auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
@@ -514,9 +514,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
 
         this() @disable;
 
-        /++ 
+        /++
          + Constructs a `dsdl2.FRect` from a vanilla `SDL_FRect` from bindbc-sdl
-         + 
+         +
          + Params:
          +   sdlFRect = the `SDL_FRect` struct
          +/
@@ -524,9 +524,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             this.sdlFRect = sdlFRect;
         }
 
-        /++ 
+        /++
          + Constructs a `dsdl2.FRect` by feeding in the `x`, `y`, `width`, and `height` of the rectangle
-         + 
+         +
          + Params:
          +   x      = top-left x coordinate point of the rectangle
          +   y      = top-left y coordinate point of the rectangle
@@ -540,10 +540,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             this.sdlFRect.h = height;
         }
 
-        /++ 
+        /++
          + Constructs a `dsdl2.FRect` by feeding in a `dsdl2.FPoint` as the `xy`, then `width` and `height` of
          + the rectangle
-         + 
+         +
          + Params:
          +   point  = top-left point of the rectangle
          +   width  = rectangle width
@@ -556,14 +556,14 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             this.sdlFRect.h = height;
         }
 
-        /++ 
+        /++
          + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.FPoint`
          +/
         FRect opBinary(string op)(const FPoint offset) const {
             return FRect(this.point + offset, this.width, this.height);
         }
 
-        /++ 
+        /++
          + Operator assignment overload template to move rectangle's position in-place by an `offset` as a
          + `dsdl2.FPoint`
          +/
@@ -582,54 +582,54 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return "dsdl2.FRect(%d, %d, %d, %d)".format(this.x, this.y, this.width, this.height);
         }
 
-        /++ 
+        /++
          + Proxy to the X value of the `dsdl2.FRect`
-         + 
+         +
          + Returns: X value of the `dsdl2.FRect`
          +/
         ref inout(float) x() return inout @property {
             return this.sdlFRect.x;
         }
 
-        /++ 
+        /++
          + Proxy to the Y value of the `dsdl2.FRect`
-         + 
+         +
          + Returns: Y value of the `dsdl2.FRect`
          +/
         ref inout(float) y() return inout @property {
             return this.sdlFRect.y;
         }
 
-        /++ 
+        /++
          + Gets the `dsdl2.FPoint` representation for the X and Y of the `dsdl2.FRect`
-         + 
+         +
          + Returns: `dsdl2.FPoint` with X and Y of the `dsdl2.FRect`
          +/
         FPoint point() const @property {
             return FPoint(this.sdlFRect.x, this.sdlFRect.y);
         }
 
-        /++ 
+        /++
          + Proxy to the width of the `dsdl2.FRect`
-         + 
+         +
          + Returns: width of the `dsdl2.FRect`
          +/
         ref inout(float) width() return inout @property {
             return this.sdlFRect.w;
         }
 
-        /++ 
+        /++
          + Proxy to the height of the `dsdl2.Rect`
-         + 
+         +
          + Returns: height of the `dsdl2.Rect`
          +/
         ref inout(float) height() return inout @property {
             return this.sdlFRect.h;
         }
 
-        /++ 
+        /++
          + Gets the static array representation of the width and height of the `dsdl2.FRect`
-         + 
+         +
          + Returns: width and height as an array
          +/
         float[2] size() const @property {
@@ -637,9 +637,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         }
 
         static if (sdlSupport >= SDLSupport.v2_0_22) {
-            /++ 
+            /++
              + Wraps `SDL_FRectEmpty` (from SDL 2.0.22) which checks if the `dsdl2.FRect` is an empty rectangle
-             + 
+             +
              + Returns: `true` if it is empty, otherwise `false`
              +/
             bool empty() const @trusted
@@ -650,10 +650,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 return SDL_FRectEmpty(&this.sdlFRect);
             }
 
-            /++ 
+            /++
              + Wraps `SDL_PointInFRect` (from SDL 2.0.22) which sees whether the coordinate of a `dsdl2.FPoint`
              + is inside the `dsdl2.FRect`
-             + 
+             +
              + Params:
              +   point = the `dsdl2.FPoint` to check its collision of with the `dsdl2.FRect` instance
              + Returns: `true` if it is within, otherwise `false`
@@ -666,7 +666,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 return SDL_PointInFRect(&point.sdlFPoint, &this.sdlFRect);
             }
 
-            /++ 
+            /++
              + Wraps `SDL_HasIntersectionF` (from SDL 2.0.22) which sees whether two `dsdl2.FRect`s intersect
              + each other
              +
@@ -682,10 +682,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 return SDL_HasIntersectionF(&this.sdlFRect, &rect.sdlFRect) == SDL_TRUE;
             }
 
-            /++ 
+            /++
              + Wraps `SDL_IntersectFRectAndLine` (from SDL 2.0.22) which sees whether a line intersects with the
              + `dsdl2.FRect`
-             + 
+             +
              + Params:
              +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to check
              +          its intersection of with the `dsdl2.FRect`
@@ -700,10 +700,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
             }
 
-            /++ 
+            /++
              + Wraps `SDL_IntersectFRect` (from SDL 2.0.22) which attempts to get the rectangle of intersection
              + between two `dsdl2.FRect`s
-             + 
+             +
              + Params:
              +   other = other `dsdl2.FRect` with which the `dsdl2.FRect` is intersected
              + Returns: non-null `Nullable!FRect` instance if intersection is present, otherwise a null one
@@ -722,10 +722,10 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 }
             }
 
-            /++ 
+            /++
              + Wraps `SDL_IntersectFRectAndLine` (from SDL 2.0.22) which attempts to clip a line segment in the
              + boundaries of the `dsdl2.FRect`
-             + 
+             +
              + Params:
              +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to clip from
              +          its intersection with the `dsdl2.FRect`
@@ -747,7 +747,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
                 }
             }
 
-            /++ 
+            /++
              + Wraps `SDL_UnionFRect` which creates a `dsdl2.FRect` (from SDL 2.0.22) of the minimum size to
              + enclose two given `dsdl2.FRect`s
              +

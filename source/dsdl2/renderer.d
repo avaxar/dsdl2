@@ -19,11 +19,11 @@ final class Renderer {
     private bool isOwner = true;
     private void* userRef = null;
 
-    @system SDL_Renderer* sdlRenderer = null; /// Internal `SDL_Renderer` 
+    @system SDL_Renderer* sdlRenderer = null; /// Internal `SDL_Renderer` pointer
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Renderer` from a vanilla `SDL_Renderer*` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlRenderer = the `SDL_Renderer` pointer to manage
      +   isOwner     = whether the instance owns the given `SDL_Renderer*` and should destroy it on its own

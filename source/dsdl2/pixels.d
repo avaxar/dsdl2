@@ -14,10 +14,10 @@ import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 
-/++ 
+/++
  + D struct that wraps `SDL_Color` containing 4 bytes for storing color values of 3 color channels and 1 alpha
  + channel.
- + 
+ +
  + `dsdl2.Color` stores unsigned `byte`-sized (0-255) `r`ed, `g`reen, `b`lue color, and `a`lpha channel values.
  + In total there are 16,777,216 possible color values. Combined with the `a`lpha (transparency) channel, there
  + are 4,294,967,296 combinations.
@@ -33,9 +33,9 @@ struct Color {
 
     this() @disable;
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Color` from a vanilla `SDL_Color` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlColor = the `SDL_Color` struct
      +/
@@ -43,9 +43,9 @@ struct Color {
         this.sdlColor = sdlColor;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Color` by feeding in `r`ed, `g`reen, `b`lue, and optionally `a`lpha values
-     + 
+     +
      + Params:
      +   r = red color channel value (0-255)
      +   g = green color channel value (0-255)
@@ -68,45 +68,45 @@ struct Color {
         return "dsdl2.Color(%d, %d, %d, %d)".format(this.r, this.g, this.b, this.a);
     }
 
-    /++ 
+    /++
      + Proxy to the red color value of the `dsdl2.Point`
-     + 
+     +
      + Returns: red color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) r() return inout @property {
         return this.sdlColor.r;
     }
 
-    /++ 
+    /++
      + Proxy to the green color value of the `dsdl2.Point`
-     + 
+     +
      + Returns: green color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) g() return inout @property {
         return this.sdlColor.g;
     }
 
-    /++ 
+    /++
      + Proxy to the blue color value of the `dsdl2.Point`
-     + 
+     +
      + Returns: blue color value of the `dsdl2.Point`
      +/
     ref inout(ubyte) b() return inout @property {
         return this.sdlColor.b;
     }
 
-    /++ 
+    /++
      + Proxy to the alpha transparency value of the `dsdl2.Point`
-     + 
+     +
      + Returns: alpha transparency value of the `dsdl2.Point`
      +/
     ref inout(ubyte) a() return inout @property {
         return this.sdlColor.a;
     }
 
-    /++ 
+    /++
      + Gets the static array representation of the `dsdl2.Color`
-     + 
+     +
      + Returns: RGBA as an array
      +/
     ubyte[4] array() const @property {
@@ -116,10 +116,10 @@ struct Color {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to use along with indexed
  + `dsdl2.PixelFormat` instances
- + 
+ +
  + Examples:
  + ---
  + auto myPalette = new dsdl2.Palette([dsdl2.Color(1, 2, 3), dsdl2.Color(3, 2, 1)]);
@@ -133,9 +133,9 @@ final class Palette {
 
     @system SDL_Palette* sdlPalette = null; /// Internal `SDL_Palette` pointer
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Palette` from a vanilla `SDL_Palette*` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlPalette = the `SDL_Palette` pointer to manage
      +   isOwner    = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
@@ -151,9 +151,9 @@ final class Palette {
         this.userRef = userRef;
     }
 
-    /++ 
-     + Constructs a `dsdl2.Palette` and allocate memory for a set amount of `dsdl2.Color`s 
-     + 
+    /++
+     + Constructs a `dsdl2.Palette` and allocate memory for a set amount of `dsdl2.Color`s
+     +
      + Params:
      +   ncolors = amount of `dsdl2.Color`s to allocate in the `dsdl2.Palette`
      + Throws: `dsdl2.SDLException` if allocation failed
@@ -165,9 +165,9 @@ final class Palette {
         }
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Palette` from an array of `dsdl2.Color`s
-     + 
+     +
      + Params:
      +   colors = an array/slice of `dsdl2.Color`s to put in the `dsdl2.Palette`
      + Throws: `dsdl2.SDLException` if allocation failed
@@ -199,7 +199,7 @@ final class Palette {
         assert(this.sdlPalette !is null);
     }
 
-    /++ 
+    /++
      + Indexing operation overload
      +/
     ref inout(Color) opIndex(size_t i) inout @trusted
@@ -210,7 +210,7 @@ final class Palette {
         return *cast(inout(Color*))&this.sdlPalette.colors[i];
     }
 
-    /++ 
+    /++
      + Dollar sign overload
      +/
     size_t opDollar(size_t dim)() const if (dim == 0) {
@@ -236,9 +236,9 @@ final class Palette {
         return str ~= "])";
     }
 
-    /++ 
+    /++
      + Gets the length of `dsdl2.Color`s allocated in the `dsdl2.Palette`
-     + 
+     +
      + Returns: number of `dsdl2.Color`s
      +/
     size_t length() const @property @trusted {
@@ -246,10 +246,10 @@ final class Palette {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_PixelFormat` defining the color and alpha channel bit layout in the internal
  + representation of a pixel
- + 
+ +
  + Examples:
  + ---
  + const auto rgba = dsdl2.PixelFormat.rgba32
@@ -282,7 +282,7 @@ final class PixelFormat {
         return new PixelFormat(sdlPixelFormatEnum, palette);
     }
 
-    /++ 
+    /++
      + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s from `SDL_PIXELFORMAT_*` enumeration
      + constants
      +/
@@ -294,7 +294,7 @@ final class PixelFormat {
     static alias yv12 = _instantiateIndexed!SDL_PIXELFORMAT_YV12; /// ditto
     static alias yuy2 = _instantiateIndexed!SDL_PIXELFORMAT_YUY2; /// ditto
 
-    /++ 
+    /++
      + Retrieves one of the `dsdl2.PixelFormat` multiton presets from `SDL_PIXELFORMAT_*` enumeration constants
      +/
     static alias rgb332 = _multiton!SDL_PIXELFORMAT_RGB332;
@@ -328,7 +328,7 @@ final class PixelFormat {
     static alias yvyu = _multiton!SDL_PIXELFORMAT_YVYU; /// ditto
 
     static if (sdlSupport >= SDLSupport.v2_0_4) {
-        /++ 
+        /++
          + Instantiates indexed `dsdl2.PixelFormat` for use with `dsdl2.Palette`s from `SDL_PIXELFORMAT_*`
          + enumeration constants (from SDL 2.0.4)
          +/
@@ -337,7 +337,7 @@ final class PixelFormat {
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_5) {
-        /++ 
+        /++
          + Retrieves one of the `dsdl2.PixelFormat` multiton presets from `SDL_PIXELFORMAT_*` enumeration constants
          + (from SDL 2.0.5)
          +/
@@ -353,9 +353,9 @@ final class PixelFormat {
 
     @system SDL_PixelFormat* sdlPixelFormat = null; /// Internal `SDL_PixelFormat` pointer
 
-    /++ 
+    /++
      + Constructs a `dsdl2.PixelFormat` from a vanilla `SDL_PixelFormat*` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlPixelFormat = the `SDL_PixelFormat` pointer to manage
      +   isOwner        = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
@@ -375,9 +375,9 @@ final class PixelFormat {
         }
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.PixelFormat` using an `SDL_PixelFormatEnum` from bindbc-sdl
-     + 
+     +
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (non-indexed)
      + Throws: `dsdl2.SDLException` if allocation failed
@@ -394,10 +394,10 @@ final class PixelFormat {
         }
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.PixelFormat` using an indexed `SDL_PixelFormatEnum` from bindbc-sdl, allowing use with
      + `dsdl2.Palette`s
-     + 
+     +
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (indexed)
      +   palette            = the `dsdl2.Palette` class instance to bind as the color palette
@@ -421,12 +421,12 @@ final class PixelFormat {
         this.paletteRef = palette;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.PixelFormat` from user-provided bit masks for RGB color and alpha channels by internally
      + using `SDL_MasksToPixelFormatEnum` to retrieve the `SDL_PixelFormatEnum`
-     + 
+     +
      + Params:
-     +   bitDepth  = bit depth of a pixel (size of one pixel in bits) 
+     +   bitDepth  = bit depth of a pixel (size of one pixel in bits)
      +   rgbaMasks = bit masks for the red, green, blue, and alpha channels
      + Throws: `dsdl2.SDLException` if pixel format conversion not possible
      +/
@@ -487,20 +487,20 @@ final class PixelFormat {
         }
     }
 
-    /++ 
+    /++
      + Gets the `SDL_PixelFormatEnum` of the underlying `SDL_PixelFormat`
-     + 
+     +
      + Returns: `SDL_PixelFormatEnum` enumeration from bindbc-sdl
      +/
     SDL_PixelFormatEnum sdlPixelFormatEnum() const nothrow @trusted {
         return this.sdlPixelFormat.format;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetRGB` which converts a pixel `uint` value to a comprehensible `dsdl2.Color` struct without
      + accounting the alpha value (automatically set to opaque [255]), based on the pixel format defined by the
      + `dsdl2.PixelFormat`
-     + 
+     +
      + Params:
      +   pixel = the pixel `uint` value to convert
      + Returns: the `dsdl2.Color` struct of the given `pixel` value
@@ -512,10 +512,10 @@ final class PixelFormat {
         return color;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetRGBA` which converts a pixel `uint` value to a comprehensible `dsdl2.Color` struct, based on
      + the pixel format defined by the `dsdl2.PixelFormat`
-     + 
+     +
      + Params:
      +   pixel = the pixel `uint` value to convert
      + Returns: the `dsdl2.Color` struct of the given `pixel` value
@@ -527,10 +527,10 @@ final class PixelFormat {
         return color;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_MapRGB` which converts a `dsdl2.Color` to its pixel `uint` value according to the pixel format
      + defined by the `dsdl2.PixelFormat` without accounting the alpha value, assuming that it's opaque
-     + 
+     +
      + Params:
      +   color = the `dsdl2.Color` struct to convert
      + Returns: the converted pixel value
@@ -540,10 +540,10 @@ final class PixelFormat {
                 .sdlColor.b);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_MapRGBA` which converts a `dsdl2.Color` to its pixel `uint` value according to the pixel format
      + defined by the `dsdl2.PixelFormat`
-     + 
+     +
      + Params:
      +   color = the `dsdl2.Color` struct to convert
      + Returns: the converted pixel value
@@ -553,9 +553,9 @@ final class PixelFormat {
             color.sdlColor.a);
     }
 
-    /++ 
+    /++
      + Gets the `dsdl2.Palette` bounds to the indexed `dsdl2.PixelFormat`
-     + 
+     +
      + Returns: the bound `dsdl2.Palette`
      +/
     inout(Palette) palette() inout @property @trusted
@@ -566,9 +566,9 @@ final class PixelFormat {
         return this.paletteRef;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_SetPixelFormatPalette` which sets the `dsdl2.Palette` for indexed `dsdl2.PixelFormat`s`
-     + 
+     +
      + Params:
      +   newPalette = the `dsdl2.Palette` class instance to bind as the color palette
      +/
@@ -585,27 +585,27 @@ final class PixelFormat {
         this.paletteRef = newPalette;
     }
 
-    /++ 
+    /++
      + Gets the bit depth (size of a pixel in bits) of the `dsdl2.PixelFormat`
-     + 
+     +
      + Returns: the bit depth of the `dsdl2.PixelFormat`
      +/
     ubyte bitDepth() const @property @trusted {
         return this.sdlPixelFormat.BitsPerPixel;
     }
 
-    /++ 
+    /++
      + Gets the how many bytes needed to represent a pixel in the `dsdl2.PixelFormat`
-     + 
+     +
      + Returns: the bytes per pixel value of the `dsdl2.PixelFormat`
      +/
     size_t bytesPerPixel() const @property @trusted {
         return this.sdlPixelFormat.BytesPerPixel;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_PixelFormatEnumToMasks` which gets the bit mask for all four channels of the `dsdl2.PixelFormat`
-     + 
+     +
      + Returns: an array of 4 bit masks for each channel (red, green, blue, and alpha)
      +/
     uint[4] toMasks() const @trusted {
@@ -620,27 +620,27 @@ final class PixelFormat {
         return rgbaMasks;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_ISPIXELFORMAT_INDEXED` which checks whether the `dsdl2.PixelFormat` is indexed
-     + 
+     +
      + Returns: `true` if it is indexed, otherwise `false`
      +/
     bool isIndexed() const @property @trusted {
         return SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_ISPIXELFORMAT_ALPHA` which checks whether the `dsdl2.PixelFormat` is capable of storing alpha value
-     + 
+     +
      + Returns: `true` if it can have an alpha channel, otherwise `false`
      +/
     bool hasAlpha() const @property @trusted {
         return SDL_ISPIXELFORMAT_ALPHA(this.sdlPixelFormatEnum);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_ISPIXELFORMAT_FOURCC` which checks whether the `dsdl2.PixelFormat` represents a unique format
-     + 
+     +
      + Returns: `true` if it is unique, otherwise `false`
      +/
     bool isFourCC() const @property @trusted {

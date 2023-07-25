@@ -14,9 +14,9 @@ import core.stdc.string;
 import std.conv : to;
 import std.string : toStringz;
 
-/++ 
+/++
  + Wraps `SDL_GetClipboardText` which gets the text stored in the clipboard
- +  
+ +
  + Returns: clipboard text content
  + Throws: `dsdl2.SDLException` if the clipboard text failed to allocate on SDL's side
  +/
@@ -33,18 +33,18 @@ string getClipboard() @trusted {
     }
 }
 
-/++ 
+/++
  + Wraps `SDL_HasClipboardText` which checks whether the clipboard exists and contains a non-empty text string
- + 
+ +
  + Returns: `true` if it exists and contains a non-empty string, otherwise `false`
  +/
 bool hasClipboard() @trusted {
     return SDL_HasClipboardText() == SDL_TRUE;
 }
 
-/++ 
+/++
  + Wraps `SDL_SetClipboardText` which puts a string of text into the clipboard
- + 
+ +
  + Params:
  +   text = `string` to put into the clipboard
  + Throws: `dsdl2.SDLException` on fail when putting the string into the clipboard
@@ -56,9 +56,9 @@ void setClipboard(string text) @trusted {
 }
 
 static if (sdlSupport >= SDLSupport.v2_26) {
-    /++ 
-     + Wraps `SDL_GetPrimarySelectionText` which gets the text stored in the primary selection
-     + 
+    /++
+     + Wraps `SDL_GetPrimarySelectionText` (from SDL 2.26) which gets the text stored in the primary selection
+     +
      + Returns: primary selection text content
      + Throws: `dsdl2.SDLException` if the primary selection text failed to allocate on SDL's side
      +/
@@ -79,10 +79,10 @@ static if (sdlSupport >= SDLSupport.v2_26) {
         }
     }
 
-    /++ 
-     + Wraps `SDL_HasPrimarySelectionText` which checks whether the primary selection exists and contains a
-     + non-empty text string
-     + 
+    /++
+     + Wraps `SDL_HasPrimarySelectionText` (from SDL 2.26) which checks whether the primary selection exists
+     + and contains a non-empty text string
+     +
      + Returns: `true` if it exists and contains a non-empty string, otherwise `false`
      +/
     bool hasPrimarySelection() @trusted
@@ -93,9 +93,10 @@ static if (sdlSupport >= SDLSupport.v2_26) {
         return SDL_HasPrimarySelectionText() == SDL_TRUE;
     }
 
-    /++ 
-     + Wraps `SDL_SetPrimarySelectionText` which puts a string of text into the primary selection
-     + 
+    /++
+     + Wraps `SDL_SetPrimarySelectionText` (from SDL 2.26) which puts a string of text into the primary
+     + selection
+     +
      + Params:
      +   text = `string` to put into the primary selection
      + Throws: `dsdl2.SDLException` on fail when putting the string into the primary selection
