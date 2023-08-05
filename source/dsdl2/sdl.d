@@ -10,8 +10,8 @@ module dsdl2.sdl;
 import bindbc.sdl;
 
 import std.conv : to;
-import std.string : toStringz;
 import std.format : format;
+import std.string : toStringz;
 
 /++
  + SDL exception generated from `SDL_GetError()` or dsdl2-specific exceptions

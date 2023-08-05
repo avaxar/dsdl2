@@ -12,6 +12,7 @@ import dsdl2.sdl;
 import dsdl2.pixels;
 import dsdl2.rect;
 import dsdl2.surface;
+import dsdl2.video;
 
 import core.memory : GC;
 import std.conv : to;
@@ -333,19 +334,47 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowDisplayIndex` which gets the index of the display where the center of the window
-     + is located
+     + Wraps `SDL_GetWindowDisplayIndex` which gets the display where the center of the window is located
      +
-     + Returns: `uint` of the display index
-     + Throws: `dsdl2.SDLException` if failed to get the display index
+     + Returns: `dsdl2.Display` of the display the window is located
+     + Throws: `dsdl2.SDLException` if failed to get the display
      +/
-    uint displayIndex() const @property @trusted {
-        int display = SDL_GetWindowDisplayIndex(cast(SDL_Window*) this.sdlWindow);
-        if (display < 0) {
+    Display display() const @property @trusted {
+        int index = SDL_GetWindowDisplayIndex(cast(SDL_Window*) this.sdlWindow);
+        if (index < 0) {
             throw new SDLException;
         }
 
-        return display;
+        return getDisplays()[index];
+    }
+
+    /++
+     + Wraps `SDL_GetWindowDisplayMode` which gets the window's display mode attributes
+     +
+     + Returns: `dsdl2.DisplayMode` storing the attributes
+     + Throws: `dsdl2.SDLException` if failed to get the display mode
+     +/
+    DisplayMode displayMode() const @property @trusted {
+        SDL_DisplayMode sdlMode = void;
+        if (SDL_GetWindowDisplayMode(cast(SDL_Window*) this.sdlWindow, &sdlMode) != 0) {
+            throw new SDLException;
+        }
+
+        return DisplayMode(sdlMode);
+    }
+
+    /++
+     + Wraps `SDL_SetWindowDisplayMode` which sets new display mode attributes to the window
+     +
+     + Params:
+     +   newDisplayMode = `dsdl2.DisplayMode` containing the desired attributes
+     + Throws: `dsdl2.SDLException` if failed to set the display mode
+     +/
+    void displayMode(DisplayMode newDisplayMode) @property @trusted {
+        SDL_DisplayMode sdlMode = newDisplayMode.sdlDisplayMode;
+        if (SDL_SetWindowDisplayMode(this.sdlWindow, &sdlMode) != 0) {
+            throw new SDLException;
+        }
     }
 
     /++
@@ -372,7 +401,26 @@ final class Window {
      + Returns: `true` it was, otherwise `false`
      +/
     bool hasFlag(WindowFlag flag) const @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & flag) != 0;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & flag) == flag;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` which gets an array of flags the window has
+     +
+     + Returns: `dsdl2.WindowFlag` array of the window
+     +/
+    WindowFlag[] flags() const @property @trusted {
+        uint sdlFlags = SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow);
+        WindowFlag[] windowFlags;
+
+        foreach (flagStr; __traits(allMembers, WindowFlag)) {
+            WindowFlag flag = mixin("WindowFlag." ~ flagStr);
+            if ((sdlFlags & flag) == flag) {
+                windowFlags ~= flag;
+            }
+        }
+
+        return windowFlags;
     }
 
     /++
@@ -392,6 +440,20 @@ final class Window {
      +/
     void title(string newTitle) @property @trusted {
         SDL_SetWindowTitle(this.sdlWindow, newTitle.toStringz());
+    }
+
+    /++
+     + Wraps `SDL_SetWindowIcon` which sets a new icon to the window
+     +
+     + Params:
+     +   newIcon = `dsdl2.Surface` of the new icon
+     +/
+    void icon(Surface newIcon) @property @trusted
+    in {
+        assert(newIcon !is null);
+    }
+    do {
+        SDL_SetWindowIcon(this.sdlWindow, newIcon.sdlSurface);
     }
 
     /++
@@ -493,7 +555,8 @@ final class Window {
      + Returns: `true` if borders are visible, otherwise `false`
      +/
     bool bordered() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_BORDERLESS) == 0;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_BORDERLESS) !=
+            SDL_WINDOW_BORDERLESS;
     }
 
     /++
@@ -554,7 +617,8 @@ final class Window {
      + Returns: `true` if the window is resizable, otherwise `false`
      +/
     bool resizable() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_RESIZABLE) != 0;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_RESIZABLE) ==
+            SDL_WINDOW_RESIZABLE;
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_5) {
@@ -579,7 +643,8 @@ final class Window {
      + Returns: `true` if the the window is in real fullscreen, otherwise `false`
      +/
     bool fullscreen() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN) != 0;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN) ==
+            SDL_WINDOW_FULLSCREEN;
     }
 
     /++
