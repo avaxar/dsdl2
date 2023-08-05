@@ -26,4 +26,5 @@ import dsdl2.rect;
 import dsdl2.renderer;
 import dsdl2.sdl;
 import dsdl2.surface;
+import dsdl2.video;
 import dsdl2.window;
