@@ -1,25 +1,34 @@
 @safe:
 
 import std.stdio;
+import std.random;
 static import dsdl2;
 
-void main() {
+int main() {
     dsdl2.loadSO();
     dsdl2.init();
 
     writeln("Version of SDL used: ", dsdl2.getVersion());
     writeln("List of drivers: ", dsdl2.getVideoDrivers());
-    writeln("List of displays: ", dsdl2.getDisplays());
+    writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
 
-    dsdl2.Window window = new dsdl2.Window("bruh", [
+    auto window = new dsdl2.Window("My Window", [
         dsdl2.WindowPos.centered, dsdl2.WindowPos.centered
     ], [800, 600]);
-    window.surface.fill(dsdl2.Color(255, 0, 0));
-    window.icon = window.surface;
-    window.update();
+
+    auto rnd = Random(unpredictableSeed);
 
     while (true) {
-    }
+        while (auto event = dsdl2.pollEvent()){
+            if (cast(dsdl2.QuitEvent)event) {
+                dsdl2.quit();
+                return 0;
+            }
+        }
 
-    // dsdl2.quit();
+        ubyte val = cast(ubyte)uniform(0, 256, rnd);
+        window.surface.fill(dsdl2.Color(val, val, val));
+        window.update();
+        window.icon = window.surface;
+    }
 }
