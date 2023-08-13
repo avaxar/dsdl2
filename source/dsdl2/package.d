@@ -21,6 +21,7 @@ module dsdl2;
 public:
 import dsdl2.blend;
 import dsdl2.clipboard;
+import dsdl2.display;
 import dsdl2.pixels;
 import dsdl2.rect;
 import dsdl2.renderer;

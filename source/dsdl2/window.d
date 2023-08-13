@@ -9,10 +9,10 @@ module dsdl2.window;
 
 import bindbc.sdl;
 import dsdl2.sdl;
+import dsdl2.display;
 import dsdl2.pixels;
 import dsdl2.rect;
 import dsdl2.surface;
-import dsdl2.video;
 
 import core.memory : GC;
 import std.conv : to;
@@ -297,7 +297,7 @@ final class Window {
         }
 
         this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int, position[1].to!int,
-        size[0].to!int, size[1].to!int, intFlags);
+            size[0].to!int, size[1].to!int, intFlags);
         if (this.sdlWindow is null) {
             throw new SDLException;
         }
@@ -462,9 +462,9 @@ final class Window {
      +
      + Returns: top-left coordinate position of the window in the desktop environment
      +/
-    uint[2] position() const @property @trusted {
-        uint[2] xy;
-        SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, cast(int*)&xy[0], cast(int*)&xy[1]);
+    int[2] position() const @property @trusted {
+        int[2] xy;
+        SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, &xy[0], &xy[1]);
         return xy;
     }
 
@@ -474,8 +474,8 @@ final class Window {
      + Params:
      +   newPosition = top-left coordinate of the new window position in the desktop environment
      +/
-    void position(uint[2] newPosition) @property @trusted {
-        SDL_SetWindowPosition(this.sdlWindow, newPosition[0].to!int, newPosition[1].to!int);
+    void position(int[2] newPosition) @property @trusted {
+        SDL_SetWindowPosition(this.sdlWindow, newPosition[0], newPosition[1]);
     }
 
     /++
@@ -507,8 +507,7 @@ final class Window {
      +/
     uint[2] minimumSize() const @property @trusted {
         uint[2] wh;
-        SDL_GetWindowMinimumSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(
-            int*)&wh[1]);
+        SDL_GetWindowMinimumSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(int*)&wh[1]);
         return wh;
     }
 
@@ -521,7 +520,7 @@ final class Window {
      +/
     void minimumSize(uint[2] newMinimumSize) @property @trusted {
         SDL_SetWindowMinimumSize(this.sdlWindow, newMinimumSize[0].to!int,
-        newMinimumSize[1].to!int);
+            newMinimumSize[1].to!int);
     }
 
     /++
@@ -532,8 +531,7 @@ final class Window {
      +/
     uint[2] maximumSize() const @property @trusted {
         uint[2] wh;
-        SDL_GetWindowMaximumSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(
-            int*)&wh[1]);
+        SDL_GetWindowMaximumSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(int*)&wh[1]);
         return wh;
     }
 
@@ -546,7 +544,7 @@ final class Window {
      +/
     void maximumSize(uint[2] newMaximumSize) @property @trusted {
         SDL_SetWindowMaximumSize(this.sdlWindow, newMaximumSize[0].to!int,
-        newMaximumSize[1].to!int);
+            newMaximumSize[1].to!int);
     }
 
     /++
@@ -1029,7 +1027,7 @@ final class Window {
         do {
             uint[2] size = void;
             SDL_GetWindowSizeInPixels(cast(SDL_Window*) this.sdlWindow, cast(int*)&size[0],
-            cast(int*)&size[1]);
+                cast(int*)&size[1]);
             return size;
         }
     }

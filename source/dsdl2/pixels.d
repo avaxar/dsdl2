@@ -492,7 +492,7 @@ final class PixelFormat {
      +
      + Returns: `SDL_PixelFormatEnum` enumeration from bindbc-sdl
      +/
-    SDL_PixelFormatEnum sdlPixelFormatEnum() const nothrow @trusted {
+    SDL_PixelFormatEnum sdlPixelFormatEnum() const nothrow @property @trusted {
         return this.sdlPixelFormat.format;
     }
 
