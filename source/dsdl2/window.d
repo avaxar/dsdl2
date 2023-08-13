@@ -16,6 +16,7 @@ import dsdl2.surface;
 
 import core.memory : GC;
 import std.conv : to;
+import std.format : format;
 import std.string : toStringz;
 import std.typecons : Nullable, nullable;
 
@@ -322,6 +323,22 @@ final class Window {
         assert(this.sdlWindow !is null);
         assert(this.pixelFormatProxy !is null);
         assert(this.surfaceProxy !is null);
+    }
+
+    /++
+     + Equality operator overload
+     +/
+    bool opEquals(const Window rhs) const @trusted {
+        return this.sdlWindow == rhs.sdlWindow;
+    }
+
+    /++
+     + Formats the `dsdl2.Window` into its construction representation: `"dsdl2.Window(<SDL_Window pointer>)"`
+     +
+     + Returns: the formatted `string`
+     +/
+    override string toString() const @trusted {
+        return "dsdl2.Window(0x%x)".format(this.sdlWindow);
     }
 
     /++
@@ -697,6 +714,15 @@ final class Window {
         if (SDL_SetWindowBrightness(this.sdlWindow, newBrightness) != 0) {
             throw new SDLException;
         }
+    }
+
+    /++
+     + Wraps `SDL_IsScreenKeyboardShown` which checks whether the screen keyboard is shown on the window
+     +
+     + Returns: `true` if the screen keyboard is shown, otherwise `false`
+     +/
+    bool hasShownScreenKeyboard() const @property @trusted {
+        return SDL_IsScreenKeyboardShown(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
     }
 
     /++

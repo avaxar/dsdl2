@@ -78,7 +78,7 @@ final class Surface {
         uint[4] masks = rgbPixelFormat.toMasks();
 
         this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitDepth,
-        masks[0], masks[1], masks[2], masks[3]);
+            masks[0], masks[1], masks[2], masks[3]);
         if (this.sdlSurface is null) {
             throw new SDLException;
         }
@@ -193,13 +193,13 @@ final class Surface {
 
     /++
      + Formats the `dsdl2.Surface` into its construction representation:
-     + `"dsdl2.PixelFormat([...], [<width>, <height>], <pitch>, <pixelFormat>)"`
+     + `"dsdl2.PixelFormat([<bytes>], [<width>, <height>], <pitch>, <pixelFormat>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Surface([...], [%d, %d], %d, %s)".format(this.width, this.height, this.pitch, this
-                .pixelFormat.toString());
+        return "dsdl2.Surface(%s, [%d, %d], %d, %s)".format(this.buffer, this.width, this.height, this.pitch,
+            this.pixelFormat.toString());
     }
 
     /++
@@ -215,6 +215,15 @@ final class Surface {
         }
 
         return this.pixelFormatProxy;
+    }
+
+    /++
+     + Gets the internal pixel buffer of the `dsdl2.Surface
+     +
+     + Returns: slice of the buffer
+     +/
+    inout(ubyte[]) buffer() inout @property @system {
+        return (cast(inout(ubyte*)) this.sdlSurface.pixels)[0 .. this.pitch * this.height];
     }
 
     /++

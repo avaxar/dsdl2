@@ -136,14 +136,12 @@ class Display {
     }
 
     /++
-     + Formats the `dsdl2.Display` showing its internal information:
-     + `"dsdl2.PixelFormat(<sdlDisplayIndex>, name: <name>, bounds: <bounds>)"`
+     + Formats the `dsdl2.Display` showing its internal information: `"dsdl2.PixelFormat(<sdlDisplayIndex>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Display(%d, name: %s, bounds: %s)".format(this.sdlDisplayIndex, this.name,
-            this.bounds.to!string);
+        return "dsdl2.Display(%d)".format(this.sdlDisplayIndex);
     }
 
     /++

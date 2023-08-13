@@ -200,6 +200,31 @@ final class Palette {
     }
 
     /++
+     +  Equality operator overload
+     +/
+    bool opEquals(const Palette rhs) const @trusted {
+        if (rhs is null) {
+            return false;
+        }
+
+        if (this.sdlPalette == rhs.sdlPalette) {
+            return true;
+        }
+
+        if (this.length != rhs.length) {
+            return false;
+        }
+
+        foreach (size_t i; 0 .. this.length) {
+            if (this[i] != rhs[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /++
      + Indexing operation overload
      +/
     ref inout(Color) opIndex(size_t i) inout @trusted
@@ -436,7 +461,7 @@ final class PixelFormat {
     }
     do {
         uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitDepth, rgbaMasks[0], rgbaMasks[1], rgbaMasks[2],
-        rgbaMasks[3]);
+            rgbaMasks[3]);
         if (sdlPixelFormatEnum == SDL_PIXELFORMAT_UNKNOWN) {
             throw new SDLException("Pixel format conversion is not possible", __FILE__, __LINE__);
         }
@@ -471,6 +496,30 @@ final class PixelFormat {
     }
 
     /++
+     + Equality operator overload
+     +/
+    bool opEquals(const PixelFormat rhs) const @trusted {
+        if (rhs is null) {
+            return false;
+        }
+
+        if (this.sdlPixelFormat.format == rhs.sdlPixelFormat.format) {
+            return true;
+        }
+
+        if (this.sdlPixelFormatEnum != rhs.sdlPixelFormatEnum) {
+            return false;
+        }
+
+        if (SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum)) {
+            return this.paletteRef == rhs.paletteRef;
+        }
+        else {
+            return true;
+        }
+    }
+
+    /++
      + Formats the `dsdl2.PixelFormat` into its construction representation:
      + `"dsdl2.PixelFormat(<sdlPixelFormatEnum>)"` or `"dsdl2.PixelFormat(<sdlPixelFormatEnum>, <palette>)"`
      +
@@ -478,12 +527,10 @@ final class PixelFormat {
      +/
     override string toString() const @trusted {
         if (SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum)) {
-            return "dsdl2.PixelFormat(%s, %s)".format(
-                SDL_GetPixelFormatName(this.sdlPixelFormatEnum), this.paletteRef);
+            return "dsdl2.PixelFormat(0x%x, %s)".format(this.sdlPixelFormatEnum, this.paletteRef);
         }
         else {
-            return "dsdl2.PixelFormat(%s)".format(
-                SDL_GetPixelFormatName(this.sdlPixelFormatEnum));
+            return "dsdl2.PixelFormat(0x%s)".format(this.sdlPixelFormatEnum);
         }
     }
 
@@ -613,7 +660,7 @@ final class PixelFormat {
         int bitDepth = void;
 
         if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
-            &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
+                &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
             throw new SDLException;
         }
 
