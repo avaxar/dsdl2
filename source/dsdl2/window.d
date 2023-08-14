@@ -725,6 +725,50 @@ final class Window {
         return SDL_IsScreenKeyboardShown(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
     }
 
+    /++ 
+     + Wraps `SDL_GetKeyboardFocus` which verifies whether keyboard input is focused to the window
+     + 
+     + Returns: `true` if keyboard input is focused, otherwise `false`
+     +/
+    bool isKeyboardFocused() const @property @trusted {
+        return SDL_GetKeyboardFocus() == this.sdlWindow;
+    }
+
+    /++ 
+     + Wraps `SDL_GetMouseFocus` which verifies whether mouse input is focused to the window
+     + 
+     + Returns: `true` if mouse input is focused, otherwise `false`
+     +/
+    bool isMouseFocused() const @property @trusted {
+        return SDL_GetMouseFocus() == this.sdlWindow;
+    }
+
+    /++ 
+     + Wraps `SDL_GetMouseState` which gets the mouse position in the window
+     + 
+     + Returns: `[x, y]` of the mouse position relative to the window, otherwise `[-1, -1]` if mouse input
+     +          is not focused to the window
+     +/
+    int[2] mousePosition() const @property @trusted {
+        if (SDL_GetMouseFocus() != this.sdlWindow) {
+            return [-1, -1];
+        }
+
+        int[2] pos = void;
+        SDL_GetMouseState(&pos[0], &pos[1]);
+        return pos;
+    }
+
+    /++ 
+     + Wraps `SDL_WarpMouseInWindow` which sets the mouse position in the window
+     + 
+     + Params:
+     +   newMousePosition = coordinate of the mouse position to set
+     +/
+    void mousePosition(int[2] newMousePosition) @property @trusted {
+        SDL_WarpMouseInWindow(this.sdlWindow, newMousePosition[0], newMousePosition[1]);
+    }
+
     /++
      + Wraps `SDL_GetWindowSurface` which gets the window's surface for software rendering
      +
