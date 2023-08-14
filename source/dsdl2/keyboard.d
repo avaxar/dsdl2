@@ -12,6 +12,7 @@ import dsdl2.sdl;
 import dsdl2.rect;
 
 import std.bitmanip : bitfields;
+import std.format : format;
 
 /++
  + Wraps `SDL_GetKeyboardState` which gets the current key states of the keyboard
@@ -205,26 +206,41 @@ struct Keymod {
         this.scroll = scroll;
     }
 
+    /++ 
+     + Formats the `dsdl2.Keymod` into its construction representation:
+     + `"dsdl2.Keymod(<sdlKeymod>, <lShift>, <rShift>, <lCtrl>, <rCtrl>, <lAlt>, <rAlt>, <lGUI>, <rGUI>, <num>, <caps>, <mode>, <scroll>)"`
+     + 
+     + Returns: the formatted `string` 
+     +/
+    string toString() const @property {
+        return "dsdl2.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,
+            this.lShift, this.rShift, this.lCtrl, this.rCtrl, this.lAlt, this.rAlt, this.lGUI, this.rGUI,
+            this.num, this.caps, this.mode, this.scroll);
+    }
+
     /++
      + Gets the internal `SDL_Keymod` representation
      +
      + Returns: `SDL_Keymod` with the appropriate bitflags toggled
      +/
     SDL_Keymod sdlKeymod() const @property {
-        return this.lShift ? KMOD_LSHIFT : 0
-            | this.rShift ? KMOD_RSHIFT
-            : 0
-            | this.lCtrl ? KMOD_LCTRL : 0
-            | this.rCtrl ? KMOD_RCTRL
-            : 0
-            | this.lAlt ? KMOD_LALT : 0
-            | this.rAlt ? KMOD_RALT : 0
-            | this.lGUI ? KMOD_LGUI : 0
-            | this.rGUI ? KMOD_RGUI : 0
-            | this.num ? KMOD_NUM : 0
-            | this.caps ? KMOD_CAPS : 0
-            | this.mode ? KMOD_MODE : 0
-            | this.scroll ? KMOD_SCROLL : 0;
+        return (this.lShift ? KMOD_LSHIFT : 0)
+            | (this.rShift ? KMOD_RSHIFT
+                    : 0)
+            | (this.lCtrl ? KMOD_LCTRL : 0)
+            | (this.rCtrl ? KMOD_RCTRL
+                    : 0)
+            | (this.lAlt ? KMOD_LALT : 0)
+            | (this.rAlt ? KMOD_RALT
+                    : 0)
+            | (this.lGUI ? KMOD_LGUI : 0)
+            | (this.rGUI ? KMOD_RGUI
+                    : 0)
+            | (this.num ? KMOD_NUM : 0)
+            | (this.caps ? KMOD_CAPS
+                    : 0)
+            | (this.mode ? KMOD_MODE : 0)
+            | (this.scroll ? KMOD_SCROLL : 0);
     }
 
     /++
