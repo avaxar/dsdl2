@@ -16,19 +16,25 @@ int main() {
         dsdl2.WindowPos.centered, dsdl2.WindowPos.centered
     ], [800, 600]);
 
+    auto surface = new dsdl2.Surface([128, 128], window.surface.pixelFormat);
+    surface.fill(dsdl2.Color(255, 0, 0));
+
     auto rnd = Random(unpredictableSeed);
 
     while (true) {
-        while (auto event = dsdl2.pollEvent()){
-            if (cast(dsdl2.QuitEvent)event) {
+        while (auto event = dsdl2.pollEvent()) {
+            if (cast(dsdl2.QuitEvent) event) {
                 dsdl2.quit();
                 return 0;
             }
         }
 
-        ubyte val = cast(ubyte)uniform(0, 256, rnd);
+        ubyte val = cast(ubyte) uniform(0, 256, rnd);
         window.surface.fill(dsdl2.Color(val, val, val));
+        if (window.mouseFocused) {
+            window.surface.blit(dsdl2.Point(window.mousePosition), surface);
+        }
+
         window.update();
-        window.icon = window.surface;
     }
 }

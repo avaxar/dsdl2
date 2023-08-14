@@ -333,7 +333,7 @@ final class Window {
     }
 
     /++
-     + Formats the `dsdl2.Window` into its construction representation: `"dsdl2.Window(<SDL_Window pointer>)"`
+     + Formats the `dsdl2.Window` into its construction representation: `"dsdl2.Window(<sdlWindow>)"`
      +
      + Returns: the formatted `string`
      +/
@@ -676,21 +676,21 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowGrab` which gets the window's grab mode
+     + Wraps `SDL_GetWindowGrab` which gets the window's input grab mode
      +
-     + Returns: `true` if the window is in grab mode, otherwise `false`
+     + Returns: `true` if the window is in input grab mode, otherwise `false`
      +/
-    bool grab() const @property @trusted {
+    bool inputGrab() const @property @trusted {
         return SDL_GetWindowGrab(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
     }
 
     /++
-     + Wraps `SDL_SetWindowGrab` which sets the window's grab mode
+     + Wraps `SDL_SetWindowGrab` which sets the window's input grab mode
      +
      + Params:
-     +   newGrab = `true` to set the window on grab mode, otherwise `false`
+     +   newGrab = `true` to set the window on input grab mode, otherwise `false`
      +/
-    void grab(bool newGrab) @property @trusted {
+    void inputGrab(bool newGrab) @property @trusted {
         SDL_SetWindowGrab(this.sdlWindow, newGrab);
     }
 
@@ -725,27 +725,27 @@ final class Window {
         return SDL_IsScreenKeyboardShown(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetKeyboardFocus` which verifies whether keyboard input is focused to the window
-     + 
+     +
      + Returns: `true` if keyboard input is focused, otherwise `false`
      +/
-    bool isKeyboardFocused() const @property @trusted {
+    bool keyboardFocused() const @property @trusted {
         return SDL_GetKeyboardFocus() == this.sdlWindow;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetMouseFocus` which verifies whether mouse input is focused to the window
-     + 
+     +
      + Returns: `true` if mouse input is focused, otherwise `false`
      +/
-    bool isMouseFocused() const @property @trusted {
+    bool mouseFocused() const @property @trusted {
         return SDL_GetMouseFocus() == this.sdlWindow;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetMouseState` which gets the mouse position in the window
-     + 
+     +
      + Returns: `[x, y]` of the mouse position relative to the window, otherwise `[-1, -1]` if mouse input
      +          is not focused to the window
      +/
@@ -759,9 +759,9 @@ final class Window {
         return pos;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_WarpMouseInWindow` which sets the mouse position in the window
-     + 
+     +
      + Params:
      +   newMousePosition = coordinate of the mouse position to set
      +/

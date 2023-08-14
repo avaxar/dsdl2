@@ -116,7 +116,7 @@ abstract class Event {
     }
 }
 
-class UnknownEvent : Event {
+final class UnknownEvent : Event {
     this(SDL_Event sdlEvent) {
         this.sdlEvent = sdlEvent;
     }
@@ -126,7 +126,7 @@ class UnknownEvent : Event {
     }
 }
 
-class QuitEvent : Event {
+final class QuitEvent : Event {
     this() {
         this.sdlEvent.type = SDL_QUIT;
     }
@@ -140,7 +140,7 @@ class QuitEvent : Event {
     }
 }
 
-class AppTerminatingEvent : Event {
+final class AppTerminatingEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_TERMINATING;
     }
@@ -154,7 +154,7 @@ class AppTerminatingEvent : Event {
     }
 }
 
-class AppLowMemoryEvent : Event {
+final class AppLowMemoryEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_LOWMEMORY;
     }
@@ -168,7 +168,7 @@ class AppLowMemoryEvent : Event {
     }
 }
 
-class AppWillEnterBackgroundEvent : Event {
+final class AppWillEnterBackgroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_WILLENTERBACKGROUND;
     }
@@ -182,7 +182,7 @@ class AppWillEnterBackgroundEvent : Event {
     }
 }
 
-class AppDidEnterBackgroundEvent : Event {
+final class AppDidEnterBackgroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_DIDENTERBACKGROUND;
     }
@@ -196,7 +196,7 @@ class AppDidEnterBackgroundEvent : Event {
     }
 }
 
-class AppWillEnterForegroundEvent : Event {
+final class AppWillEnterForegroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_WILLENTERFOREGROUND;
     }
@@ -210,7 +210,7 @@ class AppWillEnterForegroundEvent : Event {
     }
 }
 
-class AppDidEnterForegroundEvent : Event {
+final class AppDidEnterForegroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_DIDENTERFOREGROUND;
     }
@@ -420,7 +420,7 @@ abstract class WindowEvent : Event {
     }
 }
 
-class WindowShownEvent : WindowEvent {
+final class WindowShownEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_SHOWN;
@@ -436,7 +436,7 @@ class WindowShownEvent : WindowEvent {
     }
 }
 
-class WindowHiddenEvent : WindowEvent {
+final class WindowHiddenEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_HIDDEN;
@@ -452,7 +452,7 @@ class WindowHiddenEvent : WindowEvent {
     }
 }
 
-class WindowExposedEvent : WindowEvent {
+final class WindowExposedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_EXPOSED;
@@ -468,7 +468,7 @@ class WindowExposedEvent : WindowEvent {
     }
 }
 
-class WindowMovedEvent : WindowEvent {
+final class WindowMovedEvent : WindowEvent {
     this(uint windowID, int[2] position) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_MOVED;
@@ -498,7 +498,7 @@ class WindowMovedEvent : WindowEvent {
     }
 }
 
-class WindowResizedEvent : WindowEvent {
+final class WindowResizedEvent : WindowEvent {
     this(uint windowID, uint[2] size) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_RESIZED;
@@ -540,7 +540,7 @@ class WindowResizedEvent : WindowEvent {
     }
 }
 
-class WindowSizeChangedEvent : WindowEvent {
+final class WindowSizeChangedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_SIZE_CHANGED;
@@ -556,7 +556,7 @@ class WindowSizeChangedEvent : WindowEvent {
     }
 }
 
-class WindowMinimizedEvent : WindowEvent {
+final class WindowMinimizedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_MINIMIZED;
@@ -572,7 +572,7 @@ class WindowMinimizedEvent : WindowEvent {
     }
 }
 
-class WindowMaximizedEvent : WindowEvent {
+final class WindowMaximizedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_MAXIMIZED;
@@ -588,7 +588,7 @@ class WindowMaximizedEvent : WindowEvent {
     }
 }
 
-class WindowRestoredEvent : WindowEvent {
+final class WindowRestoredEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_RESTORED;
@@ -604,7 +604,7 @@ class WindowRestoredEvent : WindowEvent {
     }
 }
 
-class WindowEnterEvent : WindowEvent {
+final class WindowEnterEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_ENTER;
@@ -620,7 +620,7 @@ class WindowEnterEvent : WindowEvent {
     }
 }
 
-class WindowLeaveEvent : WindowEvent {
+final class WindowLeaveEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_LEAVE;
@@ -636,7 +636,7 @@ class WindowLeaveEvent : WindowEvent {
     }
 }
 
-class WindowFocusGainedEvent : WindowEvent {
+final class WindowFocusGainedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_FOCUS_GAINED;
@@ -652,7 +652,7 @@ class WindowFocusGainedEvent : WindowEvent {
     }
 }
 
-class WindowFocusLostEvent : WindowEvent {
+final class WindowFocusLostEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_FOCUS_LOST;
@@ -668,7 +668,7 @@ class WindowFocusLostEvent : WindowEvent {
     }
 }
 
-class WindowCloseEvent : WindowEvent {
+final class WindowCloseEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_CLOSE;
@@ -757,7 +757,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
     }
 }
 
-class SysWMEvent : Event {
+final class SysWMEvent : Event {
     this(SDL_SysWMmsg* msg) @system {
         this.sdlEvent.type = SDL_SYSWMEVENT;
         this.sdlEvent.syswm.msg = msg;
@@ -823,19 +823,19 @@ abstract class KeyboardEvent : Event {
             assert(false);
 
         case SDL_KEYDOWN:
-            return new KeydownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
+            return new KeyDownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
             cast(Scancode)sdlEvent.key.keysym.scancode, cast(Keycode)sdlEvent.key.keysym.sym,
             Keymod(sdlEvent.key.keysym.mod));
 
         case SDL_KEYUP:
-            return new KeyupKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
+            return new KeyUpKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
             cast(Scancode)sdlEvent.key.keysym.scancode, cast(Keycode)sdlEvent.key.keysym.sym,
             Keymod(sdlEvent.key.keysym.mod));
         }
     }
 }
 
-class KeydownKeyboardEvent : KeyboardEvent {
+final class KeyDownKeyboardEvent : KeyboardEvent {
     this(uint windowID, ubyte repeat, Scancode scancode, Keycode sym, Keymod mod) {
         this.sdlEvent.type = SDL_KEYDOWN;
         this.sdlEvent.key.windowID = windowID;
@@ -850,12 +850,12 @@ class KeydownKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.KeydownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
+        return "dsdl2.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
             this.sym, this.mod);
     }
 }
 
-class KeyupKeyboardEvent : KeyboardEvent {
+final class KeyUpKeyboardEvent : KeyboardEvent {
     this(uint windowID, ubyte repeat, Scancode scancode, Keycode sym, Keymod mod) {
         this.sdlEvent.type = SDL_KEYUP;
         this.sdlEvent.key.windowID = windowID;
@@ -870,7 +870,7 @@ class KeyupKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.KeyupKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
+        return "dsdl2.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
             this.sym, this.mod);
     }
 }

@@ -10,9 +10,24 @@ module dsdl2.keyboard;
 import bindbc.sdl;
 import dsdl2.sdl;
 import dsdl2.rect;
+import dsdl2.window;
 
 import std.bitmanip : bitfields;
 import std.format : format;
+
+/++
+ + Wraps `SDL_GetKeyboardFocus` which gets the keyboard-focused window
+ +
+ + Returns: `dsdl2.Window` proxy of the window with the keyboard focus; `null` if no window is focused
+ +/
+Window getKeyboardFocusedWindow() @trusted {
+    SDL_Window* sdlWindow = SDL_GetKeyboardFocus();
+    if (sdlWindow is null) {
+        return null;
+    }
+
+    return new Window(sdlWindow, false);
+}
 
 /++
  + Wraps `SDL_GetKeyboardState` which gets the current key states of the keyboard
@@ -206,11 +221,11 @@ struct Keymod {
         this.scroll = scroll;
     }
 
-    /++ 
+    /++
      + Formats the `dsdl2.Keymod` into its construction representation:
      + `"dsdl2.Keymod(<sdlKeymod>, <lShift>, <rShift>, <lCtrl>, <rCtrl>, <lAlt>, <rAlt>, <lGUI>, <rGUI>, <num>, <caps>, <mode>, <scroll>)"`
-     + 
-     + Returns: the formatted `string` 
+     +
+     + Returns: the formatted `string`
      +/
     string toString() const @property {
         return "dsdl2.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,

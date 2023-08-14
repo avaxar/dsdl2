@@ -56,6 +56,17 @@ struct Point {
         this.sdlPoint.y = y;
     }
 
+    /++ 
+     + Constructs a `dsdl2.Point` by feeding in an array of `x` and `y`
+     +
+     + Params:
+     +   xy = x and y coordinate point array
+     +/
+    this(int[2] xy) {
+        this.sdlPoint.x = xy[0];
+        this.sdlPoint.y = xy[1];
+    }
+
     /++
      + Unary element-wise operation overload template
      +/
@@ -316,7 +327,7 @@ struct Rect {
      +/
     bool hasLineIntersection(Point[2] line) const @trusted {
         return SDL_IntersectRectAndLine(&this.sdlRect, &line[0].sdlPoint.x, &line[0].sdlPoint.y,
-        &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
+            &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
     }
 
     /++
@@ -346,7 +357,7 @@ struct Rect {
      +/
     Nullable!(Point[2]) intersectLine(Point[2] line) const @trusted {
         if (SDL_IntersectRectAndLine(&this.sdlRect, &line[0].sdlPoint.x, &line[0].sdlPoint.y,
-            &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE) {
+                &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE) {
             Point[2] intersection = [line[0], line[1]];
             return intersection.nullable;
         }
@@ -411,6 +422,17 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         this(float x, float y) {
             this.x = x;
             this.y = y;
+        }
+
+        /++ 
+         + Constructs a `dsdl2.FPoint` by feeding in an array of `x` and `y`
+         +
+         + Params:
+         +   xy = x and y coordinate point array
+         +/
+        this(float[2] xy) {
+            this.sdlFPoint.x = xy[0];
+            this.sdlFPoint.y = xy[1];
         }
 
         /++
@@ -697,7 +719,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             }
             do {
                 return SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
-                &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
+                    &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
             }
 
             /++
@@ -738,7 +760,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             }
             do {
                 if (SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
-                    &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE) {
+                        &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE) {
                     FPoint[2] intersection = [line[0], line[1]];
                     return intersection.nullable;
                 }
