@@ -40,8 +40,11 @@ Event pollEvent() @trusted {
     }
 }
 
+/++ 
+ + D abstract class that wraps `SDL_Event` containing details of an event polled from `dsdl2.pollEvent()`
+ +/
 abstract class Event {
-    SDL_Event sdlEvent;
+    SDL_Event sdlEvent; /// Internal `SDL_Event` struct
 
     /++
      + Gets the `SDL_EventType` of the underlying `SDL_Event`
@@ -65,7 +68,7 @@ abstract class Event {
      + Turns a vanilla `SDL_Event` from bindbc-sdl to `dsdl2.Event`
      +
      + Params:
-     +   sdlEvent: vanilla `SDL_Event` from bindbc-sdl
+     +   sdlEvent = vanilla `SDL_Event` from bindbc-sdl
      + Returns: `dsdl2.Event` of the same attributes
      +/
     static Event fromSDL(SDL_Event sdlEvent) @trusted {
