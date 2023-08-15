@@ -74,8 +74,8 @@ struct DisplayMode {
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.DisplayMode(%s, [%d, %d], %d, %p)".format(this.pixelFormat.to!string, this.width,
-            this.height, this.refreshRate, this.driverData);
+        return "dsdl2.DisplayMode(%s, %s, %d, %p)".format(this.pixelFormat, this.size,
+            this.refreshRate, this.driverData);
     }
 
     /++
@@ -109,7 +109,7 @@ struct DisplayMode {
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
     /++
-     + D enum that wraps `SDL_DisplayOrientation` defining orientation of displays
+     + D enum that wraps `SDL_DisplayOrientation` (from SDL 2.0.9) defining orientation of displays
      +/
     enum DisplayOrientation {
         /++

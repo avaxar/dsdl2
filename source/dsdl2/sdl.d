@@ -82,8 +82,12 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         gameController = SDL_INIT_GAMECONTROLLER, /// ditto
         events = SDL_INIT_EVENTS, /// ditto
         everything = SDL_INIT_EVERYTHING, /// ditto
-        sensor = SDL_INIT_SENSOR, /// ditto
         noparachute = SDL_INIT_NOPARACHUTE, /// ditto
+
+        /++
+         + Wraps `SDL_INIT_*` enumeration constants (from SDL 2.0.9)
+         +/
+        sensor = SDL_INIT_SENSOR,
     }
 }
 else {

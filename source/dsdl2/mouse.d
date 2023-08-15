@@ -180,6 +180,19 @@ enum MouseButton {
     x2 = SDL_BUTTON_X2
 }
 
+static if (sdlSupport >= SDLSupport.v2_0_4) {
+    /++
+     + D enum that wraps `SDL_MOUSEWHEEL_*` enumerations (from SDL 2.0.4)
+     +/
+    enum MouseWheel {
+        /++
+         + Wraps `SDL_MOUSEWHEEL_*` enumeration constants
+         +/
+        normal = SDL_MOUSEWHEEL_NORMAL,
+        flipped = SDL_MOUSEWHEEL_FLIPPED /// ditto
+    }
+}
+
 /++
  + D struct that encapsulates mouse button state flags
  +/
@@ -385,6 +398,15 @@ final class Cursor {
      +/
     bool opEquals(const Cursor rhs) const @trusted {
         return this.sdlCursor == rhs.sdlCursor;
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.Cursor`
+     +
+     + Returns: unique hash for the instance being the pointer of the internal `SDL_Cursor` pointer
+     +/
+    override hash_t toHash() const @trusted {
+        return cast(hash_t) this.sdlCursor;
     }
 
     /++

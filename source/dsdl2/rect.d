@@ -56,7 +56,7 @@ struct Point {
         this.sdlPoint.y = y;
     }
 
-    /++ 
+    /++
      + Constructs a `dsdl2.Point` by feeding in an array of `x` and `y`
      +
      + Params:
@@ -141,6 +141,17 @@ struct Point {
      +/
     int[2] array() const @property {
         return [this.sdlPoint.x, this.sdlPoint.y];
+    }
+
+    /++
+     + Sets the `dsdl2.Point` through an array
+     +
+     + Params:
+     +   newArray = array of `x` and `y`
+     +/
+    void array(int[2] newArray) @property {
+        this.sdlPoint.x = newArray[0];
+        this.sdlPoint.y = newArray[1];
     }
 }
 
@@ -260,6 +271,17 @@ struct Rect {
     }
 
     /++
+     + Sets the `dsdl2.Rect`'s `x` and `y` through a `dsdl2.Point`
+     +
+     + Params:
+     +   newPoint = `dsdl2.Point` containing the new `x` and `y` values
+     +/
+    void point(Point newPoint) @property {
+        this.sdlRect.x = newPoint.x;
+        this.sdlRect.y = newPoint.y;
+    }
+
+    /++
      + Proxy to the width of the `dsdl2.Rect`
      +
      + Returns: width of the `dsdl2.Rect`
@@ -284,6 +306,17 @@ struct Rect {
      +/
     int[2] size() const @property {
         return [this.sdlRect.w, this.sdlRect.h];
+    }
+
+    /++
+     + Sets the `dsdl2.Rect`'s `width` and `height` through an array
+     +
+     + Params:
+     +   newSize = array of `width` and `height`
+     +/
+    void size(int[2] newSize) @property {
+        this.sdlRect.w = newSize[0];
+        this.sdlRect.h = newSize[1];
     }
 
     /++
@@ -424,7 +457,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             this.y = y;
         }
 
-        /++ 
+        /++
          + Constructs a `dsdl2.FPoint` by feeding in an array of `x` and `y`
          +
          + Params:
@@ -509,6 +542,17 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +/
         float[2] array() const @property {
             return [this.sdlFPoint.x, this.sdlFPoint.y];
+        }
+
+        /++
+         + Sets the `dsdl2.FPoint` through an array
+         +
+         + Params:
+         +   newArray = array of `x` and `y`
+         +/
+        void array(float[2] newArray) @property {
+            this.sdlFPoint.x = newArray[0];
+            this.sdlFPoint.y = newArray[1];
         }
     }
 
@@ -632,6 +676,17 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         }
 
         /++
+         + Sets the `dsdl2.Rect`'s `x` and `y` through a `dsdl2.FPoint`
+         +
+         + Params:
+         +   newPoint = `dsdl2.Point` containing the new `x` and `y` values
+         +/
+        void point(FPoint newPoint) @property {
+            this.sdlFRect.x = newPoint.x;
+            this.sdlFRect.y = newPoint.y;
+        }
+
+        /++
          + Proxy to the width of the `dsdl2.FRect`
          +
          + Returns: width of the `dsdl2.FRect`
@@ -656,6 +711,17 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          +/
         float[2] size() const @property {
             return [this.sdlFRect.w, this.sdlFRect.h];
+        }
+
+        /++
+         + Sets the `dsdl2.FRect`'s `width` and `height` through an array
+         +
+         + Params:
+         +   newSize = array of `width` and `height`
+         +/
+        void size(float[2] newSize) @property {
+            this.sdlFRect.w = newSize[0];
+            this.sdlFRect.h = newSize[1];
         }
 
         static if (sdlSupport >= SDLSupport.v2_0_22) {

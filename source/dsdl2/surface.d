@@ -198,8 +198,8 @@ final class Surface {
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Surface(%s, [%d, %d], %d, %s)".format(this.buffer, this.width, this.height, this.pitch,
-            this.pixelFormat.toString());
+        return "dsdl2.Surface(%s, %s, %d, %s)".format(this.buffer, this.size, this.pitch,
+            this.pixelFormat);
     }
 
     /++
