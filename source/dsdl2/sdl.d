@@ -368,3 +368,24 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         return SDL_GetHintBoolean(name.toStringz(), defaultValue) == SDL_TRUE;
     }
 }
+
+/++ 
+ + Wraps `SDL_GetTicks` or `SDL_GetTicks64` on SDL 2.0.18 which gets the time since the SDL library was initialized
+ + in milliseconds
+ +
+ + Returns: milliseconds since the initialization of the SDL library
+ +/
+ulong getTicks() @trusted
+in {
+    static if (sdlSupport >= SDLSupport.v2_0_18) {
+        assert(getVersion() >= Version(2, 0, 18));
+    }
+}
+do {
+    static if (sdlSupport >= SDLSupport.v2_0_18) {
+        return SDL_GetTicks64();
+    }
+    else {
+        return SDL_GetTicks();
+    }
+}

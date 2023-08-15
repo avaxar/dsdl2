@@ -1,7 +1,6 @@
 @safe:
 
 import std.stdio;
-import std.random;
 static import dsdl2;
 
 int main() {
@@ -19,8 +18,6 @@ int main() {
     auto surface = new dsdl2.Surface([128, 128], window.surface.pixelFormat);
     surface.fill(dsdl2.Color(255, 0, 0));
 
-    auto rnd = Random(unpredictableSeed);
-
     while (true) {
         while (auto event = dsdl2.pollEvent()) {
             if (cast(dsdl2.QuitEvent) event) {
@@ -29,7 +26,7 @@ int main() {
             }
         }
 
-        ubyte val = cast(ubyte) uniform(0, 256, rnd);
+        ubyte val = cast(ubyte) dsdl2.getTicks();
         window.surface.fill(dsdl2.Color(val, val, val));
         if (window.mouseFocused) {
             window.surface.blit(dsdl2.Point(window.mousePosition), surface);
