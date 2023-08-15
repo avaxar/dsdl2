@@ -1,0 +1,16 @@
+{
+	"authors": [
+		"Avaxar <avaxar@nekkl.org>"
+	],
+	"copyright": "Copyright © 2023, Avaxar",
+	"dependencies": {
+		"dsdl2": {
+			"path": "./../.."
+		}
+	},
+	"description": "The game of pong written in D with dsdl2.",
+	"license": "none",
+	"name": "pong",
+	"targetType": "executable",
+	"versions": ["SDL_2022"]
+}
