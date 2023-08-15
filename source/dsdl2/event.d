@@ -40,11 +40,13 @@ Event pollEvent() @trusted {
     }
 }
 
-/++ 
+/++
  + D abstract class that wraps `SDL_Event` containing details of an event polled from `dsdl2.pollEvent()`
  +/
 abstract class Event {
     SDL_Event sdlEvent; /// Internal `SDL_Event` struct
+
+    override string toString() const;
 
     /++
      + Gets the `SDL_EventType` of the underlying `SDL_Event`
@@ -295,14 +297,14 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
             return this.sdlEvent.display.display;
         }
 
-        static DisplayEvent fromSDL(SDL_Event sdlEvent)
+        static Event fromSDL(SDL_Event sdlEvent)
         in {
             assert(sdlEvent.type == SDL_DISPLAYEVENT);
         }
         do {
             switch (sdlEvent.display.event) {
             default:
-                assert(false);
+                return new UnknownEvent(sdlEvent);
 
             case SDL_DISPLAYEVENT_ORIENTATION:
                 return new DisplayOrientationEvent(sdlEvent.display.display,
@@ -388,14 +390,14 @@ abstract class WindowEvent : Event {
         return this.sdlEvent.window.windowID;
     }
 
-    static WindowEvent fromSDL(SDL_Event sdlEvent)
+    static Event fromSDL(SDL_Event sdlEvent)
     in {
         assert(sdlEvent.type == SDL_WINDOWEVENT);
     }
     do {
         switch (sdlEvent.window.event) {
         default:
-            assert(false);
+            return new UnknownEvent(sdlEvent);
 
         case SDL_WINDOWEVENT_SHOWN:
             return new WindowShownEvent(sdlEvent.window.windowID);
@@ -863,7 +865,7 @@ abstract class KeyboardEvent : Event {
         this.sdlEvent.key.keysym.mod = newMod.sdlKeymod;
     }
 
-    static KeyboardEvent fromSDL(SDL_Event sdlEvent)
+    static Event fromSDL(SDL_Event sdlEvent)
     in {
         assert(sdlEvent.type == SDL_KEYDOWN || sdlEvent.type == SDL_KEYUP);
     }
@@ -1152,7 +1154,7 @@ abstract class MouseButtonEvent : Event {
         this.sdlEvent.button.y = newXY[1];
     }
 
-    static MouseButtonEvent fromSDL(SDL_Event sdlEvent)
+    static Event fromSDL(SDL_Event sdlEvent)
     in {
         assert(sdlEvent.type == SDL_MOUSEBUTTONDOWN || sdlEvent.type == SDL_MOUSEBUTTONUP);
     }

@@ -60,6 +60,32 @@ struct Color {
     }
 
     /++
+     + Constructs a `dsdl2.Color` by feeding in an array of `r`ed, `g`reen, and `b`lue, with `a`lpha being `255`
+     +
+     + Params:
+     +   rgb = array of `r`ed, `g`reen, `b`lue values
+     +/
+    this(ubyte[3] rgb) {
+        this.sdlColor.r = rgb[0];
+        this.sdlColor.g = rgb[1];
+        this.sdlColor.b = rgb[2];
+        this.sdlColor.a = 255;
+    }
+
+    /++
+     + Constructs a `dsdl2.Color` by feeding in an array of `r`ed, `g`reen, `b`lue, and `a`lpha
+     +
+     + Params:
+     +   rgba = array of `r`ed, `g`reen, `b`lue, `a`lpha values
+     +/
+    this(ubyte[4] rgba) {
+        this.sdlColor.r = rgba[0];
+        this.sdlColor.g = rgba[1];
+        this.sdlColor.b = rgba[2];
+        this.sdlColor.a = rgba[3];
+    }
+
+    /++
      + Formats the `dsdl2.Color` into its construction representation: `"dsdl2.Color(<r>, <g>, <b>, <a>)"`
      +
      + Returns: the formatted `string`

@@ -32,7 +32,7 @@ Window getKeyboardFocusedWindow() @trusted {
 /++
  + Wraps `SDL_GetKeyboardState` which gets the current key states of the keyboard
  +
- + Returns: `bool` array of whether the keys are pressed or not as indexed by `dsdl2.Keycode`
+ + Returns: `bool` array of whether the keys are pressed or not as indexed by `dsdl2.Scancode`
  +/
 const(bool[]) getKeyboardState() @trusted {
     int numkeys = void;
