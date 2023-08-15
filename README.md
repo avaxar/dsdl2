@@ -1,6 +1,6 @@
 # dsdl2
 
- An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs, accompanied with the [bindbc-sdl](https://code.dlang.org/packages/bindbc-sdl) binding.
+ An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs compatible with `@safe` code, accompanied with the [bindbc-sdl](https://code.dlang.org/packages/bindbc-sdl) binding.
 
 ## Use
 

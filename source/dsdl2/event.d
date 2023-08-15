@@ -11,6 +11,7 @@ import bindbc.sdl;
 import dsdl2.sdl;
 import dsdl2.display;
 import dsdl2.keyboard;
+import dsdl2.mouse;
 
 import std.conv : to;
 import std.format : format;
@@ -112,6 +113,43 @@ abstract class Event {
         case SDL_KEYDOWN:
         case SDL_KEYUP:
             return KeyboardEvent.fromSDL(sdlEvent);
+
+        case SDL_TEXTEDITING:
+            return new TextEditingEvent(sdlEvent.edit.windowID, sdlEvent.edit.text.ptr.to!string,
+                sdlEvent.edit.start.to!size_t, sdlEvent.edit.length.to!size_t);
+
+        case SDL_TEXTINPUT:
+            return new TextInputEvent(sdlEvent.text.windowID, sdlEvent.text.text.ptr.to!string);
+
+            static if (sdlSupport >= SDLSupport.v2_0_4) {
+        case SDL_KEYMAPCHANGED:
+                return new KeymapChangedEvent;
+            }
+
+        case SDL_MOUSEMOTION:
+            return new MouseMotionEvent(sdlEvent.motion.windowID, sdlEvent.motion.which,
+                MouseState(sdlEvent.motion.state), [
+                sdlEvent.motion.x, sdlEvent.motion.y
+            ], [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
+
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            return MouseButtonEvent.fromSDL(sdlEvent);
+
+        case SDL_MOUSEWHEEL:
+            static if (sdlSupport >= SDLSupport.v2_0_18) {
+                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                    [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction,
+                    [sdlEvent.wheel.preciseX, sdlEvent.wheel.preciseY]);
+            }
+            else static if (sdlSupport >= SDLSupport.v2_0_4) {
+                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                    [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction);
+            }
+            else {
+                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                    [sdlEvent.wheel.x, sdlEvent.wheel.y]);
+            }
         }
     }
 }
@@ -122,7 +160,7 @@ final class UnknownEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.UnknownEvent(%s)".format(this.sdlEvent.to!string);
+        return "dsdl2.UnknownEvent(%s)".format(this.sdlEvent);
     }
 }
 
@@ -469,12 +507,12 @@ final class WindowExposedEvent : WindowEvent {
 }
 
 final class WindowMovedEvent : WindowEvent {
-    this(uint windowID, int[2] position) {
+    this(uint windowID, int[2] xy) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
         this.sdlEvent.window.event = SDL_WINDOWEVENT_MOVED;
         this.sdlEvent.window.windowID = windowID;
-        this.sdlEvent.window.data1 = position[0];
-        this.sdlEvent.window.data2 = position[1];
+        this.sdlEvent.window.data1 = xy[0];
+        this.sdlEvent.window.data2 = xy[1];
     }
 
     invariant {
@@ -482,7 +520,7 @@ final class WindowMovedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowMovedEvent(%d, [%d, %d])".format(this.windowID, this.x, this.y);
+        return "dsdl2.WindowMovedEvent(%d, %s)".format(this.windowID, this.xy);
     }
 
     ref inout(int) x() return inout @property {
@@ -493,8 +531,13 @@ final class WindowMovedEvent : WindowEvent {
         return this.sdlEvent.window.data2;
     }
 
-    int[2] position() const @property {
+    int[2] xy() const @property {
         return [this.sdlEvent.window.data1, this.sdlEvent.window.data2];
+    }
+
+    void xy(int[2] newXY) @property {
+        this.sdlEvent.window.data1 = newXY[0];
+        this.sdlEvent.window.data2 = newXY[1];
     }
 }
 
@@ -512,8 +555,7 @@ final class WindowResizedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowResizedEvent(%d, [%d, %d])".format(this.windowID, this.width,
-            this.height);
+        return "dsdl2.WindowResizedEvent(%d, %s)".format(this.windowID, this.size);
     }
 
     uint width() const @property {
@@ -537,6 +579,11 @@ final class WindowResizedEvent : WindowEvent {
             this.sdlEvent.window.data1.to!uint,
             this.sdlEvent.window.data2.to!uint
         ];
+    }
+
+    void size(uint[2] newSize) @property {
+        this.sdlEvent.window.data1 = newSize[0].to!int;
+        this.sdlEvent.window.data2 = newSize[1].to!int;
     }
 }
 
@@ -824,13 +871,13 @@ abstract class KeyboardEvent : Event {
 
         case SDL_KEYDOWN:
             return new KeyDownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
-            cast(Scancode)sdlEvent.key.keysym.scancode, cast(Keycode)sdlEvent.key.keysym.sym,
-            Keymod(sdlEvent.key.keysym.mod));
+                cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
+                Keymod(sdlEvent.key.keysym.mod));
 
         case SDL_KEYUP:
             return new KeyUpKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
-            cast(Scancode)sdlEvent.key.keysym.scancode, cast(Keycode)sdlEvent.key.keysym.sym,
-            Keymod(sdlEvent.key.keysym.mod));
+                cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
+                Keymod(sdlEvent.key.keysym.mod));
         }
     }
 }
@@ -849,7 +896,7 @@ final class KeyDownKeyboardEvent : KeyboardEvent {
         assert(this.sdlEvent.type == SDL_KEYDOWN);
     }
 
-    override string toString() const @trusted {
+    override string toString() const {
         return "dsdl2.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
             this.sym, this.mod);
     }
@@ -869,8 +916,434 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
         assert(this.sdlEvent.type == SDL_KEYUP);
     }
 
-    override string toString() const @trusted {
+    override string toString() const {
         return "dsdl2.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
             this.sym, this.mod);
+    }
+}
+
+final class TextEditingEvent : Event {
+    this(uint windowID, string text, size_t start, size_t length)
+    in {
+        assert(text.length < 32);
+    }
+    do {
+        this.sdlEvent.type = SDL_TEXTEDITING;
+        this.sdlEvent.edit.windowID = windowID;
+        this.sdlEvent.edit.text[0 .. text.length] = text[];
+        this.sdlEvent.edit.start = start.to!int;
+        this.sdlEvent.edit.length = length.to!int;
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_TEXTEDITING);
+    }
+
+    override string toString() const @trusted {
+        return "dsdl2.TextEditingEvent(%d, %s, %d, %d)".format(this.windowID,
+            [this.text].to!string[1 .. $ - 1], this.start, this.length);
+    }
+
+    ref inout(uint) windowID() return inout @property {
+        return this.sdlEvent.edit.windowID;
+    }
+
+    string text() const @property @trusted {
+        return this.sdlEvent.edit.text.ptr.to!string;
+    }
+
+    void text(string newText) @property
+    in {
+        assert(newText.length < 32);
+    }
+    do {
+        this.sdlEvent.edit.text[0 .. newText.length] = newText[];
+    }
+
+    size_t start() const @property {
+        return this.sdlEvent.edit.start.to!size_t;
+    }
+
+    void start(size_t newStart) @property {
+        this.sdlEvent.edit.start = newStart.to!int;
+    }
+
+    size_t length() const @property {
+        return this.sdlEvent.edit.length.to!size_t;
+    }
+
+    void length(size_t newLength) @property {
+        this.sdlEvent.edit.length = newLength.to!int;
+    }
+}
+
+final class TextInputEvent : Event {
+    this(uint windowID, string text)
+    in {
+        assert(text.length < 32);
+    }
+    do {
+        this.sdlEvent.type = SDL_TEXTINPUT;
+        this.sdlEvent.edit.windowID = windowID;
+        this.sdlEvent.edit.text[0 .. text.length] = text[];
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_TEXTINPUT);
+    }
+
+    override string toString() const @trusted {
+        return "dsdl2.TextInputEvent(%d, %s)".format(this.windowID,
+            [this.text].to!string[1 .. $ - 1]);
+    }
+
+    ref inout(uint) windowID() return inout @property {
+        return this.sdlEvent.edit.windowID;
+    }
+
+    string text() const @property @trusted {
+        return this.sdlEvent.edit.text.ptr.to!string;
+    }
+
+    void text(string newText) @property
+    in {
+        assert(newText.length < 32);
+    }
+    do {
+        this.sdlEvent.edit.text[0 .. newText.length] = newText[];
+    }
+}
+
+static if (sdlSupport >= SDLSupport.v2_0_4) {
+    final class KeymapChangedEvent : Event {
+        this() {
+            this.sdlEvent.type = SDL_KEYMAPCHANGED;
+        }
+
+        invariant {
+            assert(this.sdlEvent.type == SDL_KEYMAPCHANGED);
+        }
+
+        override string toString() const {
+            return "dsdl2.KeymapChangedEvent()";
+        }
+    }
+}
+
+final class MouseMotionEvent : Event {
+    this(uint windowID, uint which, MouseState state, int[2] xy, int[2] xyRel) {
+        this.sdlEvent.type = SDL_MOUSEMOTION;
+        this.sdlEvent.motion.windowID = windowID;
+        this.sdlEvent.motion.which = which;
+        this.sdlEvent.motion.state = state.sdlMouseState;
+        this.sdlEvent.motion.x = xy[0];
+        this.sdlEvent.motion.y = xy[1];
+        this.sdlEvent.motion.xrel = xyRel[0];
+        this.sdlEvent.motion.yrel = xyRel[1];
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_MOUSEMOTION);
+    }
+
+    override string toString() const {
+        return "dsdl2.MouseMotionEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
+            this.state, this.xy, this.xyRel);
+    }
+
+    ref inout(uint) windowID() return inout @property {
+        return this.sdlEvent.motion.windowID;
+    }
+
+    ref inout(uint) which() return inout @property {
+        return this.sdlEvent.motion.which;
+    }
+
+    MouseState state() const @property {
+        return MouseState(this.sdlEvent.motion.state);
+    }
+
+    void state(MouseState newState) @property {
+        this.sdlEvent.motion.state = newState.sdlMouseState;
+    }
+
+    ref inout(int) x() return inout @property {
+        return this.sdlEvent.motion.x;
+    }
+
+    ref inout(int) y() return inout @property {
+        return this.sdlEvent.motion.y;
+    }
+
+    int[2] xy() const @property {
+        return [this.sdlEvent.motion.x, this.sdlEvent.motion.y];
+    }
+
+    void xy(int[2] newXY) @property {
+        this.sdlEvent.motion.x = newXY[0];
+        this.sdlEvent.motion.y = newXY[1];
+    }
+
+    ref inout(int) xRel() return inout @property {
+        return this.sdlEvent.motion.xrel;
+    }
+
+    ref inout(int) yRel() return inout @property {
+        return this.sdlEvent.motion.yrel;
+    }
+
+    int[2] xyRel() const @property {
+        return [this.sdlEvent.motion.xrel, this.sdlEvent.motion.yrel];
+    }
+
+    void xyRel(int[2] newXYRel) @property {
+        this.sdlEvent.motion.xrel = newXYRel[0];
+        this.sdlEvent.motion.yrel = newXYRel[1];
+    }
+}
+
+abstract class MouseButtonEvent : Event {
+    invariant {
+        assert(this.sdlEvent.type == SDL_MOUSEBUTTONDOWN || this.sdlEvent.type == SDL_MOUSEBUTTONUP);
+    }
+
+    ref inout(uint) windowID() return inout @property {
+        return this.sdlEvent.button.windowID;
+    }
+
+    ref inout(uint) which() return inout @property {
+        return this.sdlEvent.button.which;
+    }
+
+    MouseButton button() const @property {
+        return cast(MouseButton) this.sdlEvent.button.button;
+    }
+
+    void button(MouseButton newButton) @property {
+        this.sdlEvent.button.button = cast(ubyte) newButton;
+    }
+
+    ref inout(ubyte) clicks() return inout @property {
+        static if (sdlSupport >= SDLSupport.v2_0_2) {
+            return this.sdlEvent.button.clicks;
+        }
+        else {
+            return this.sdlEvent.button.padding1;
+        }
+    }
+
+    ref inout(int) x() return inout @property {
+        return this.sdlEvent.button.x;
+    }
+
+    ref inout(int) y() return inout @property {
+        return this.sdlEvent.button.y;
+    }
+
+    int[2] xy() const @property {
+        return [this.sdlEvent.button.x, this.sdlEvent.button.y];
+    }
+
+    void xy(int[2] newXY) @property {
+        this.sdlEvent.button.x = newXY[0];
+        this.sdlEvent.button.y = newXY[1];
+    }
+
+    static MouseButtonEvent fromSDL(SDL_Event sdlEvent)
+    in {
+        assert(sdlEvent.type == SDL_MOUSEBUTTONDOWN || sdlEvent.type == SDL_MOUSEBUTTONUP);
+    }
+    do {
+        switch (sdlEvent.type) {
+        default:
+            assert(false);
+
+        case SDL_MOUSEBUTTONDOWN:
+            static if (sdlSupport >= SDLSupport.v2_0_2) {
+                return new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                    cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
+                    [sdlEvent.button.x, sdlEvent.button.y]);
+            }
+            else {
+                return new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                    cast(MouseButton) sdlEvent.button.button, 1,
+                    [sdlEvent.button.x, sdlEvent.button.y]);
+            }
+
+        case SDL_MOUSEBUTTONUP:
+            static if (sdlSupport >= SDLSupport.v2_0_2) {
+                return new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                    cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
+                    [sdlEvent.button.x, sdlEvent.button.y]);
+            }
+            else {
+                return new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                    cast(MouseButton) sdlEvent.button.button, 1,
+                    [sdlEvent.button.x, sdlEvent.button.y]);
+            }
+        }
+    }
+}
+
+final class MouseButtonDownEvent : MouseButtonEvent {
+    this(uint windowID, uint which, MouseButton button, ubyte clicks, int[2] xy) {
+        this.sdlEvent.type = SDL_MOUSEBUTTONDOWN;
+        this.sdlEvent.button.windowID = windowID;
+        this.sdlEvent.button.which = which;
+        this.sdlEvent.button.button = button;
+        this.sdlEvent.button.state = SDL_PRESSED;
+        static if (sdlSupport >= SDLSupport.v2_0_2) {
+            this.sdlEvent.button.clicks = clicks;
+        }
+        else {
+            this.sdlEvent.button.padding1 = clicks;
+        }
+        this.sdlEvent.button.x = xy[0];
+        this.sdlEvent.button.y = xy[1];
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_MOUSEBUTTONDOWN);
+        assert(this.sdlEvent.button.state == SDL_PRESSED);
+    }
+
+    override string toString() const {
+        return "dsdl2.MouseButtonDownEvent(%d, %d, %s, %d, %s)".format(this.windowID,
+            this.which, this.button, this.clicks, this.xy);
+    }
+}
+
+final class MouseButtonUpEvent : MouseButtonEvent {
+    this(uint windowID, uint which, MouseButton button, ubyte clicks, int[2] xy) {
+        this.sdlEvent.type = SDL_MOUSEBUTTONDOWN;
+        this.sdlEvent.button.windowID = windowID;
+        this.sdlEvent.button.which = which;
+        this.sdlEvent.button.button = button;
+        this.sdlEvent.button.state = SDL_RELEASED;
+        static if (sdlSupport >= SDLSupport.v2_0_2) {
+            this.sdlEvent.button.clicks = clicks;
+        }
+        else {
+            this.sdlEvent.button.padding1 = clicks;
+        }
+        this.sdlEvent.button.x = xy[0];
+        this.sdlEvent.button.y = xy[1];
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_MOUSEBUTTONDOWN);
+        assert(this.sdlEvent.button.state == SDL_RELEASED);
+    }
+
+    override string toString() const {
+        return "dsdl2.MouseButtonUpEvent(%d, %d, %s, %d, %s)".format(this.windowID,
+            this.which, this.button, this.clicks, this.xy);
+    }
+}
+
+final class MouseWheelEvent : Event {
+    static if (sdlSupport >= SDLSupport.v2_0_18) {
+        this(uint windowID, uint which, int[2] xy, MouseWheel direction = MouseWheel.normal,
+            float[2] preciseXY = [0.0, 0.0]) {
+            this.sdlEvent.type = SDL_MOUSEWHEEL;
+            this.sdlEvent.wheel.windowID = windowID;
+            this.sdlEvent.wheel.which = which;
+            this.sdlEvent.wheel.x = xy[0];
+            this.sdlEvent.wheel.y = xy[1];
+            this.sdlEvent.wheel.direction = cast(uint) direction;
+            this.sdlEvent.wheel.preciseX = preciseXY[0];
+            this.sdlEvent.wheel.preciseY = preciseXY[1];
+        }
+    }
+    else static if (sdlSupport >= SDLSupport.v2_0_4) {
+        this(uint windowID, uint which, int[2] xy, MouseWheel direction = MouseWheel.normal) {
+            this.sdlEvent.type = SDL_MOUSEWHEEL;
+            this.sdlEvent.wheel.windowID = windowID;
+            this.sdlEvent.wheel.which = which;
+            this.sdlEvent.wheel.x = xy[0];
+            this.sdlEvent.wheel.y = xy[1];
+            this.sdlEvent.wheel.direction = cast(uint) direction;
+        }
+    }
+    else {
+        this(uint windowID, uint which, int[2] xy) {
+            this.sdlEvent.type = SDL_MOUSEWHEEL;
+            this.sdlEvent.wheel.windowID = windowID;
+            this.sdlEvent.wheel.which = which;
+            this.sdlEvent.wheel.x = xy[0];
+            this.sdlEvent.wheel.y = xy[1];
+        }
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_MOUSEWHEEL);
+    }
+
+    ref inout(uint) windowID() return inout @property {
+        return this.sdlEvent.wheel.windowID;
+    }
+
+    override string toString() const {
+        static if (sdlSupport >= SDLSupport.v2_0_18) {
+            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
+                this.xy, this.direction, this.preciseXY);
+        }
+        else static if (sdlSupport >= SDLSupport.v2_0_4) {
+            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s)".format(this.windowID, this.which, this.xy,
+                this.direction);
+        }
+        else {
+            return "dsdl2.MouseWheelEvent(%d, %d, %s)".format(this.windowID, this.which, this.xy);
+        }
+    }
+
+    ref inout(uint) which() return inout @property {
+        return this.sdlEvent.wheel.which;
+    }
+
+    ref inout(int) x() return inout @property {
+        return this.sdlEvent.wheel.x;
+    }
+
+    ref inout(int) y() return inout @property {
+        return this.sdlEvent.wheel.y;
+    }
+
+    int[2] xy() const @property {
+        return [this.sdlEvent.wheel.x, this.sdlEvent.wheel.y];
+    }
+
+    void xy(int[2] newXY) @property {
+        this.sdlEvent.wheel.x = newXY[0];
+        this.sdlEvent.wheel.y = newXY[1];
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_4) {
+        MouseWheel direction() const @property {
+            return cast(MouseWheel) this.sdlEvent.wheel.direction;
+        }
+
+        void direction(MouseWheel newDirection) @property {
+            this.sdlEvent.wheel.direction = cast(uint) newDirection;
+        }
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_18) {
+        ref inout(float) preciseX() return inout @property {
+            return this.sdlEvent.wheel.preciseX;
+        }
+
+        ref inout(float) preciseY() return inout @property {
+            return this.sdlEvent.wheel.preciseY;
+        }
+
+        float[2] preciseXY() const @property {
+            return [this.sdlEvent.wheel.preciseX, this.sdlEvent.wheel.preciseY];
+        }
+
+        void preciseXY(float[2] newXY) @property {
+            this.sdlEvent.wheel.preciseX = newXY[0];
+            this.sdlEvent.wheel.preciseY = newXY[1];
+        }
     }
 }

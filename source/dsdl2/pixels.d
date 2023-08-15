@@ -114,6 +114,19 @@ struct Color {
             this.sdlColor.r, this.sdlColor.g, this.sdlColor.b, this.sdlColor.a
         ];
     }
+
+    /++
+     + Sets the `dsdl2.Color` through an array
+     +
+     + Params:
+     +   newArray = array of `r`, `g`, `b`, and `a`
+     +/
+    void array(ubyte[4] newArray) @property {
+        this.sdlColor.r = newArray[0];
+        this.sdlColor.g = newArray[1];
+        this.sdlColor.b = newArray[2];
+        this.sdlColor.a = newArray[3];
+    }
 }
 
 /++

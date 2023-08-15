@@ -14,7 +14,7 @@ import std.format : format;
 
 static if (sdlSupport >= SDLSupport.v2_0_6) {
     /++
-     + D enum that wraps `SDL_BlendOperation` defining blending operations
+     + D enum that wraps `SDL_BlendOperation` (from SDL 2.0.6) defining blending operations
      +/
     enum BlendOperation {
         /++
@@ -28,7 +28,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
     }
 
     /++
-     + D enum that wraps `SDL_BlendFactor` defining blending multipliers
+     + D enum that wraps `SDL_BlendFactor` (from SDL 2.0.6) defining blending multipliers
      +/
     enum BlendFactor {
         /++

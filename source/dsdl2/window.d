@@ -49,17 +49,37 @@ static if (sdlSupport >= SDLSupport.v2_0_16) {
         inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
         mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
         foreign = SDL_WINDOW_FOREIGN, /// ditto
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI, /// ditto
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE, /// ditto
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP, /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
+         +/
+        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
+         +/
+        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
+         +/
+        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
         skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
         utility = SDL_WINDOW_UTILITY, /// ditto
         tooltip = SDL_WINDOW_TOOLTIP, /// ditto
         popupMenu = SDL_WINDOW_POPUP_MENU, /// ditto
-        vulkan = SDL_WINDOW_VULKAN, /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.6)
+         +/
+        vulkan = SDL_WINDOW_VULKAN,
         metal = SDL_WINDOW_METAL, /// ditto
-        mouseGrabbed = SDL_WINDOW_MOUSE_GRABBED, /// ditto
-        keyboardGrabbed = SDL_WINDOW_KEYBOARD_GRABBED
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.16)
+         +/
+        mouseGrabbed = SDL_WINDOW_MOUSE_GRABBED,
+        keyboardGrabbed = SDL_WINDOW_KEYBOARD_GRABBED /// ditto
     }
 }
 else static if (sdlSupport >= SDLSupport.v2_0_6) {
@@ -83,14 +103,30 @@ else static if (sdlSupport >= SDLSupport.v2_0_6) {
         inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
         mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
         foreign = SDL_WINDOW_FOREIGN, /// ditto
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI, /// ditto
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE, /// ditto
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP, /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
+         +/
+        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
+         +/
+        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
+         +/
+        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
         skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
         utility = SDL_WINDOW_UTILITY, /// ditto
         tooltip = SDL_WINDOW_TOOLTIP, /// ditto
         popupMenu = SDL_WINDOW_POPUP_MENU, /// ditto
-        vulkan = SDL_WINDOW_VULKAN, /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.6)
+         +/
+        vulkan = SDL_WINDOW_VULKAN,
         metal = SDL_WINDOW_METAL /// ditto
     }
 }
@@ -115,9 +151,21 @@ else static if (sdlSupport >= SDLSupport.v2_0_5) {
         inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
         mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
         foreign = SDL_WINDOW_FOREIGN, /// ditto
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI, /// ditto
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE, /// ditto
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP, /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
+         +/
+        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
+         +/
+        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
+         +/
+        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
         skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
         utility = SDL_WINDOW_UTILITY, /// ditto
         tooltip = SDL_WINDOW_TOOLTIP, /// ditto
@@ -145,8 +193,16 @@ else static if (sdlSupport >= SDLSupport.v2_0_4) {
         inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
         mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
         foreign = SDL_WINDOW_FOREIGN, /// ditto
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI, /// ditto
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
+         +/
+        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
+         +/
+        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE
     }
 }
 else static if (sdlSupport >= SDLSupport.v2_0_1) {
@@ -170,7 +226,11 @@ else static if (sdlSupport >= SDLSupport.v2_0_1) {
         inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
         mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
         foreign = SDL_WINDOW_FOREIGN, /// ditto
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI /// ditto
+
+        /++
+         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
+         +/
+        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI
     }
 }
 else {
@@ -330,6 +390,15 @@ final class Window {
      +/
     bool opEquals(const Window rhs) const @trusted {
         return this.sdlWindow == rhs.sdlWindow;
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.Window`
+     +
+     + Returns: unique hash for the instance being the pointer of the internal `SDL_Window` pointer
+     +/
+    override hash_t toHash() const @trusted {
+        return cast(hash_t) this.sdlWindow;
     }
 
     /++

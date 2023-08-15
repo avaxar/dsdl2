@@ -227,7 +227,7 @@ struct Keymod {
      +
      + Returns: the formatted `string`
      +/
-    string toString() const @property {
+    string toString() const {
         return "dsdl2.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,
             this.lShift, this.rShift, this.lCtrl, this.rCtrl, this.lAlt, this.rAlt, this.lGUI, this.rGUI,
             this.num, this.caps, this.mode, this.scroll);
