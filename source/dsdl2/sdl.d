@@ -369,7 +369,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
     }
 }
 
-/++ 
+/++
  + Wraps `SDL_GetTicks` or `SDL_GetTicks64` on SDL 2.0.18 which gets the time since the SDL library was initialized
  + in milliseconds
  +
