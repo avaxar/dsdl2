@@ -104,7 +104,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++
          + Element-wise operator assignment overload
          +/
-        ref inout(FPoint) opOpAssign(string op)(const FPoint other) inout {
+        ref inout(FPoint) opOpAssign(string op)(const FPoint other) return inout {
             mixin("this.x" ~ op ~ "=other.x");
             mixin("this.y" ~ op ~ "=other.y");
             return this;
@@ -113,8 +113,8 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++
          + Operator assignment overload with scalars
          +/
-        ref inout(FPoint) opOpAssign(string op)(const float scalar) inout
-        if (op == "*" || op == "/") {
+        ref inout(FPoint) opOpAssign(string op)(const float scalar) return inout
+                if (op == "*" || op == "/") {
             mixin("this.x" ~ op ~ "=scalar");
             mixin("this.y" ~ op ~ "=scalar");
             return this;
@@ -132,7 +132,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++
          + Proxy to the X value of the `dsdl2.FPoint`
          +
-         + Returns: X value of the `dsdl2.Point`
+         + Returns: X value of the `dsdl2.FPoint`
          +/
         ref inout(float) x() return inout @property {
             return this.sdlFPoint.x;
@@ -141,30 +141,19 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++
          + Proxy to the Y value of the `dsdl2.FPoint`
          +
-         + Returns: Y value of the `dsdl2.Point`
+         + Returns: Y value of the `dsdl2.FPoint`
          +/
         ref inout(float) y() return inout @property {
             return this.sdlFPoint.y;
         }
 
-        /++
-         + Gets the static array representation of the `dsdl2.FPoint`
+        /++ 
+         + Static array proxy of the `dsdl2.FPoint`
          +
-         + Returns: X and Y as an array
+         + Returns: array of `x` and `y`
          +/
-        float[2] array() const @property {
-            return [this.sdlFPoint.x, this.sdlFPoint.y];
-        }
-
-        /++
-         + Sets the `dsdl2.FPoint` through an array
-         +
-         + Params:
-         +   newArray = array of `x` and `y`
-         +/
-        void array(float[2] newArray) @property {
-            this.sdlFPoint.x = newArray[0];
-            this.sdlFPoint.y = newArray[1];
+        ref inout(float[2]) array() return inout @property @trusted {
+            return *cast(inout(float[2]*))&this.sdlFPoint;
         }
     }
 
@@ -258,7 +247,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
          + Operator assignment overload template to move rectangle's position in-place by an `offset` as a
          + `dsdl2.FPoint`
          +/
-        ref inout(FPoint) opOpAssign(string op)(const FPoint offset) inout {
+        ref inout(FPoint) opOpAssign(string op)(const FPoint offset) return inout {
             mixin("this.x" ~ op ~ "=offset.x");
             mixin("this.y" ~ op ~ "=offset.y");
             return this;
@@ -291,24 +280,13 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return this.sdlFRect.y;
         }
 
-        /++
-         + Gets the `dsdl2.FPoint` representation for the X and Y of the `dsdl2.FRect`
-         +
-         + Returns: `dsdl2.FPoint` with X and Y of the `dsdl2.FRect`
+        /++ 
+         + Proxy to the `dsdl2.FPoint` containing the `x` and `y` value of the `dsdl2.FRect`
+         + 
+         + Returns: reference to the `dsdl2.FPoint` structure
          +/
-        FPoint point() const @property {
-            return FPoint(this.sdlFRect.x, this.sdlFRect.y);
-        }
-
-        /++
-         + Sets the `dsdl2.Rect`'s `x` and `y` through a `dsdl2.FPoint`
-         +
-         + Params:
-         +   newPoint = `dsdl2.Point` containing the new `x` and `y` values
-         +/
-        void point(FPoint newPoint) @property {
-            this.sdlFRect.x = newPoint.x;
-            this.sdlFRect.y = newPoint.y;
+        ref inout(FPoint) point() return inout @property @trusted {
+            return *cast(inout(FPoint*))&this.sdlFRect.x;
         }
 
         /++
@@ -321,32 +299,21 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         }
 
         /++
-         + Proxy to the height of the `dsdl2.Rect`
+         + Proxy to the height of the `dsdl2.FRect`
          +
-         + Returns: height of the `dsdl2.Rect`
+         + Returns: height of the `dsdl2.FRect`
          +/
         ref inout(float) height() return inout @property {
             return this.sdlFRect.h;
         }
 
-        /++
-         + Gets the static array representation of the width and height of the `dsdl2.FRect`
-         +
-         + Returns: width and height as an array
+        /++ 
+         + Proxy to the size array containing the `width` and `height` of the `dsdl2.FRect` 
+         + 
+         + Returns: reference to the static `float[2]` array
          +/
-        float[2] size() const @property {
-            return [this.sdlFRect.w, this.sdlFRect.h];
-        }
-
-        /++
-         + Sets the `dsdl2.FRect`'s `width` and `height` through an array
-         +
-         + Params:
-         +   newSize = array of `width` and `height`
-         +/
-        void size(float[2] newSize) @property {
-            this.sdlFRect.w = newSize[0];
-            this.sdlFRect.h = newSize[1];
+        ref inout(float[2]) size() return inout @property @trusted {
+            return *cast(inout(float[2]*))&this.sdlFRect.w;
         }
 
         static if (sdlSupport >= SDLSupport.v2_0_22) {

@@ -262,6 +262,11 @@ final class Surface {
         return this.sdlSurface.pitch;
     }
 
+    /++ 
+     + Gets the used color palette of the `dsdl2.Surface`
+     +
+     + Returns: `dsdl2.Palette` instance of the `dsdl2.Surface`
+     +/
     inout(Palette) palette() inout @property @trusted
     in {
         assert(this.pixelFormat.isIndexed);
@@ -270,6 +275,12 @@ final class Surface {
         return (cast(inout PixelFormat) this.pixelFormat).palette;
     }
 
+    /++ 
+     + Sets the color palette of the `dsdl2.Surface`
+     +
+     + Params:
+     +   newPalette = new `dsdl2.Palette` instance to use for the `dsdl2.Surface`
+     +/
     void palette(Palette newPalette) @property @trusted
     in {
         assert(this.pixelFormat.isIndexed);
