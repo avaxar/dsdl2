@@ -95,63 +95,48 @@ struct Color {
     }
 
     /++
-     + Proxy to the red color value of the `dsdl2.Point`
+     + Proxy to the red color value of the `dsdl2.Color`
      +
-     + Returns: red color value of the `dsdl2.Point`
+     + Returns: red color value of the `dsdl2.Color`
      +/
     ref inout(ubyte) r() return inout @property {
         return this.sdlColor.r;
     }
 
     /++
-     + Proxy to the green color value of the `dsdl2.Point`
+     + Proxy to the green color value of the `dsdl2.Color`
      +
-     + Returns: green color value of the `dsdl2.Point`
+     + Returns: green color value of the `dsdl2.Color`
      +/
     ref inout(ubyte) g() return inout @property {
         return this.sdlColor.g;
     }
 
     /++
-     + Proxy to the blue color value of the `dsdl2.Point`
+     + Proxy to the blue color value of the `dsdl2.Color`
      +
-     + Returns: blue color value of the `dsdl2.Point`
+     + Returns: blue color value of the `dsdl2.Color`
      +/
     ref inout(ubyte) b() return inout @property {
         return this.sdlColor.b;
     }
 
     /++
-     + Proxy to the alpha transparency value of the `dsdl2.Point`
+     + Proxy to the alpha transparency value of the `dsdl2.Color`
      +
-     + Returns: alpha transparency value of the `dsdl2.Point`
+     + Returns: alpha transparency value of the `dsdl2.Color`
      +/
     ref inout(ubyte) a() return inout @property {
         return this.sdlColor.a;
     }
 
     /++
-     + Gets the static array representation of the `dsdl2.Color`
-     +
-     + Returns: RGBA as an array
+     + Static array proxy of the `dsdl2.Color`
+     + 
+     + Returns: array of `r`, `g`, `b`, `a`
      +/
-    ubyte[4] array() const @property {
-        return [
-            this.sdlColor.r, this.sdlColor.g, this.sdlColor.b, this.sdlColor.a
-        ];
-    }
-
-    /++
-     + Sets the `dsdl2.Color` through an array
-     +
-     + Params:
-     +   newArray = array of `r`, `g`, `b`, and `a`
-     +/
-    void array(ubyte[4] newArray) @property {
-        this.sdlColor.r = newArray[0];
-        this.sdlColor.g = newArray[1];
-        this.sdlColor.b = newArray[2];
-        this.sdlColor.a = newArray[3];
+    ref inout(ubyte[4]) array() return inout @property @trusted {
+        return *cast(inout(ubyte[4]*))&this.sdlColor;
     }
 }
 
@@ -266,7 +251,7 @@ final class Palette {
     /++
      + Indexing operation overload
      +/
-    ref inout(Color) opIndex(size_t i) inout @trusted
+    ref inout(Color) opIndex(size_t i) return inout @trusted
     in {
         assert(0 <= i && i < this.length);
     }
@@ -644,7 +629,7 @@ final class PixelFormat {
      +
      + Returns: the bound `dsdl2.Palette`
      +/
-    inout(Palette) palette() inout @property @trusted
+    inout(Palette) palette() return inout @property @trusted
     in {
         assert(this.isIndexed);
     }

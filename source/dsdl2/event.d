@@ -335,12 +335,8 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
             return "dsdl2.DisplayOrientationEvent(%d, %d)".format(this.display, this.orientation);
         }
 
-        DisplayOrientation orientation() const @property {
-            return cast(DisplayOrientation) this.sdlEvent.display.data1;
-        }
-
-        void orientation(DisplayOrientation newOrientation) @property {
-            this.sdlEvent.display.data1 = newOrientation;
+        ref inout(DisplayOrientation) orientation() return inout @property @trusted {
+            return *cast(inout(DisplayOrientation*))&this.sdlEvent.display.data1;
         }
     }
 
@@ -536,13 +532,8 @@ final class WindowMovedEvent : WindowEvent {
         return this.sdlEvent.window.data2;
     }
 
-    int[2] xy() const @property {
-        return [this.sdlEvent.window.data1, this.sdlEvent.window.data2];
-    }
-
-    void xy(int[2] newXY) @property {
-        this.sdlEvent.window.data1 = newXY[0];
-        this.sdlEvent.window.data2 = newXY[1];
+    ref inout(int[2]) xy() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlEvent.window.data1;
     }
 }
 
@@ -563,32 +554,16 @@ final class WindowResizedEvent : WindowEvent {
         return "dsdl2.WindowResizedEvent(%d, %s)".format(this.windowID, this.size);
     }
 
-    uint width() const @property {
-        return this.sdlEvent.window.data1.to!uint;
+    ref inout(uint) width() return inout @property @trusted {
+        return *cast(inout(uint*))&this.sdlEvent.window.data1;
     }
 
-    void width(uint newWidth) @property {
-        this.sdlEvent.window.data1 = newWidth.to!int;
+    ref inout(uint) height() return inout @property @trusted {
+        return *cast(inout(uint*))&this.sdlEvent.window.data2;
     }
 
-    uint height() const @property {
-        return this.sdlEvent.window.data2.to!uint;
-    }
-
-    void height(uint newHeight) @property {
-        this.sdlEvent.window.data2 = newHeight.to!int;
-    }
-
-    uint[2] size() const @property {
-        return [
-            this.sdlEvent.window.data1.to!uint,
-            this.sdlEvent.window.data2.to!uint
-        ];
-    }
-
-    void size(uint[2] newSize) @property {
-        this.sdlEvent.window.data1 = newSize[0].to!int;
-        this.sdlEvent.window.data2 = newSize[1].to!int;
+    ref inout(uint[2]) size() return inout @property @trusted {
+        return *cast(inout(uint[2]*))&this.sdlEvent.window.data1;
     }
 }
 
@@ -841,20 +816,12 @@ abstract class KeyboardEvent : Event {
         return this.sdlEvent.key.repeat;
     }
 
-    Scancode scancode() const @property {
-        return cast(Scancode) this.sdlEvent.key.keysym.scancode;
+    ref inout(Scancode) scancode() return inout @property @trusted {
+        return *cast(inout(Scancode*))&this.sdlEvent.key.keysym.scancode;
     }
 
-    void scancode(Scancode newScancode) @property {
-        this.sdlEvent.key.keysym.scancode = cast(SDL_Scancode) newScancode;
-    }
-
-    Keycode sym() const @property {
-        return cast(Keycode) this.sdlEvent.key.keysym.sym;
-    }
-
-    void sym(Keycode newSym) @property {
-        this.sdlEvent.key.keysym.sym = cast(SDL_Keycode) newSym;
+    ref inout(Keycode) sym() return inout @property @trusted {
+        return *cast(inout(Keycode*))&this.sdlEvent.key.keysym.sym;
     }
 
     Keymod mod() const @property {
@@ -965,20 +932,12 @@ final class TextEditingEvent : Event {
         this.sdlEvent.edit.text[0 .. newText.length] = newText[];
     }
 
-    size_t start() const @property {
-        return this.sdlEvent.edit.start.to!size_t;
+    ref inout(uint) start() return inout @property {
+        return *cast(inout(uint*))&this.sdlEvent.edit.start;
     }
 
-    void start(size_t newStart) @property {
-        this.sdlEvent.edit.start = newStart.to!int;
-    }
-
-    size_t length() const @property {
-        return this.sdlEvent.edit.length.to!size_t;
-    }
-
-    void length(size_t newLength) @property {
-        this.sdlEvent.edit.length = newLength.to!int;
+    ref inout(uint) length() return inout @property {
+        return *cast(inout(uint*))&this.sdlEvent.edit.length;
     }
 }
 
@@ -1080,13 +1039,8 @@ final class MouseMotionEvent : Event {
         return this.sdlEvent.motion.y;
     }
 
-    int[2] xy() const @property {
-        return [this.sdlEvent.motion.x, this.sdlEvent.motion.y];
-    }
-
-    void xy(int[2] newXY) @property {
-        this.sdlEvent.motion.x = newXY[0];
-        this.sdlEvent.motion.y = newXY[1];
+    ref inout(int[2]) xy() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlEvent.motion.x;
     }
 
     ref inout(int) xRel() return inout @property {
@@ -1097,13 +1051,8 @@ final class MouseMotionEvent : Event {
         return this.sdlEvent.motion.yrel;
     }
 
-    int[2] xyRel() const @property {
-        return [this.sdlEvent.motion.xrel, this.sdlEvent.motion.yrel];
-    }
-
-    void xyRel(int[2] newXYRel) @property {
-        this.sdlEvent.motion.xrel = newXYRel[0];
-        this.sdlEvent.motion.yrel = newXYRel[1];
+    ref inout(int[2]) xyRel() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlEvent.motion.xrel;
     }
 }
 
@@ -1120,12 +1069,8 @@ abstract class MouseButtonEvent : Event {
         return this.sdlEvent.button.which;
     }
 
-    MouseButton button() const @property {
-        return cast(MouseButton) this.sdlEvent.button.button;
-    }
-
-    void button(MouseButton newButton) @property {
-        this.sdlEvent.button.button = cast(ubyte) newButton;
+    ref inout(MouseButton) button() inout @property @trusted {
+        return *cast(inout(MouseButton*))&this.sdlEvent.button.button;
     }
 
     ref inout(ubyte) clicks() return inout @property {
@@ -1145,13 +1090,8 @@ abstract class MouseButtonEvent : Event {
         return this.sdlEvent.button.y;
     }
 
-    int[2] xy() const @property {
-        return [this.sdlEvent.button.x, this.sdlEvent.button.y];
-    }
-
-    void xy(int[2] newXY) @property {
-        this.sdlEvent.button.x = newXY[0];
-        this.sdlEvent.button.y = newXY[1];
+    ref inout(int[2]) xy() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlEvent.button.x;
     }
 
     static Event fromSDL(SDL_Event sdlEvent)
@@ -1314,22 +1254,13 @@ final class MouseWheelEvent : Event {
         return this.sdlEvent.wheel.y;
     }
 
-    int[2] xy() const @property {
-        return [this.sdlEvent.wheel.x, this.sdlEvent.wheel.y];
-    }
-
-    void xy(int[2] newXY) @property {
-        this.sdlEvent.wheel.x = newXY[0];
-        this.sdlEvent.wheel.y = newXY[1];
+    ref inout(int[2]) xy() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlEvent.wheel.x;
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_4) {
-        MouseWheel direction() const @property {
-            return cast(MouseWheel) this.sdlEvent.wheel.direction;
-        }
-
-        void direction(MouseWheel newDirection) @property {
-            this.sdlEvent.wheel.direction = cast(uint) newDirection;
+        ref inout(MouseWheel) direction() return inout @property @trusted {
+            return *cast(inout(MouseWheel*))&this.sdlEvent.wheel.direction;
         }
     }
 
@@ -1342,13 +1273,8 @@ final class MouseWheelEvent : Event {
             return this.sdlEvent.wheel.preciseY;
         }
 
-        float[2] preciseXY() const @property {
-            return [this.sdlEvent.wheel.preciseX, this.sdlEvent.wheel.preciseY];
-        }
-
-        void preciseXY(float[2] newXY) @property {
-            this.sdlEvent.wheel.preciseX = newXY[0];
-            this.sdlEvent.wheel.preciseY = newXY[1];
+        ref inout(float[2]) preciseXY() return inout @property @trusted {
+            return *cast(inout(float[2]*))&this.sdlEvent.wheel.preciseX;
         }
     }
 }

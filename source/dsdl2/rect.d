@@ -106,7 +106,7 @@ struct Point {
     /++
      + Element-wise operator assignment overload
      +/
-    ref inout(Point) opOpAssign(string op)(const Point other) inout {
+    ref inout(Point) opOpAssign(string op)(const Point other) return inout {
         mixin("this.x" ~ op ~ "=other.x");
         mixin("this.y" ~ op ~ "=other.y");
         return this;
@@ -115,7 +115,7 @@ struct Point {
     /++
      + Operator assignment overload with scalars
      +/
-    ref inout(Point) opOpAssign(string op)(const int scalar) inout
+    ref inout(Point) opOpAssign(string op)(const int scalar) return inout
     if (op == "*" || op == "/") {
         mixin("this.x" ~ op ~ "=scalar");
         mixin("this.y" ~ op ~ "=scalar");
@@ -149,24 +149,13 @@ struct Point {
         return this.sdlPoint.y;
     }
 
-    /++
-     + Gets the static array representation of the `dsdl2.Point`
+    /++ 
+     + Static array proxy of the `dsdl2.Point`
      +
-     + Returns: X and Y as an array
+     + Returns: array of `x` and `y`
      +/
-    int[2] array() const @property {
-        return [this.sdlPoint.x, this.sdlPoint.y];
-    }
-
-    /++
-     + Sets the `dsdl2.Point` through an array
-     +
-     + Params:
-     +   newArray = array of `x` and `y`
-     +/
-    void array(int[2] newArray) @property {
-        this.sdlPoint.x = newArray[0];
-        this.sdlPoint.y = newArray[1];
+    ref inout(int[2]) array() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlPoint;
     }
 }
 
@@ -258,7 +247,7 @@ struct Rect {
     /++
      + Operator assignment overload template to move rectangle's position in-place by an `offset` as a `dsdl2.Point`
      +/
-    ref inout(Point) opOpAssign(string op)(const Point offset) inout {
+    ref inout(Point) opOpAssign(string op)(const Point offset) return inout {
         mixin("this.x" ~ op ~ "=offset.x");
         mixin("this.y" ~ op ~ "=offset.y");
         return this;
@@ -291,24 +280,13 @@ struct Rect {
         return this.sdlRect.y;
     }
 
-    /++
-     + Gets the `dsdl2.Point` representation for the X and Y of the `dsdl2.Rect`
-     +
-     + Returns: `dsdl2.Point` with X and Y of the `dsdl2.Rect`
+    /++ 
+     + Proxy to the `dsdl2.Point` containing the `x` and `y` value of the `dsdl2.Rect`
+     + 
+     + Returns: reference to the `dsdl2.Point` structure
      +/
-    Point point() const @property {
-        return Point(this.sdlRect.x, this.sdlRect.y);
-    }
-
-    /++
-     + Sets the `dsdl2.Rect`'s `x` and `y` through a `dsdl2.Point`
-     +
-     + Params:
-     +   newPoint = `dsdl2.Point` containing the new `x` and `y` values
-     +/
-    void point(Point newPoint) @property {
-        this.sdlRect.x = newPoint.x;
-        this.sdlRect.y = newPoint.y;
+    ref inout(Point) point() return inout @property @trusted {
+        return *cast(inout(Point*))&this.sdlRect.x;
     }
 
     /++
@@ -329,24 +307,13 @@ struct Rect {
         return this.sdlRect.h;
     }
 
-    /++
-     + Gets the static array representation of the width and height of the `dsdl2.Rect`
-     +
-     + Returns: width and height as an array
+    /++ 
+     + Proxy to the size array containing the `width` and `height` of the `dsdl2.Rect` 
+     + 
+     + Returns: reference to the static `int[2]` array
      +/
-    int[2] size() const @property {
-        return [this.sdlRect.w, this.sdlRect.h];
-    }
-
-    /++
-     + Sets the `dsdl2.Rect`'s `width` and `height` through an array
-     +
-     + Params:
-     +   newSize = array of `width` and `height`
-     +/
-    void size(int[2] newSize) @property {
-        this.sdlRect.w = newSize[0];
-        this.sdlRect.h = newSize[1];
+    ref inout(int[2]) size() return inout @property @trusted {
+        return *cast(inout(int[2]*))&this.sdlRect.w;
     }
 
     /++
