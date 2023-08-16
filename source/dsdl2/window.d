@@ -543,6 +543,50 @@ final class Window {
     }
 
     /++
+     + Wraps `SDL_GetWindowPosition` which gets the top-left X coordinate position of the window in
+     + the desktop environment
+     +
+     + Returns: top-left X coordinate position of the window in the desktop environment
+     +/
+    int x() const @property @trusted {
+        int x;
+        SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, &x, null);
+        return x;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowPosition` which sets the X position of the window in the desktop environment
+     +
+     + Params:
+     +   newX = top-left X coordinate of the new window position in the desktop environment
+     +/
+    void x(int newX) @property @trusted {
+        SDL_SetWindowPosition(this.sdlWindow, newX, this.y);
+    }
+
+    /++
+     + Wraps `SDL_GetWindowPosition` which gets the top-left Y coordinate position of the window in
+     + the desktop environment
+     +
+     + Returns: top-left Y coordinate position of the window in the desktop environment
+     +/
+    int y() const @property @trusted {
+        int y;
+        SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, null, &y);
+        return y;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowPosition` which sets the Y position of the window in the desktop environment
+     +
+     + Params:
+     +   newY = top-left Y coordinate of the new window position in the desktop environment
+     +/
+    void y(int newY) @property @trusted {
+        SDL_SetWindowPosition(this.sdlWindow, this.x, newY);
+    }
+
+    /++
      + Wraps `SDL_GetWindowPosition` which gets the top-left coordinate position of the window in
      + the desktop environment
      +
@@ -565,6 +609,48 @@ final class Window {
     }
 
     /++
+     + Wraps `SDL_GetWindowSize` which gets the drawable width of the window in pixels
+     +
+     + Returns: drawable width of the window in pixels
+     +/
+    uint width() const @property @trusted {
+        uint w;
+        SDL_GetWindowSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&w, null);
+        return w;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowSize` which resizes the width of the window in pixels
+     +
+     + Params:
+     +   newWidth = new resized width of the window in pixels
+     +/
+    void width(uint newWidth) @property @trusted {
+        SDL_SetWindowSize(this.sdlWindow, newWidth.to!int, this.height);
+    }
+
+    /++ 
+     + Wraps `SDL_GetWindowSize` which gets the drawable height of the window in pixels
+     +
+     + Returns: drawable height of the window in pixels
+     +/
+    uint height() const @property @trusted {
+        uint h;
+        SDL_GetWindowSize(cast(SDL_Window*) this.sdlWindow, null, cast(int*)&h);
+        return h;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowSize` which resizes the height of the window in pixels
+     +
+     + Params:
+     +   newHeight = new resized height of the window in pixels
+     +/
+    void height(uint newHeight) @property @trusted {
+        SDL_SetWindowSize(this.sdlWindow, this.width, newHeight.to!int);
+    }
+
+    /++
      + Wraps `SDL_GetWindowSize` which gets the drawable size of the window in pixels
      +
      + Returns: drawable size of the window in pixels
@@ -576,10 +662,10 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_SetWindowSize` which sets the drawable size of the window in pixels
+     + Wraps `SDL_SetWindowSize` which resizes the size of the window in pixels
      +
      + Params:
-     +   newSize = drawable new size of the window in pixels (width and height)
+     +   newSize = new resized size of the window in pixels (width and height)
      +/
     void size(uint[2] newSize) @property @trusted {
         SDL_SetWindowSize(this.sdlWindow, newSize[0].to!int, newSize[1].to!int);

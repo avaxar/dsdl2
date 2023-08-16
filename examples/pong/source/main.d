@@ -21,7 +21,7 @@ void main() {
     auto playerB = dsdl2.FRect(780, 250, 10, 100);
 
     float ballSpeed = 300.0;
-    float ballDirection = uniform(0.0, 2.0 * PI, rand);
+    float ballDirection = uniform(-PI, PI, rand);
     auto ball = dsdl2.FRect(390, 290, 20, 20);
 
     bool running = true;
@@ -62,14 +62,14 @@ void main() {
         if (playerA.y < 10) {
             playerA.y = 10;
         }
-        if (playerA.y > 600 - playerA.height - 10) {
-            playerA.y = 600 - playerA.height - 10;
+        if (playerA.y > window.height - playerA.height - 10) {
+            playerA.y = window.height - playerA.height - 10;
         }
         if (playerB.y < 10) {
             playerB.y = 10;
         }
-        if (playerB.y > 600 - playerB.height - 10) {
-            playerB.y = 600 - playerB.height - 10;
+        if (playerB.y > window.height - playerB.height - 10) {
+            playerB.y = window.height - playerB.height - 10;
         }
 
         // Bounces the ball from the walls
@@ -77,8 +77,8 @@ void main() {
             ball.y = 0;
             ballDirection = PI - ballDirection;
         }
-        if (ball.y > 600 - ball.height) {
-            ball.y = 600 - ball.height;
+        if (ball.y > window.height - ball.height) {
+            ball.y = window.height - ball.height;
             ballDirection = PI - ballDirection;
         }
 
@@ -93,8 +93,9 @@ void main() {
         }
 
         // If the ball hits the left or right side of the screen, reset the game
-        if (ball.x < 0 || ball.x + ball.width > 800) {
-            ball.point = dsdl2.FPoint(390, 290);
+        if (ball.x < 0 || ball.x + ball.width > window.width) {
+            ball.point = dsdl2.FPoint((window.width - ball.width) / 2,
+                (window.size[1] - ball.height) / 2);
             ballDirection = uniform(0.0, 2.0 * PI, rand);
         }
 
