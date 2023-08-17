@@ -262,7 +262,7 @@ final class Surface {
         return this.sdlSurface.pitch;
     }
 
-    /++ 
+    /++
      + Gets the used color palette of the `dsdl2.Surface`
      +
      + Returns: `dsdl2.Palette` instance of the `dsdl2.Surface`
@@ -275,7 +275,7 @@ final class Surface {
         return (cast(inout PixelFormat) this.pixelFormat).palette;
     }
 
-    /++ 
+    /++
      + Sets the color palette of the `dsdl2.Surface`
      +
      + Params:

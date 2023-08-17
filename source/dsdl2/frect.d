@@ -147,7 +147,7 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return this.sdlFPoint.y;
         }
 
-        /++ 
+        /++
          + Static array proxy of the `dsdl2.FPoint`
          +
          + Returns: array of `x` and `y`
@@ -280,9 +280,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return this.sdlFRect.y;
         }
 
-        /++ 
+        /++
          + Proxy to the `dsdl2.FPoint` containing the `x` and `y` value of the `dsdl2.FRect`
-         + 
+         +
          + Returns: reference to the `dsdl2.FPoint` structure
          +/
         ref inout(FPoint) point() return inout @property @trusted {
@@ -307,9 +307,9 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
             return this.sdlFRect.h;
         }
 
-        /++ 
-         + Proxy to the size array containing the `width` and `height` of the `dsdl2.FRect` 
-         + 
+        /++
+         + Proxy to the size array containing the `width` and `height` of the `dsdl2.FRect`
+         +
          + Returns: reference to the static `float[2]` array
          +/
         ref inout(float[2]) size() return inout @property @trusted {

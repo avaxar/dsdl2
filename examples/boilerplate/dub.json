@@ -11,6 +11,5 @@
 	"description": "A boilerplate DSDL2 application.",
 	"license": "none",
 	"name": "boilerplate",
-	"targetType": "executable",
-	"versions": ["SDL_2_26"]
+	"targetType": "executable"
 }

@@ -132,7 +132,7 @@ struct Color {
 
     /++
      + Static array proxy of the `dsdl2.Color`
-     + 
+     +
      + Returns: array of `r`, `g`, `b`, `a`
      +/
     ref inout(ubyte[4]) array() return inout @property @trusted {
