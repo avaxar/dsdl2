@@ -629,7 +629,7 @@ final class Window {
         SDL_SetWindowSize(this.sdlWindow, newWidth.to!int, this.height);
     }
 
-    /++ 
+    /++
      + Wraps `SDL_GetWindowSize` which gets the drawable height of the window in pixels
      +
      + Returns: drawable height of the window in pixels
@@ -942,6 +942,30 @@ final class Window {
         }
 
         return this.surfaceProxy;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_28) {
+        /++
+         + Wraps `SDL_DestroyWindowSurface` (from SDL 2.28) which destructs the underlying associated surface
+         + of the window
+         +
+         + Throws: `dsdl2.SDLException` if failed to destruct the surface
+         +/
+        void surface(typeof(null) _) @property @trusted {
+            if (SDL_DestroyWindowSurface(this.sdlWindow) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        /++
+         + Wraps `SDL_HasWindowSurface` (from SDL 2.28) which checks whether there is a surface associated with
+         + the window
+         +
+         + Returns: `true` if the window has an associated surface, otherwise `false`
+         +/
+        bool hasSurface() const @property @trusted {
+            return SDL_HasWindowSurface(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
+        }
     }
 
     /++

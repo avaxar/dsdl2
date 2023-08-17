@@ -149,7 +149,7 @@ struct Point {
         return this.sdlPoint.y;
     }
 
-    /++ 
+    /++
      + Static array proxy of the `dsdl2.Point`
      +
      + Returns: array of `x` and `y`
@@ -280,9 +280,9 @@ struct Rect {
         return this.sdlRect.y;
     }
 
-    /++ 
+    /++
      + Proxy to the `dsdl2.Point` containing the `x` and `y` value of the `dsdl2.Rect`
-     + 
+     +
      + Returns: reference to the `dsdl2.Point` structure
      +/
     ref inout(Point) point() return inout @property @trusted {
@@ -307,9 +307,9 @@ struct Rect {
         return this.sdlRect.h;
     }
 
-    /++ 
-     + Proxy to the size array containing the `width` and `height` of the `dsdl2.Rect` 
-     + 
+    /++
+     + Proxy to the size array containing the `width` and `height` of the `dsdl2.Rect`
+     +
      + Returns: reference to the static `int[2]` array
      +/
     ref inout(int[2]) size() return inout @property @trusted {

@@ -4,18 +4,18 @@
 	],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
-		"bindbc-sdl": "~>1.3.6"
+		"bindbc-sdl": "~>1.4"
 	},
 	"description": "An OO high level wrapper for SDL2 with bindbc-sdl in the D programming language around bindbc-sdl.",
 	"buildTypes": {
 		"ddox": {
 			"buildOptions": ["syntaxOnly"],
 			"dflags": ["-c", "-Df__dummy.html", "-Xfdocs.json"],
-			"versions": ["SDL_2_26", "SDL_Image_2_6", "SDL_Mixer_2_6", "SDL_TTF_2_20"]
+			"versions": ["SDL_2_28", "SDL_Image_2_6", "SDL_Mixer_2_6", "SDL_TTF_2_20"]
 		},
 		"syntax": {
 			"buildOptions": ["syntaxOnly"],
-			"versions": ["SDL_2_26", "SDL_Image_2_6", "SDL_Mixer_2_6", "SDL_TTF_2_20"]
+			"versions": ["SDL_2_28", "SDL_Image_2_6", "SDL_Mixer_2_6", "SDL_TTF_2_20"]
 		}
 	},
 	"homepage": "https://dsdl2.nekkl.org",
