@@ -205,6 +205,8 @@ struct MouseState {
             bool, "x2", 1,
             bool, "", 3));
 
+    this() @disable;
+
     /++
      + Constructs a `dsdl2.MouseState` from a vanilla SDL mouse state flag
      +
@@ -313,7 +315,7 @@ final class Cursor {
         static Cursor cursor = null;
         if (cursor is null) {
             SDL_Cursor* sdlCursor = SDL_CreateSystemCursor(sdlSystemCursor);
-            if (sdlCursor == null) {
+            if (sdlCursor is null) {
                 throw new SDLException;
             }
 

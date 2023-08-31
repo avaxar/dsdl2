@@ -239,15 +239,18 @@ static if (sdlSupport >= SDLSupport.v2_0_10) {
         /++
          + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.FPoint`
          +/
-        FRect opBinary(string op)(const FPoint offset) const {
-            return FRect(this.point + offset, this.width, this.height);
+        FRect opBinary(string op)(const FPoint offset) const
+        if (op == "+" || op == "-") {
+            return FRect(Foint(mixin("this.x" ~ op ~ "offset.x"), mixin("this.y" ~ op ~ "offset.y")),
+                this.width, this.height);
         }
 
         /++
          + Operator assignment overload template to move rectangle's position in-place by an `offset` as a
          + `dsdl2.FPoint`
          +/
-        ref inout(FPoint) opOpAssign(string op)(const FPoint offset) return inout {
+        ref inout(FPoint) opOpAssign(string op)(const FPoint offset) return inout
+                if (op == "+" || op == "-") {
             mixin("this.x" ~ op ~ "=offset.x");
             mixin("this.y" ~ op ~ "=offset.y");
             return this;

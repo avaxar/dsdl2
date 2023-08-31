@@ -121,7 +121,7 @@ abstract class Event {
 
         case SDL_TEXTEDITING:
             return new TextEditingEvent(sdlEvent.edit.windowID, sdlEvent.edit.text.ptr.to!string,
-                sdlEvent.edit.start.to!size_t, sdlEvent.edit.length.to!size_t);
+                sdlEvent.edit.start.to!uint, sdlEvent.edit.length.to!uint);
 
         case SDL_TEXTINPUT:
             return new TextInputEvent(sdlEvent.text.windowID, sdlEvent.text.text.ptr.to!string);
@@ -133,9 +133,9 @@ abstract class Event {
 
         case SDL_MOUSEMOTION:
             return new MouseMotionEvent(sdlEvent.motion.windowID, sdlEvent.motion.which,
-                MouseState(sdlEvent.motion.state), [
-                sdlEvent.motion.x, sdlEvent.motion.y
-            ], [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
+                MouseState(sdlEvent.motion.state),
+                [sdlEvent.motion.x, sdlEvent.motion.y],
+                [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
@@ -895,7 +895,7 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
 }
 
 final class TextEditingEvent : Event {
-    this(uint windowID, string text, size_t start, size_t length)
+    this(uint windowID, string text, uint start, uint length)
     in {
         assert(text.length < 32);
     }

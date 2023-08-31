@@ -192,6 +192,22 @@ final class Surface {
     }
 
     /++
+     + Equality operator overload
+     +/
+    bool opEquals(const Surface rhs) const @trusted {
+        return this.sdlSurface == rhs.sdlSurface;
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.Surface`
+     +
+     + Returns: unique hash for the instance being the pointer of the internal `SDL_Surface` pointer
+     +/
+    override hash_t toHash() const @trusted {
+        return cast(hash_t) this.sdlSurface;
+    }
+
+    /++
      + Formats the `dsdl2.Surface` into its construction representation:
      + `"dsdl2.PixelFormat([<bytes>], [<width>, <height>], <pitch>, <pixelFormat>)"`
      +

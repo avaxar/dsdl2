@@ -126,7 +126,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
 /++
  + D class that acts as a proxy for a display from a display index
  +/
-class Display {
+final class Display {
     const uint sdlDisplayIndex; /// Display index from SDL
 
     this() @disable;
@@ -136,11 +136,27 @@ class Display {
     }
 
     /++
+     + Equality operator overload
+     +/
+    bool opEquals(const Display rhs) const {
+        return this.sdlDisplayIndex == rhs.sdlDisplayIndex;
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.Display`
+     +
+     + Returns: unique hash for the instance being the display index
+     +/
+    override hash_t toHash() const {
+        return cast(hash_t) this.sdlDisplayIndex;
+    }
+
+    /++
      + Formats the `dsdl2.Display` showing its internal information: `"dsdl2.PixelFormat(<sdlDisplayIndex>)"`
      +
      + Returns: the formatted `string`
      +/
-    override string toString() const @trusted {
+    override string toString() const {
         return "dsdl2.Display(%d)".format(this.sdlDisplayIndex);
     }
 
@@ -312,10 +328,10 @@ class Display {
 /++
  + Gets `dsdl2.Display` proxy instances of the available displays in the system
  +
- + Returns: array of available proxy `dsdl2.Display`s
+ + Returns: array of proxies to the available `dsdl2.Display`s
  + Throws: `dsdl2.SDLException` if failed to get the available displays
  +/
-Display[] getDisplays() @trusted {
+const(Display[]) getDisplays() @trusted {
     int numDisplays = SDL_GetNumVideoDisplays();
     if (numDisplays <= 0) {
         throw new SDLException;
@@ -329,13 +345,12 @@ Display[] getDisplays() @trusted {
                 displays[i] = new Display(i.to!uint);
             }
         }
-
-        return displays;
     }
-    displays = new Display[](numDisplays);
-
-    foreach (i; 0 .. numDisplays) {
-        displays[i] = new Display(i);
+    else {
+        displays = new Display[](numDisplays);
+        foreach (i; 0 .. numDisplays) {
+            displays[i] = new Display(i);
+        }
     }
 
     return displays;
