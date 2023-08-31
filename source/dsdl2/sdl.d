@@ -16,7 +16,7 @@ import std.string : toStringz;
 /++
  + SDL exception generated from `SDL_GetError()` or dsdl2-specific exceptions
  +/
-class SDLException : Exception {
+final class SDLException : Exception {
     this(string msg, string file = __FILE__, size_t line = __LINE__) {
         super(msg, file, line);
     }
@@ -51,9 +51,7 @@ else {
             return;
         }
 
-        Version wanted;
-        wanted.sdlVersion = sdlSupport;
-
+        Version wanted = Version(sdlSupport);
         if (current == SDLSupport.badLibrary) {
             import std.stdio : writeln;
 
@@ -178,6 +176,8 @@ bool wasInit(SubSystem subsystem) @trusted {
 struct Version {
     SDL_version sdlVersion; /// Internal `SDL_version` struct
 
+    this() @disable;
+
     /++
      + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
      +
@@ -280,7 +280,7 @@ struct Version {
  + Returns: `dsdl2.Version` of the version of the linked SDL2 library
  +/
 Version getVersion() @trusted {
-    Version ver;
+    Version ver = void;
     SDL_GetVersion(&ver.sdlVersion);
     return ver;
 }
@@ -296,16 +296,14 @@ string getRevision() @trusted {
 
 /++
  + D enum that wraps `SDL_HintPriority`
- +
- + Notes: `SDL_HINT_DEFAULT` and `SDL_HINT_OVERRIDE` are named as `low` and `high` respectively.
  +/
 enum HintPriority : SDL_HintPriority {
     /++
      + Wraps `SDL_HINT_*` enumeration constants
      +/
-    low = SDL_HINT_DEFAULT,
+    default_ = SDL_HINT_DEFAULT,
     normal = SDL_HINT_NORMAL, /// ditto
-    high = SDL_HINT_OVERRIDE /// ditto
+    override_ = SDL_HINT_OVERRIDE /// ditto
 }
 
 /++

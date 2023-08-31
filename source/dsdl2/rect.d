@@ -240,14 +240,16 @@ struct Rect {
     /++
      + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.Point`
      +/
-    Rect opBinary(string op)(const Point offset) const {
-        return Rect(this.xy + offset, this.w, this.h);
+    Rect opBinary(string op)(const Point offset) const if (op == "+" || op == "-") {
+        return Rect(Point(mixin("this.x" ~ op ~ "offset.x"), mixin("this.y" ~ op ~ "offset.y")),
+            this.w, this.h);
     }
 
     /++
      + Operator assignment overload template to move rectangle's position in-place by an `offset` as a `dsdl2.Point`
      +/
-    ref inout(Point) opOpAssign(string op)(const Point offset) return inout {
+    ref inout(Point) opOpAssign(string op)(const Point offset) return inout
+    if (op == "+" || op == "-") {
         mixin("this.x" ~ op ~ "=offset.x");
         mixin("this.y" ~ op ~ "=offset.y");
         return this;

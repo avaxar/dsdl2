@@ -164,6 +164,8 @@ struct Keymod {
             bool, "scroll", 1,
             ubyte, "", 4));
 
+    this() @disable;
+
     /++
      + Constructs a `dsdl2.Keymod` from a vanilla `SDL_Keymod` from bindbc-sdl
      +

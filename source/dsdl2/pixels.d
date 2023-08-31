@@ -202,7 +202,7 @@ final class Palette {
             throw new SDLException;
         }
 
-        foreach (i, const ref Color color; colors) {
+        foreach (i, const ref color; colors) {
             this.sdlPalette.colors[i] = color.sdlColor;
         }
     }
@@ -239,7 +239,7 @@ final class Palette {
             return false;
         }
 
-        foreach (size_t i; 0 .. this.length) {
+        foreach (i; 0 .. this.length) {
             if (this[i] != rhs[i]) {
                 return false;
             }
@@ -274,7 +274,7 @@ final class Palette {
     override string toString() const {
         string str = "dsdl2.Palette([";
 
-        foreach (size_t i; 0 .. this.length) {
+        foreach (i; 0 .. this.length) {
             str ~= this[i].toString();
 
             if (i + 1 < this.length) {
@@ -419,7 +419,7 @@ final class PixelFormat {
         this.isOwner = isOwner;
         this.userRef = userRef;
 
-        if (this.sdlPixelFormat.palette != null) {
+        if (this.sdlPixelFormat.palette !is null) {
             this.paletteRef = new Palette(this.sdlPixelFormat.palette, false, cast(void*) this);
         }
     }
@@ -563,7 +563,7 @@ final class PixelFormat {
      +
      + Returns: `SDL_PixelFormatEnum` enumeration from bindbc-sdl
      +/
-    SDL_PixelFormatEnum sdlPixelFormatEnum() const nothrow @property @trusted {
+    SDL_PixelFormatEnum sdlPixelFormatEnum() const @property @trusted {
         return this.sdlPixelFormat.format;
     }
 

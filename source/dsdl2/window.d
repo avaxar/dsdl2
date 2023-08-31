@@ -12,6 +12,7 @@ import dsdl2.sdl;
 import dsdl2.display;
 import dsdl2.pixels;
 import dsdl2.rect;
+import dsdl2.renderer;
 import dsdl2.surface;
 
 import core.memory : GC;
@@ -347,7 +348,7 @@ final class Window {
      +   flags    = optional flags given to the window
      + Throws: `dsdl2.SDLException` if window creation failed
      +/
-    this(string title, uint[2] position, uint[2] size, WindowFlag[] flags = []) @trusted
+    this(string title, uint[2] position, uint[2] size, const WindowFlag[] flags = null) @trusted
     in {
         assert(title !is null);
     }
@@ -425,7 +426,7 @@ final class Window {
      + Returns: `dsdl2.Display` of the display the window is located
      + Throws: `dsdl2.SDLException` if failed to get the display
      +/
-    Display display() const @property @trusted {
+    const(Display) display() const @property @trusted {
         int index = SDL_GetWindowDisplayIndex(cast(SDL_Window*) this.sdlWindow);
         if (index < 0) {
             throw new SDLException;
@@ -495,7 +496,7 @@ final class Window {
      +
      + Returns: `dsdl2.WindowFlag` array of the window
      +/
-    WindowFlag[] flags() const @property @trusted {
+    const(WindowFlag[]) flags() const @property @trusted {
         uint sdlFlags = SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow);
         WindowFlag[] windowFlags;
 
@@ -507,6 +508,20 @@ final class Window {
         }
 
         return windowFlags;
+    }
+
+    /++
+     + Wraps `SDL_GetRenderer` which gets the renderer of the window
+     +
+     + Returns: `dsdl2.Renderer` proxy
+     +/
+    inout(Renderer) renderer() inout @property @trusted {
+        if (SDL_Renderer* sdlRenderer = SDL_GetRenderer(cast(SDL_Window*) this.sdlWindow)) {
+            return cast(inout(Renderer)) new Renderer(sdlRenderer, false, cast(void*) this);
+        }
+        else {
+            throw new SDLException;
+        }
     }
 
     /++
