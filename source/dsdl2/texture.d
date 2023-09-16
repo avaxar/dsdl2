@@ -11,10 +11,12 @@ import bindbc.sdl;
 import dsdl2.sdl;
 import dsdl2.rect;
 import dsdl2.frect;
+import dsdl2.pixels;
 import dsdl2.renderer;
 import dsdl2.surface;
 
 import core.memory : GC;
+import std.conv : to;
 import std.format : format;
 
 /++
@@ -56,6 +58,49 @@ final class Texture {
         this.userRef = userRef;
     }
 
+    /++ 
+     + Creates a blank `dsdl2.Texture` in the VRAM, which wraps `SDL_CreateTexture`
+     + 
+     + Params:
+     +   renderer    = `dsdl2.Renderer` the texture belongs to
+     +   pixelFormat = `dsdl2.PixelFormat` that the texture pixel data is stored as
+     +   access      = `dsdl2.TextureAccess` enumeration which indicates its access rule
+     +   size        = the size of the texture (width and height)
+     + Throws: `dsdl2.SDLException` if creation failed
+     +/
+    this(Renderer renderer, PixelFormat pixelFormat, TextureAccess access, uint[2] size) @trusted
+    in {
+        assert(renderer !is null);
+        assert(pixelFormat !is null);
+    }
+    do {
+        this.sdlTexture = SDL_CreateTexture(renderer.sdlRenderer, pixelFormat.sdlPixelFormatEnum, access,
+            size[0].to!int, size[1].to!int);
+        if (this.sdlTexture is null) {
+            throw new SDLException;
+        }
+    }
+
+    /++ 
+     + Creates a `dsdl2.Texture` in the VRAM from a `dsdl2.Surface`, which wraps `SDL_CreateTextureFromSurface`
+     + 
+     + Params:
+     +   renderer = `dsdl2.Renderer` the texture belongs to
+     +   surface  = `dsdl2.Surface` for its pixel data to be copied over to the texture
+     + Throws: `dsdl2.SDLException` if creation failed
+     +/
+    this(Renderer renderer, Surface surface) @trusted
+    in {
+        assert(renderer !is null);
+        assert(surface !is null);
+    }
+    do {
+        this.sdlTexture = SDL_CreateTextureFromSurface(renderer.sdlRenderer, surface.sdlSurface);
+        if (this.sdlTexture is null) {
+            throw new SDLException;
+        }
+    }
+
     ~this() @trusted {
         if (this.isOwner) {
             SDL_DestroyTexture(this.sdlTexture);
@@ -76,7 +121,7 @@ final class Texture {
      + Equality operator overload
      +/
     bool opEquals(const Texture rhs) const @trusted {
-        return this.sdlTexture == rhs.sdlTexture;
+        return this.sdlTexture is rhs.sdlTexture;
     }
 
     /++

@@ -2,13 +2,14 @@
 	"authors": [
 		"Avaxar <avaxar@nekkl.org>"
 	],
+	"buildOptions-windows": ["debugInfoC"],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
 		"dsdl2": {
 			"path": "./../.."
 		}
 	},
-	"description": "A boilerplate DSDL2 application.",
+	"description": "A boilerplate dsdl2 application.",
 	"license": "none",
 	"name": "boilerplate",
 	"targetType": "executable"

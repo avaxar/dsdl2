@@ -2,6 +2,7 @@
 	"authors": [
 		"Avaxar <avaxar@nekkl.org>"
 	],
+	"buildOptions-windows": ["debugInfoC"],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
 		"dsdl2": {

@@ -452,8 +452,8 @@ abstract class WindowEvent : Event {
                 return new WindowICCProfileChangedEvent(sdlEvent.window.windowID);
 
         case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-                return new WindowDisplayChangedEvent(sdlEvent.window.windowID, sdlEvent
-                        .window.data1);
+                return new WindowDisplayChangedEvent(sdlEvent.window.windowID,
+                    sdlEvent.window.data1);
             }
         }
     }

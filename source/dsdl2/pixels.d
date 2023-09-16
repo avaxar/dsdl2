@@ -231,7 +231,7 @@ final class Palette {
             return false;
         }
 
-        if (this.sdlPalette == rhs.sdlPalette) {
+        if (this.sdlPalette is rhs.sdlPalette) {
             return true;
         }
 
@@ -578,8 +578,8 @@ final class PixelFormat {
      +/
     Color getRGB(uint pixel) const @trusted {
         Color color = Color(0, 0, 0, 255);
-        SDL_GetRGB(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g, &color
-                .sdlColor.b);
+        SDL_GetRGB(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g,
+            &color.sdlColor.b);
         return color;
     }
 
@@ -607,8 +607,8 @@ final class PixelFormat {
      + Returns: the converted pixel value
      +/
     uint mapRGB(Color color) const @trusted {
-        return SDL_MapRGB(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g, color
-                .sdlColor.b);
+        return SDL_MapRGB(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g,
+            color.sdlColor.b);
     }
 
     /++
