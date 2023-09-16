@@ -14,9 +14,7 @@ void main() {
     writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
 
     // Creates a simple 800x600 window in the center of the screen
-    auto window = new dsdl2.Window("My Window", [
-        dsdl2.WindowPos.centered, dsdl2.WindowPos.centered
-    ], [800, 600]);
+    auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
 
     // The application loop
     bool running = true;

@@ -390,7 +390,7 @@ final class Window {
      + Equality operator overload
      +/
     bool opEquals(const Window rhs) const @trusted {
-        return this.sdlWindow == rhs.sdlWindow;
+        return this.sdlWindow is rhs.sdlWindow;
     }
 
     /++
@@ -564,7 +564,7 @@ final class Window {
      + Returns: top-left X coordinate position of the window in the desktop environment
      +/
     int x() const @property @trusted {
-        int x;
+        int x = void;
         SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, &x, null);
         return x;
     }
@@ -586,7 +586,7 @@ final class Window {
      + Returns: top-left Y coordinate position of the window in the desktop environment
      +/
     int y() const @property @trusted {
-        int y;
+        int y = void;
         SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, null, &y);
         return y;
     }
@@ -608,7 +608,7 @@ final class Window {
      + Returns: top-left coordinate position of the window in the desktop environment
      +/
     int[2] position() const @property @trusted {
-        int[2] xy;
+        int[2] xy = void;
         SDL_GetWindowPosition(cast(SDL_Window*) this.sdlWindow, &xy[0], &xy[1]);
         return xy;
     }
@@ -624,12 +624,12 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowSize` which gets the drawable width of the window in pixels
+     + Wraps `SDL_GetWindowSize` which gets the width of the window in pixels
      +
      + Returns: drawable width of the window in pixels
      +/
     uint width() const @property @trusted {
-        uint w;
+        uint w = void;
         SDL_GetWindowSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&w, null);
         return w;
     }
@@ -645,12 +645,12 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowSize` which gets the drawable height of the window in pixels
+     + Wraps `SDL_GetWindowSize` which gets the height of the window in pixels
      +
-     + Returns: drawable height of the window in pixels
+     + Returns: height of the window in pixels
      +/
     uint height() const @property @trusted {
-        uint h;
+        uint h = void;
         SDL_GetWindowSize(cast(SDL_Window*) this.sdlWindow, null, cast(int*)&h);
         return h;
     }
@@ -666,12 +666,12 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowSize` which gets the drawable size of the window in pixels
+     + Wraps `SDL_GetWindowSize` which gets the size of the window in pixels
      +
-     + Returns: drawable size of the window in pixels
+     + Returns: size of the window in pixels
      +/
     uint[2] size() const @property @trusted {
-        uint[2] wh;
+        uint[2] wh = void;
         SDL_GetWindowSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(int*)&wh[1]);
         return wh;
     }
@@ -951,7 +951,7 @@ final class Window {
             throw new SDLException;
         }
 
-        // If the surface pointer happen to change, rewire the proxy.
+        // If the surface pointer happens to change, rewire the proxy.
         if (this.surfaceProxy.sdlSurface !is surfacePtr) {
             (cast(Window) this).surfaceProxy.sdlSurface = surfacePtr;
         }

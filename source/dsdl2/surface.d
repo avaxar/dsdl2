@@ -55,7 +55,8 @@ final class Surface {
     }
     do {
         this.sdlSurface = sdlSurface;
-        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
+        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(
+                void*) this);
         this.isOwner = isOwner;
         this.userRef = userRef;
     }
@@ -195,7 +196,7 @@ final class Surface {
      + Equality operator overload
      +/
     bool opEquals(const Surface rhs) const @trusted {
-        return this.sdlSurface == rhs.sdlSurface;
+        return this.sdlSurface is rhs.sdlSurface;
     }
 
     /++
@@ -224,7 +225,7 @@ final class Surface {
      + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Surface`
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
-        // If the internal pixel format pointer happen to change, rewire the proxy.
+        // If the internal pixel format pointer happens to change, rewire the proxy.
         if (this.pixelFormatProxy.sdlPixelFormat !is this.sdlSurface.format) {
             (cast(Surface) this).pixelFormatProxy.sdlPixelFormat = cast(
                 SDL_PixelFormat*) this.sdlSurface.format;
@@ -327,8 +328,8 @@ final class Surface {
         if (this.pixelFormat.bitDepth >= 8) {
             const ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
             align(4) ubyte[4] pixel;
-            pixel[0 .. this.pixelFormat.bytesPerPixel] = pixelPtr[0 .. this
-                    .pixelFormat.bytesPerPixel];
+            pixel[0 .. this.pixelFormat.bytesPerPixel] =
+                pixelPtr[0 .. this.pixelFormat.bytesPerPixel];
 
             return *cast(uint*) pixel.ptr;
         }
@@ -375,8 +376,8 @@ final class Surface {
 
         if (this.pixelFormat.bitDepth >= 8) {
             ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
-            pixelPtr[0 .. this.pixelFormat.bytesPerPixel] = (*cast(ubyte[4]*)&value)[0 .. this
-                    .pixelFormat.bytesPerPixel];
+            pixelPtr[0 .. this.pixelFormat.bytesPerPixel] =
+                (*cast(ubyte[4]*)&value)[0 .. this.pixelFormat.bytesPerPixel];
         }
         else {
             ubyte* pixelPtr = row + (xy[0] * this.pixelFormat.bitDepth) / 8;
@@ -676,11 +677,11 @@ final class Surface {
      + Wraps `SDL_SetSurfaceBlendMode` which sets the `dsdl2.Surface`'s `dsdl2.BlendMode` defining blitting
      +
      + Params:
-     +   newBlendMode = `dsdl2.BlendMode` to set
+     +   newMode = `dsdl2.BlendMode` to set
      + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to set
      +/
-    void blendMode(BlendMode newBlendMode) @property @trusted {
-        if (SDL_SetSurfaceBlendMode(this.sdlSurface, newBlendMode.sdlBlendMode) != 0) {
+    void blendMode(BlendMode newMode) @property @trusted {
+        if (SDL_SetSurfaceBlendMode(this.sdlSurface, newMode.sdlBlendMode) != 0) {
             throw new SDLException;
         }
     }

@@ -399,7 +399,7 @@ final class Cursor {
      + Equality operator overload
      +/
     bool opEquals(const Cursor rhs) const @trusted {
-        return this.sdlCursor == rhs.sdlCursor;
+        return this.sdlCursor is rhs.sdlCursor;
     }
 
     /++
