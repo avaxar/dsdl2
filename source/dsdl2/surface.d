@@ -55,8 +55,7 @@ final class Surface {
     }
     do {
         this.sdlSurface = sdlSurface;
-        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(
-                void*) this);
+        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
         this.isOwner = isOwner;
         this.userRef = userRef;
     }
@@ -227,8 +226,8 @@ final class Surface {
     const(PixelFormat) pixelFormat() const @property @trusted {
         // If the internal pixel format pointer happens to change, rewire the proxy.
         if (this.pixelFormatProxy.sdlPixelFormat !is this.sdlSurface.format) {
-            (cast(Surface) this).pixelFormatProxy.sdlPixelFormat = cast(
-                SDL_PixelFormat*) this.sdlSurface.format;
+            (cast(Surface) this).pixelFormatProxy.sdlPixelFormat =
+                cast(SDL_PixelFormat*) this.sdlSurface.format;
         }
 
         return this.pixelFormatProxy;
@@ -807,10 +806,10 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
      +
      + Params:
-     +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
      +   source    = `dsdl2.Surface` to blit/draw
+     +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
      +/
-    void blit(Point destPoint, const Surface source) @trusted {
+    void blit(const Surface source, Point destPoint) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
         if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface, &dstrect) != 0) {
             throw new SDLException;
@@ -822,13 +821,13 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
      +
      + Params:
-     +   destPoint  = top-left `dsdl2.Point` of where `source` is drawn
      +   source     = `dsdl2.Surface` to blit/draw
-     +   sourceRect = the clipping rect of `source` specifying which part is drawn
+     +   destPoint  = top-left `dsdl2.Point` of where `source` is drawn
+     +   srcRect    = the clipping rect of `source` specifying which part is drawn
      +/
-    void blit(Point destPoint, const Surface source, Rect sourceRect) @trusted {
+    void blit(const Surface source, Point destPoint, Rect srcRect) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
-        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &sourceRect.sdlRect, this.sdlSurface,
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
                 &dstrect) != 0) {
             throw new SDLException;
         }
@@ -839,10 +838,10 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` with scaling
      +
      + Params:
-     +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +   source   = `dsdl2.Surface` to blit/draw
+     +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +/
-    void blitScaled(Rect destRect, const Surface source) @trusted {
+    void blitScaled(const Surface source, Rect destRect) @trusted {
         if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface,
                 &destRect.sdlRect) != 0) {
             throw new SDLException;
@@ -854,12 +853,12 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` with scaling
      +
      + Params:
-     +   destRect   = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +   source     = `dsdl2.Surface` to blit/draw
-     +   sourceRect = the clipping rect of `source` specifying which part is drawn
+     +   destRect   = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
+     +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
-    void blitScaled(Rect destRect, const Surface source, Rect sourceRect) @trusted {
-        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &sourceRect.sdlRect, this.sdlSurface,
+    void blitScaled(const Surface source, Rect destRect, Rect srcRect) @trusted {
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
                 &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
