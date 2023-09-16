@@ -341,7 +341,7 @@ final class Renderer {
      + Wraps `SDL_GetRendererInfo` which gets the renderer information
      +
      + Returns: `dsdl2.RendererInfo` of the renderer
-     + Throws: `dsdl2.SDLException` if failed to get the renderer information 
+     + Throws: `dsdl2.SDLException` if failed to get the renderer information
      +/
     RendererInfo info() const @property @trusted {
         SDL_RendererInfo sdlRendererInfo = void;
@@ -504,9 +504,9 @@ final class Renderer {
         return w;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_RenderSetLogicalSize` which sets the renderer output's logical width
-     + 
+     +
      + Params:
      +   newWidth = new logical width of the renderer's output
      + Throws: `dsdl2.SDLException` if failed to set the renderer's logical width
@@ -528,9 +528,9 @@ final class Renderer {
         return h;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_RenderSetLogicalSize` which sets the renderer output's logical height
-     + 
+     +
      + Params:
      +   newHeight = new logical height of the renderer's output
      + Throws: `dsdl2.SDLException` if failed to set the renderer's logical height
@@ -552,9 +552,9 @@ final class Renderer {
         return wh;
     }
 
-    /++ 
+    /++
      + Wraps `SDL_RenderSetLogicalSize` which sets the renderer output's logical size
-     + 
+     +
      + Params:
      +   newSize = new logical size (width and height) of the renderer's output
      + Throws: `dsdl2.SDLException` if failed to set the renderer's logical size
@@ -798,6 +798,79 @@ final class Renderer {
         }
     }
 
+    void copy(const Texture texture, Rect destRect) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopy(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null, &destRect.sdlRect) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    void copy(const Texture texture, Rect destRect, Rect srcRect) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopy(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                &destRect.sdlRect) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    void copyEx(const Texture texture, Rect dstRect, double angle, bool flippedHorizontally,
+        bool flippedVertically) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopyEx(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null, &dstRect.sdlRect, angle,
+                null, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    void copyEx(const Texture texture, Rect dstRect, double angle, bool flippedHorizontally,
+        bool flippedVertically, Rect srcRect) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopyEx(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                &dstRect.sdlRect, angle, null, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    void copyEx(const Texture texture, Rect dstRect, double angle, bool flippedHorizontally,
+        bool flippedVertically, Point center) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopyEx(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null, &dstRect.sdlRect, angle,
+                &center.sdlPoint, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    void copyEx(const Texture texture, Rect dstRect, double angle, bool flippedHorizontally,
+        bool flippedVertically, Rect srcRect, Point center) @trusted
+    in {
+        assert(texture !is null);
+    }
+    do {
+        if (SDL_RenderCopyEx(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                &dstRect.sdlRect, angle, &center.sdlPoint, (flippedHorizontally ? SDL_FLIP_HORIZONTAL
+                : 0) | (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+            throw new SDLException;
+        }
+    }
+
     Surface readPixels(Rect rect, const PixelFormat format = PixelFormat.rgba8888) const @trusted
     in {
         assert(!format.isIndexed);
@@ -903,6 +976,80 @@ final class Renderer {
 
         void fillRects(const FRect[] rects) @trusted {
             if (SDL_RenderFillRectsF(this.sdlRenderer, cast(SDL_FRect*) rects.ptr, rects.length.to!int) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copy(const Texture texture, FRect destRect) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null,
+                    &destRect.sdlFRect) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copy(const Texture texture, FRect destRect, Rect srcRect) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                    &destRect.sdlFRect) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copyEx(const Texture texture, FRect dstRect, double angle, bool flippedHorizontally,
+            bool flippedVertically) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyExF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null, &dstRect.sdlFRect,
+                    angle, null, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                    (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copyEx(const Texture texture, FRect dstRect, double angle, bool flippedHorizontally,
+            bool flippedVertically, Rect srcRect) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyExF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                    &dstRect.sdlFRect, angle, null, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                    (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copyEx(const Texture texture, FRect dstRect, double angle, bool flippedHorizontally,
+            bool flippedVertically, FPoint center) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyExF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, null, &dstRect.sdlFRect,
+                    angle, &center.sdlFPoint, (flippedHorizontally ? SDL_FLIP_HORIZONTAL : 0) |
+                    (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
+                throw new SDLException;
+            }
+        }
+
+        void copyEx(const Texture texture, FRect dstRect, double angle, bool flippedHorizontally,
+            bool flippedVertically, Rect srcRect, FPoint center) @trusted
+        in {
+            assert(texture !is null);
+        }
+        do {
+            if (SDL_RenderCopyExF(this.sdlRenderer, cast(SDL_Texture*) texture.sdlTexture, &srcRect.sdlRect,
+                    &dstRect.sdlFRect, angle, &center.sdlFPoint, (flippedHorizontally ? SDL_FLIP_HORIZONTAL
+                    : 0) | (flippedVertically ? SDL_FLIP_VERTICAL : 0)) != 0) {
                 throw new SDLException;
             }
         }
