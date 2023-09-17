@@ -280,9 +280,7 @@ static if (sdlSupport >= SDLSupport.v2_0_16) {
  +
  + Examples:
  + ---
- + auto window = new dsdl2.Window("My Window", [
- +     dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
- + ], [800, 600]);
+ + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
  + window.surface.fill(dsdl2.Color(255, 0, 0));
  + window.update();
  + ---
@@ -313,7 +311,6 @@ final class Window {
         this.userRef = userRef;
 
         this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
-        this.surfaceProxy = new Surface(SDL_GetWindowSurface(this.sdlWindow), false, cast(void*) this);
     }
 
     /++
@@ -334,7 +331,6 @@ final class Window {
         }
 
         this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
-        this.surfaceProxy = new Surface(SDL_GetWindowSurface(this.sdlWindow), false, cast(void*) this);
     }
 
     /++
@@ -365,7 +361,6 @@ final class Window {
         }
 
         this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
-        this.surfaceProxy = new Surface(SDL_GetWindowSurface(this.sdlWindow), false, cast(void*) this);
     }
 
     ~this() @trusted {
@@ -383,7 +378,6 @@ final class Window {
 
         assert(this.sdlWindow !is null);
         assert(this.pixelFormatProxy !is null);
-        assert(this.surfaceProxy !is null);
     }
 
     /++
@@ -949,6 +943,10 @@ final class Window {
         SDL_Surface* surfacePtr = SDL_GetWindowSurface(cast(SDL_Window*) this.sdlWindow);
         if (surfacePtr is null) {
             throw new SDLException;
+        }
+
+        if (this.surfaceProxy is null) {
+            (cast(Window) this).surfaceProxy = new Surface(surfacePtr, false, cast(void*) this);
         }
 
         // If the surface pointer happens to change, rewire the proxy.
