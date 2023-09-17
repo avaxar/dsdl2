@@ -32,8 +32,34 @@ enum TextureAccess {
     target = SDL_TEXTUREACCESS_TARGET /// ditto
 }
 
+static if (sdlSupport >= SDLSupport.v2_0_12) {
+    /++
+     + D enum that wraps `SDL_ScaleMode` in specifying mode of texture scaling
+     +/
+    enum ScaleMode {
+        /++
+         + Wraps `SDL_ScaleMode*` enumeration constants
+         +/
+        nearest = SDL_ScaleModeNearest,
+        linear = SDL_ScaleModeLinear,
+        best = SDL_ScaleModeBest
+    }
+}
+
 /++
- + D class that wraps `SDL_Texture` storing textures in GPU memory
+ + D class that wraps `SDL_Texture` storing textures in the VRAM
+ +
+ + `dsdl2.Texture` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
+ + GPU RAM (VRAM) according to its defined `dsdl2.PixelFormat`. A `dsdl2.Texture` is associated with its
+ + `dsdl2.Renderer`, and can only be operated with/by it.
+ + 
+ + Examples:
+ + ---
+ + auto renderer = new dsdl2.Renderer(...);
+ + auto surface = new dsdl2.Surface(...);
+ +
+ + auto texture = new dsdl2.Texture(renderer, surface);
+ + ---
  +/
 final class Texture {
     private PixelFormat pixelFormatProxy = null;
@@ -56,7 +82,6 @@ final class Texture {
     }
     do {
         this.sdlTexture = sdlTexture;
-        this.pixelFormat();
         this.isOwner = isOwner;
         this.userRef = userRef;
     }
@@ -82,8 +107,6 @@ final class Texture {
         if (this.sdlTexture is null) {
             throw new SDLException;
         }
-
-        this.pixelFormat();
     }
 
     /++
@@ -104,8 +127,6 @@ final class Texture {
         if (this.sdlTexture is null) {
             throw new SDLException;
         }
-
-        this.pixelFormat();
     }
 
     ~this() @trusted {
@@ -149,6 +170,12 @@ final class Texture {
         return "dsdl2.Texture(0x%x)".format(this.sdlTexture);
     }
 
+    /++
+     + Wraps `SDL_QueryTexture` which gets the `dsdl2.PixelFormat` of the `dsdl2.Texture`
+     +
+     + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Texture`
+     + Throws: `dsdl2.SDLException` if failed to query the information
+     +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         uint sdlPixelFormatEnum = void;
         if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, &sdlPixelFormatEnum, null, null, null) != 0) {
@@ -163,6 +190,12 @@ final class Texture {
         return this.pixelFormatProxy;
     }
 
+    /++
+     + Wraps `SDL_QueryTexture` which gets the `dsdl2.TextureAccess` of the `dsdl2.Texture`
+     +
+     + Returns: `dsdl2.TextureAccess` of the `dsdl2.Texture`
+     + Throws: `dsdl2.SDLException` if failed to query the information
+     +/
     TextureAccess access() const @property @trusted {
         TextureAccess texAccess = void;
         if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, cast(int*) texAccess, null, null) != 0) {
@@ -172,6 +205,12 @@ final class Texture {
         return texAccess;
     }
 
+    /++
+     + Wraps `SDL_QueryTexture` which gets the width of the `dsdl2.Texture` in pixels
+     +
+     + Returns: width of the `dsdl2.Texture` in pixels
+     + Throws: `dsdl2.SDLException` if failed to query the information
+     +/
     uint width() const @property @trusted {
         uint w = void;
         if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, null, cast(int*)&w, null) != 0) {
@@ -181,6 +220,12 @@ final class Texture {
         return w;
     }
 
+    /++
+     + Wraps `SDL_QueryTexture` which gets the height of the `dsdl2.Texture` in pixels
+     +
+     + Returns: height of the `dsdl2.Texture` in pixels
+     + Throws: `dsdl2.SDLException` if failed to query the information
+     +/
     uint height() const @property @trusted {
         uint h = void;
         if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, null, null, cast(int*)&h) != 0) {
@@ -190,6 +235,12 @@ final class Texture {
         return h;
     }
 
+    /++
+     + Wraps `SDL_QueryTexture` which gets the size of the `dsdl2.Texture` in pixels
+     +
+     + Returns: array of width and height of the `dsdl2.Texture` in pixels
+     + Throws: `dsdl2.SDLException` if failed to query the information
+     +/
     uint[2] size() const @property @trusted {
         uint[2] wh = void;
         if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, null, cast(int*)&wh[0],
@@ -294,6 +345,99 @@ final class Texture {
     void blendMode(BlendMode newMode) @property @trusted {
         if (SDL_SetTextureBlendMode(this.sdlTexture, newMode.sdlBlendMode) != 0) {
             throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `SDL_UpdateTexture` which updates the entire `dsdl2.Texture`'s pixel data
+     +
+     + Params:
+     +   pixels = array of pixels for the entire `dsdl2.Texture`'s pixels to be replaced with
+     +   pitch  = skips in bytes per line/row of the `pixels`
+     + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
+     +/
+    void update(void[] pixels, size_t pitch) @trusted
+    in {
+        assert(pitch * 8 >= this.width * this.pixelFormat.bitDepth);
+        assert(pixels.length == pitch * this.height);
+    }
+    do {
+        if (SDL_UpdateTexture(this.sdlTexture, null, pixels.ptr, pitch.to!int) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `SDL_UpdateTexture` which updates the `dsdl2.Texture`'s pixel data at a certain `dsdl2.Rect` boundary
+     +
+     + Params:
+     +   rect   = `dsdl2.Rect` boundary marking the part of the texture whose pixels are to be updated
+     +   pixels = array of pixels for the `dsdl2.Texture`'s `rect` pixels to be replaced with
+     +   pitch  = skips in bytes per line/row of the `pixels`
+     + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
+     +/
+    void update(Rect rect, void[] pixels, size_t pitch) @trusted
+    in {
+        assert(pitch * 8 >= rect.width * this.pixelFormat.bitDepth);
+        assert(pixels.length == pitch * rect.height);
+    }
+    do {
+        if (SDL_UpdateTexture(this.sdlTexture, &rect.sdlRect, pixels.ptr, pitch.to!int) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `SDL_GL_BindTexture` which binds the texture in OpenGL
+     +
+     + Returns: texture width and height in OpenGL
+     + Throws: `dsdl2.SDLException` if failed to bind
+     +/
+    float[2] bindGL() @trusted {
+        float[2] size = void;
+        if (SDL_GL_BindTexture(this.sdlTexture, &size[0], &size[1]) != 0) {
+            throw new SDLException;
+        }
+
+        return size;
+    }
+
+    /++
+     + Wraps `SDL_GL_UnbindTexture` which unbinds the texture in OpenGL
+     +
+     + Throws: `dsdl2.SDLException` if failed to unbind
+     +/
+    void unbindGL() @trusted {
+        if (SDL_GL_UnbindTexture(this.sdlTexture) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_12) {
+        /++
+         + Wraps `SDL_GetTextureScaleMode` (from SDL 2.0.12) which gets the texture's scaling mode
+         +
+         + Returns: `dsdl2.ScaleMode` of the texture
+         +/
+        ScaleMode scaleMode() const @property @trusted {
+            SDL_ScaleMode sdlScaleMode = void;
+            if (SDL_GetTextureScaleMode(cast(SDL_Texture*) this.sdlTexture, &sdlScaleMode) != 0) {
+                throw new SDLException;
+            }
+
+            return cast(ScaleMode) sdlScaleMode;
+        }
+
+        /++
+         + Wraps `SDL_SetTextureScaleMode` (from SDL 2.0.12) which sets the texture's scaling mode
+         +
+         + Params:
+         +   newMode = new `dsdl2.ScaleMode` set
+         +/
+        void scaleMode(ScaleMode newMode) @property @trusted {
+            if (SDL_SetTextureScaleMode(this.sdlTexture, cast(SDL_ScaleMode) newMode) != 0) {
+                throw new SDLException;
+            }
         }
     }
 }

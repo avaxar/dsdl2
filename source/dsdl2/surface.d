@@ -55,7 +55,6 @@ final class Surface {
     }
     do {
         this.sdlSurface = sdlSurface;
-        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
         this.isOwner = isOwner;
         this.userRef = userRef;
     }
@@ -82,8 +81,6 @@ final class Surface {
         if (this.sdlSurface is null) {
             throw new SDLException;
         }
-
-        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
     }
 
     /++
@@ -138,7 +135,6 @@ final class Surface {
             throw new SDLException;
         }
 
-        this.pixelFormatProxy = new PixelFormat(this.sdlSurface.format, false, cast(void*) this);
         this.palette = palette;
     }
 
@@ -188,7 +184,6 @@ final class Surface {
         }
 
         assert(this.sdlSurface !is null);
-        assert(this.pixelFormatProxy !is null);
     }
 
     /++
@@ -224,6 +219,11 @@ final class Surface {
      + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Surface`
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
+        if (this.pixelFormatProxy is null) {
+            (cast(Surface) this).pixelFormatProxy =
+                new PixelFormat(cast(SDL_PixelFormat*) this.sdlSurface.format, false, cast(void*) this);
+        }
+
         // If the internal pixel format pointer happens to change, rewire the proxy.
         if (this.pixelFormatProxy.sdlPixelFormat !is this.sdlSurface.format) {
             (cast(Surface) this).pixelFormatProxy.sdlPixelFormat =

@@ -13,8 +13,10 @@ void main() {
     writeln("List of drivers: ", dsdl2.getVideoDrivers());
     writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
 
-    // Creates a simple 800x600 window in the center of the screen
+    // Creates a simple 800x600 window in the center of the screen, as well as its associated GPU renderer
     auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
+    auto renderer = new dsdl2.Renderer(window, flags:
+        [dsdl2.RendererFlag.accelerated, dsdl2.RendererFlag.presentVSync]);
 
     // The application loop
     bool running = true;
@@ -27,9 +29,15 @@ void main() {
             }
         }
 
-        // Fills the screen with white
-        window.surface.fill(dsdl2.Color(255, 255, 255));
-        window.update();
+        // Clears the screen with white
+        renderer.drawColor = dsdl2.Color(255, 255, 255);
+        renderer.clear();
+
+        // Draws a filled red box at the center of the screen
+        renderer.drawColor = dsdl2.Color(255, 0, 0);
+        renderer.fillRect(dsdl2.Rect(350, 250, 100, 100));
+
+        renderer.present();
     }
 
     // Quits SDL
