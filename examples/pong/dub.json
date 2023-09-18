@@ -2,7 +2,6 @@
 	"authors": [
 		"Avaxar <avaxar@nekkl.org>"
 	],
-	"buildOptions-windows": ["debugInfoC"],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
 		"dsdl2": {
@@ -10,6 +9,11 @@
 		}
 	},
 	"description": "The game of pong written in D with dsdl2.",
+	"buildTypes": {
+		"debug": {
+			"buildOptions-windows": ["debugInfoC"]
+		}
+	},
 	"license": "none",
 	"name": "pong",
 	"targetType": "executable",

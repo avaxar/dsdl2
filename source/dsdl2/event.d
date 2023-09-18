@@ -13,6 +13,7 @@ import dsdl2.display;
 import dsdl2.keyboard;
 import dsdl2.mouse;
 
+import core.stdc.string : strlen;
 import std.conv : to;
 import std.format : format;
 
@@ -82,88 +83,122 @@ abstract class Event {
      + Returns: `dsdl2.Event` of the same attributes
      +/
     static Event fromSDL(SDL_Event sdlEvent) @trusted {
+        Event event;
         switch (sdlEvent.type) {
         default:
-            return new UnknownEvent(sdlEvent);
+            event = new UnknownEvent(sdlEvent);
+            break;
 
         case SDL_QUIT:
-            return new QuitEvent;
+            event = new QuitEvent;
+            break;
 
         case SDL_APP_TERMINATING:
-            return new AppTerminatingEvent;
+            event = new AppTerminatingEvent;
+            break;
 
         case SDL_APP_LOWMEMORY:
-            return new AppLowMemoryEvent;
+            event = new AppLowMemoryEvent;
+            break;
 
         case SDL_APP_WILLENTERBACKGROUND:
-            return new AppWillEnterBackgroundEvent;
+            event = new AppWillEnterBackgroundEvent;
+            break;
 
         case SDL_APP_DIDENTERBACKGROUND:
-            return new AppDidEnterBackgroundEvent;
+            event = new AppDidEnterBackgroundEvent;
+            break;
 
         case SDL_APP_WILLENTERFOREGROUND:
-            return new AppWillEnterForegroundEvent;
+            event = new AppWillEnterForegroundEvent;
+            break;
 
         case SDL_APP_DIDENTERFOREGROUND:
-            return new AppDidEnterForegroundEvent;
+            event = new AppDidEnterForegroundEvent;
+            break;
 
             static if (sdlSupport >= SDLSupport.v2_0_14) {
         case SDL_LOCALECHANGED:
-                return new LocaleChangeEvent;
+                event = new LocaleChangeEvent;
+                break;
             }
 
             static if (sdlSupport >= SDLSupport.v2_0_9) {
         case SDL_DISPLAYEVENT:
-                return DisplayEvent.fromSDL(sdlEvent);
+                event = DisplayEvent.fromSDL(sdlEvent);
+                break;
             }
 
         case SDL_WINDOWEVENT:
-            return WindowEvent.fromSDL(sdlEvent);
+            event = WindowEvent.fromSDL(sdlEvent);
+            break;
 
         case SDL_SYSWMEVENT:
-            return new SysWMEvent(sdlEvent.syswm.msg);
+            event = new SysWMEvent(sdlEvent.syswm.msg);
+            break;
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-            return KeyboardEvent.fromSDL(sdlEvent);
+            event = KeyboardEvent.fromSDL(sdlEvent);
+            break;
 
         case SDL_TEXTEDITING:
-            return new TextEditingEvent(sdlEvent.edit.windowID, sdlEvent.edit.text.ptr.to!string,
+            event = new TextEditingEvent(sdlEvent.edit.windowID, sdlEvent.edit.text.ptr.to!string,
                 sdlEvent.edit.start.to!uint, sdlEvent.edit.length.to!uint);
+            break;
 
         case SDL_TEXTINPUT:
-            return new TextInputEvent(sdlEvent.text.windowID, sdlEvent.text.text.ptr.to!string);
+            event = new TextInputEvent(sdlEvent.text.windowID, sdlEvent.text.text.ptr.to!string);
+            break;
 
             static if (sdlSupport >= SDLSupport.v2_0_4) {
         case SDL_KEYMAPCHANGED:
-                return new KeymapChangedEvent;
+                event = new KeymapChangedEvent;
+                break;
             }
 
         case SDL_MOUSEMOTION:
-            return new MouseMotionEvent(sdlEvent.motion.windowID, sdlEvent.motion.which,
+            event = new MouseMotionEvent(sdlEvent.motion.windowID, sdlEvent.motion.which,
                 MouseState(sdlEvent.motion.state),
                 [sdlEvent.motion.x, sdlEvent.motion.y],
                 [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
+            break;
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
-            return MouseButtonEvent.fromSDL(sdlEvent);
+            event = MouseButtonEvent.fromSDL(sdlEvent);
+            break;
 
         case SDL_MOUSEWHEEL:
             static if (sdlSupport >= SDLSupport.v2_0_18) {
-                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
                     [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction,
                     [sdlEvent.wheel.preciseX, sdlEvent.wheel.preciseY]);
+                break;
             }
             else static if (sdlSupport >= SDLSupport.v2_0_4) {
-                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
                     [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction);
+                break;
             }
             else {
-                return new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
+                event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
                     [sdlEvent.wheel.x, sdlEvent.wheel.y]);
+                break;
             }
+
+        case SDL_DROPFILE:
+            static if (sdlSupport >= SDLSupport.v2_0_5) {
+        case SDL_DROPTEXT:
+        case SDL_DROPBEGIN:
+        case SDL_DROPCOMPLETE:
+            }
+            event = DropFileEvent.fromSDL(sdlEvent);
+            break;
         }
+
+        event.timestamp = sdlEvent.common.timestamp;
+        return event;
     }
 }
 
@@ -340,20 +375,28 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
             assert(sdlEvent.type == SDL_DISPLAYEVENT);
         }
         do {
+            Event event;
             switch (sdlEvent.display.event) {
             default:
-                return new UnknownEvent(sdlEvent);
+                event = new UnknownEvent(sdlEvent);
+                break;
 
             case SDL_DISPLAYEVENT_ORIENTATION:
-                return new DisplayOrientationEvent(sdlEvent.display.display,
+                event = new DisplayOrientationEvent(sdlEvent.display.display,
                     cast(DisplayOrientation) sdlEvent.display.data1);
+                break;
 
             case SDL_DISPLAYEVENT_CONNECTED:
-                return new DisplayConnectedEvent(sdlEvent.display.display);
+                event = new DisplayConnectedEvent(sdlEvent.display.display);
+                break;
 
             case SDL_DISPLAYEVENT_DISCONNECTED:
-                return new DisplayDisconnectedEvent(sdlEvent.display.display);
+                event = new DisplayDisconnectedEvent(sdlEvent.display.display);
+                break;
             }
+
+            event.timestamp = sdlEvent.display.timestamp;
+            return event;
         }
     }
 
@@ -441,71 +484,94 @@ abstract class WindowEvent : Event {
         assert(sdlEvent.type == SDL_WINDOWEVENT);
     }
     do {
+        Event event;
         switch (sdlEvent.window.event) {
         default:
-            return new UnknownEvent(sdlEvent);
+            event = new UnknownEvent(sdlEvent);
+            break;
 
         case SDL_WINDOWEVENT_SHOWN:
-            return new WindowShownEvent(sdlEvent.window.windowID);
+            event = new WindowShownEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_HIDDEN:
-            return new WindowHiddenEvent(sdlEvent.window.windowID);
+            event = new WindowHiddenEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_EXPOSED:
-            return new WindowExposedEvent(sdlEvent.window.windowID);
+            event = new WindowExposedEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_MOVED:
-            return new WindowMovedEvent(sdlEvent.window.windowID,
+            event = new WindowMovedEvent(sdlEvent.window.windowID,
                 [sdlEvent.window.data1, sdlEvent.window.data2]);
+            break;
 
         case SDL_WINDOWEVENT_RESIZED:
-            return new WindowResizedEvent(sdlEvent.window.windowID,
+            event = new WindowResizedEvent(sdlEvent.window.windowID,
                 [sdlEvent.window.data1, sdlEvent.window.data2]);
+            break;
 
         case SDL_WINDOWEVENT_SIZE_CHANGED:
-            return new WindowSizeChangedEvent(sdlEvent.window.windowID);
+            event = new WindowSizeChangedEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_MINIMIZED:
-            return new WindowMinimizedEvent(sdlEvent.window.windowID);
+            event = new WindowMinimizedEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_MAXIMIZED:
-            return new WindowMaximizedEvent(sdlEvent.window.windowID);
+            event = new WindowMaximizedEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_RESTORED:
-            return new WindowRestoredEvent(sdlEvent.window.windowID);
+            event = new WindowRestoredEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_ENTER:
-            return new WindowEnterEvent(sdlEvent.window.windowID);
+            event = new WindowEnterEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_LEAVE:
-            return new WindowLeaveEvent(sdlEvent.window.windowID);
+            event = new WindowLeaveEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            return new WindowFocusGainedEvent(sdlEvent.window.windowID);
+            event = new WindowFocusGainedEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            return new WindowFocusLostEvent(sdlEvent.window.windowID);
+            event = new WindowFocusLostEvent(sdlEvent.window.windowID);
+            break;
 
         case SDL_WINDOWEVENT_CLOSE:
-            return new WindowCloseEvent(sdlEvent.window.windowID);
+            event = new WindowCloseEvent(sdlEvent.window.windowID);
+            break;
 
             static if (sdlSupport >= SDLSupport.v2_0_5) {
         case SDL_WINDOWEVENT_TAKE_FOCUS:
-                return new WindowTakeFocusEvent(sdlEvent.window.windowID);
+                event = new WindowTakeFocusEvent(sdlEvent.window.windowID);
+                break;
 
         case SDL_WINDOWEVENT_HIT_TEST:
-                return new WindowHitTestEvent(sdlEvent.window.windowID);
+                event = new WindowHitTestEvent(sdlEvent.window.windowID);
+                break;
             }
 
             static if (sdlSupport >= SDLSupport.v2_0_18) {
         case SDL_WINDOWEVENT_ICCPROF_CHANGED:
-                return new WindowICCProfileChangedEvent(sdlEvent.window.windowID);
+                event = new WindowICCProfileChangedEvent(sdlEvent.window.windowID);
+                break;
 
         case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-                return new WindowDisplayChangedEvent(sdlEvent.window.windowID,
+                event = new WindowDisplayChangedEvent(sdlEvent.window.windowID,
                     sdlEvent.window.data1);
+                break;
             }
         }
+
+        event.timestamp = sdlEvent.window.timestamp;
+        return event;
     }
 }
 
@@ -947,20 +1013,26 @@ abstract class KeyboardEvent : Event {
         assert(sdlEvent.type == SDL_KEYDOWN || sdlEvent.type == SDL_KEYUP);
     }
     do {
+        Event event;
         switch (sdlEvent.type) {
         default:
             assert(false);
 
         case SDL_KEYDOWN:
-            return new KeyDownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
+            event = new KeyDownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
                 cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
                 Keymod(sdlEvent.key.keysym.mod));
+            break;
 
         case SDL_KEYUP:
-            return new KeyUpKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
+            event = new KeyUpKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
                 cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
                 Keymod(sdlEvent.key.keysym.mod));
+            break;
         }
+
+        event.timestamp = sdlEvent.key.timestamp;
+        return event;
     }
 }
 
@@ -1230,34 +1302,40 @@ abstract class MouseButtonEvent : Event {
         assert(sdlEvent.type == SDL_MOUSEBUTTONDOWN || sdlEvent.type == SDL_MOUSEBUTTONUP);
     }
     do {
+        Event event;
         switch (sdlEvent.type) {
         default:
             assert(false);
 
         case SDL_MOUSEBUTTONDOWN:
             static if (sdlSupport >= SDLSupport.v2_0_2) {
-                return new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                event = new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
                     cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
                     [sdlEvent.button.x, sdlEvent.button.y]);
             }
             else {
-                return new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                event = new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
                     cast(MouseButton) sdlEvent.button.button, 1,
                     [sdlEvent.button.x, sdlEvent.button.y]);
             }
+            break;
 
         case SDL_MOUSEBUTTONUP:
             static if (sdlSupport >= SDLSupport.v2_0_2) {
-                return new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                event = new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
                     cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
                     [sdlEvent.button.x, sdlEvent.button.y]);
             }
             else {
-                return new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
+                event = new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
                     cast(MouseButton) sdlEvent.button.button, 1,
                     [sdlEvent.button.x, sdlEvent.button.y]);
             }
+            break;
         }
+
+        event.timestamp = sdlEvent.button.timestamp;
+        return event;
     }
 }
 
@@ -1415,6 +1493,195 @@ final class MouseWheelEvent : Event {
 
         ref inout(float[2]) preciseXY() return inout @property @trusted {
             return *cast(inout(float[2]*))&this.sdlEvent.wheel.preciseX;
+        }
+    }
+}
+
+/++ 
+ + D abstract class that wraps drop `SDL_Event`s
+ +/
+abstract class DropEvent : Event {
+    ~this() @trusted {
+        if (this.sdlEvent.drop.file !is null) {
+            SDL_free(this.sdlEvent.drop.file);
+        }
+    }
+
+    invariant {
+        static if (sdlSupport >= SDLSupport.v2_0_5) {
+            assert(this.sdlEvent.type == SDL_DROPFILE || this.sdlEvent.type == SDL_DROPTEXT
+                    || this.sdlEvent.type == SDL_DROPBEGIN || this.sdlEvent.type == SDL_DROPCOMPLETE);
+        }
+        else {
+            assert(this.sdlEvent.type == SDL_DROPFILE);
+        }
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        ref inout(uint) windowID() return inout @property @trusted {
+            return this.sdlEvent.drop.windowID;
+        }
+    }
+
+    static Event fromSDL(SDL_Event sdlEvent) @trusted
+    in {
+        static if (sdlSupport >= SDLSupport.v2_0_5) {
+            assert(sdlEvent.type == SDL_DROPFILE || sdlEvent.type == SDL_DROPTEXT
+                    || sdlEvent.type == SDL_DROPBEGIN || sdlEvent.type == SDL_DROPCOMPLETE);
+        }
+        else {
+            assert(sdlEvent.type == SDL_DROPFILE);
+        }
+    }
+    do {
+        Event event;
+        switch (sdlEvent.type) {
+        default:
+            assert(false);
+
+        case SDL_DROPFILE:
+            static if (sdlSupport >= SDLSupport.v2_0_5) {
+                event = new DropFileEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup,
+                    sdlEvent.drop.windowID);
+            }
+            else {
+                event = new DropFileEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup);
+            }
+            break;
+
+            static if (sdlSupport >= SDLSupport.v2_0_5) {
+        case SDL_DROPTEXT:
+                event = new DropTextEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup,
+                    sdlEvent.drop.windowID);
+                break;
+
+        case SDL_DROPBEGIN:
+                event = new DropBeginEvent(sdlEvent.drop.windowID);
+                break;
+
+        case SDL_DROPCOMPLETE:
+                event = new DropCompleteEvent(sdlEvent.drop.windowID);
+                break;
+            }
+        }
+
+        event.timestamp = sdlEvent.drop.timestamp;
+        return event;
+    }
+}
+
+/++ 
+ + D class that wraps `SDL_DROPFILE` `SDL_Event`s
+ +/
+class DropFileEvent : DropEvent {
+    this(string file) @trusted {
+        this.sdlEvent.type = SDL_DROPFILE;
+        this.sdlEvent.drop.file = cast(char*) SDL_malloc(file.length + 1);
+        this.sdlEvent.drop.file[0 .. file.length] = file[0 .. file.length];
+        this.sdlEvent.drop.file[file.length] = '\0';
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        this(string file, uint windowID) @trusted {
+            this.sdlEvent.type = SDL_DROPFILE;
+            this.sdlEvent.drop.file = cast(char*) SDL_malloc(file.length + 1);
+            this.sdlEvent.drop.file[0 .. file.length] = file[0 .. file.length];
+            this.sdlEvent.drop.file[file.length] = '\0';
+            this.sdlEvent.drop.windowID = windowID;
+        }
+    }
+
+    @trusted invariant {
+        assert(this.sdlEvent.type == SDL_DROPFILE);
+        assert(this.sdlEvent.drop.file !is null);
+    }
+
+    override string toString() const {
+        static if (sdlSupport >= SDLSupport.v2_0_5) {
+            return "dsdl2.DropFileEvent(%s, %d)".format(this.file, this.windowID);
+        }
+        else {
+            return "dsdl2.DropFileEvent(%s)".format(this.file);
+        }
+    }
+
+    string file() const @property @trusted {
+        return this.sdlEvent.drop.file[0 .. strlen(this.sdlEvent.drop.file)].idup;
+    }
+
+    void file(string newFile) @property @trusted {
+        SDL_realloc(this.sdlEvent.drop.file, newFile.length + 1);
+        this.sdlEvent.drop.file[0 .. newFile.length] = newFile[0 .. newFile.length];
+        this.sdlEvent.drop.file[newFile.length] = '\0';
+    }
+}
+
+static if (sdlSupport >= SDLSupport.v2_0_5) {
+    /++ 
+     + D class that wraps `SDL_DROPTEXT` `SDL_Event`s (from SDL 2.0.5)
+     +/
+    class DropTextEvent : DropEvent {
+        this(string file, uint windowID) @trusted {
+            this.sdlEvent.type = SDL_DROPTEXT;
+            this.sdlEvent.drop.file = cast(char*) SDL_malloc(file.length + 1);
+            this.sdlEvent.drop.file[0 .. file.length] = file[0 .. file.length];
+            this.sdlEvent.drop.file[file.length] = '\0';
+            this.sdlEvent.drop.windowID = windowID;
+        }
+
+        @trusted invariant {
+            assert(this.sdlEvent.type == SDL_DROPTEXT);
+            assert(this.sdlEvent.drop.file !is null);
+        }
+
+        override string toString() const {
+            return "dsdl2.DropTextEvent(%s, %d)".format(this.file, this.windowID);
+        }
+
+        string file() const @property @trusted {
+            return this.sdlEvent.drop.file[0 .. strlen(this.sdlEvent.drop.file)].idup;
+        }
+
+        void file(string newFile) @property @trusted {
+            SDL_realloc(this.sdlEvent.drop.file, newFile.length + 1);
+            this.sdlEvent.drop.file[0 .. newFile.length] = newFile[0 .. newFile.length];
+            this.sdlEvent.drop.file[newFile.length] = '\0';
+        }
+    }
+
+    /++ 
+     + D class that wraps `SDL_DROPBEGIN` `SDL_Event`s (from SDL 2.0.5)
+     +/
+    class DropBeginEvent : DropEvent {
+        this(uint windowID) @trusted {
+            this.sdlEvent.type = SDL_DROPBEGIN;
+            this.sdlEvent.drop.windowID = windowID;
+        }
+
+        invariant {
+            assert(this.sdlEvent.type == SDL_DROPBEGIN);
+        }
+
+        override string toString() const {
+            return "dsdl2.DropBeginEvent(%d)".format(this.windowID);
+        }
+    }
+
+    /++ 
+     + D class that wraps `SDL_DROPCOMPLETE` `SDL_Event`s (from SDL 2.0.5)
+     +/
+    class DropCompleteEvent : DropEvent {
+        this(uint windowID) @trusted {
+            this.sdlEvent.type = SDL_DROPCOMPLETE;
+            this.sdlEvent.drop.windowID = windowID;
+        }
+
+        invariant {
+            assert(this.sdlEvent.type == SDL_DROPCOMPLETE);
+        }
+
+        override string toString() const {
+            return "dsdl2.DropCompleteEvent(%d)".format(this.windowID);
         }
     }
 }
