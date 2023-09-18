@@ -52,7 +52,7 @@ static if (sdlSupport >= SDLSupport.v2_0_12) {
  + `dsdl2.Texture` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
  + GPU RAM (VRAM) according to its defined `dsdl2.PixelFormat`. A `dsdl2.Texture` is associated with its
  + `dsdl2.Renderer`, and can only be operated with/by it.
- + 
+ +
  + Examples:
  + ---
  + auto renderer = new dsdl2.Renderer(...);

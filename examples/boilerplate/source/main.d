@@ -22,6 +22,7 @@ void main() {
     bool running = true;
     while (running) {
         // Gets incoming events
+        dsdl2.pumpEvents();
         while (auto event = dsdl2.pollEvent()) {
             // On quit
             if (cast(dsdl2.QuitEvent) event) {

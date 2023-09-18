@@ -16,6 +16,13 @@ import dsdl2.mouse;
 import std.conv : to;
 import std.format : format;
 
+/++ 
+ + Wraps `SDL_PumpEvents` which retrieves events from input devices
+ +/
+void pumpEvents() @trusted {
+    SDL_PumpEvents();
+}
+
 /++
  + Wraps `SDL_PollEvent` which returns the latest event in queue
  +
@@ -23,6 +30,7 @@ import std.format : format;
  + Examples:
  + ---
  + // Polls every upcoming event in queue
+ + dsdl2.pumpEvents();
  + while (auto event = dsdl2.pollEvent()){
  +     if (cast(dsdl2.QuitEvent)event) {
  +         dsdl2.quit();
@@ -159,6 +167,9 @@ abstract class Event {
     }
 }
 
+/++
+ + D class that wraps SDL events that aren't recognized by dsdl2
+ +/
 final class UnknownEvent : Event {
     this(SDL_Event sdlEvent) {
         this.sdlEvent = sdlEvent;
@@ -169,6 +180,9 @@ final class UnknownEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_QUIT` `SDL_Event`s
+ +/
 final class QuitEvent : Event {
     this() {
         this.sdlEvent.type = SDL_QUIT;
@@ -183,6 +197,9 @@ final class QuitEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_TERMINATING` `SDL_Event`s
+ +/
 final class AppTerminatingEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_TERMINATING;
@@ -197,6 +214,9 @@ final class AppTerminatingEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_LOWMEMORY` `SDL_Event`s
+ +/
 final class AppLowMemoryEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_LOWMEMORY;
@@ -211,6 +231,9 @@ final class AppLowMemoryEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_WILLENTERBACKGROUND` `SDL_Event`s
+ +/
 final class AppWillEnterBackgroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_WILLENTERBACKGROUND;
@@ -225,6 +248,9 @@ final class AppWillEnterBackgroundEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_DIDENTERBACKGROUND` `SDL_Event`s
+ +/
 final class AppDidEnterBackgroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_DIDENTERBACKGROUND;
@@ -239,6 +265,9 @@ final class AppDidEnterBackgroundEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_WILLENTERFOREGROUND` `SDL_Event`s
+ +/
 final class AppWillEnterForegroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_WILLENTERFOREGROUND;
@@ -253,6 +282,9 @@ final class AppWillEnterForegroundEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_APP_DIDENTERFOREGROUND` `SDL_Event`s
+ +/
 final class AppDidEnterForegroundEvent : Event {
     this() {
         this.sdlEvent.type = SDL_APP_DIDENTERFOREGROUND;
@@ -268,6 +300,9 @@ final class AppDidEnterForegroundEvent : Event {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_14) {
+    /++ 
+     + D class that wraps `SDL_LOCALECHANGED` `SDL_Event`s (from SDL 2.0.14)
+     +/
     class LocaleChangeEvent : Event {
         this() {
             this.sdlEvent.type = SDL_LOCALECHANGED;
@@ -284,6 +319,9 @@ static if (sdlSupport >= SDLSupport.v2_0_14) {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
+    /++ 
+     + D abstract class that wraps `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     +/
     abstract class DisplayEvent : Event {
         invariant {
             assert(this.sdlEvent.type == SDL_DISPLAYEVENT);
@@ -319,6 +357,9 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
+    /++ 
+     + D class that wraps `SDL_DISPLAYEVENT_ORIENTATION` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     +/
     class DisplayOrientationEvent : DisplayEvent {
         this(uint display, DisplayOrientation orientation) {
             this.sdlEvent.type = SDL_DISPLAYEVENT;
@@ -340,6 +381,9 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
+    /++ 
+     + D class that wraps `SDL_DISPLAYEVENT_CONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     +/
     class DisplayConnectedEvent : DisplayEvent {
         this(uint display) {
             this.sdlEvent.type = SDL_DISPLAYEVENT;
@@ -356,6 +400,9 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
+    /++ 
+     + D class that wraps `SDL_DISPLAYEVENT_DISCONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     +/
     class DisplayDisconnectedEvent : DisplayEvent {
         this(uint display) {
             this.sdlEvent.type = SDL_DISPLAYEVENT;
@@ -373,6 +420,9 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
     }
 }
 
+/++ 
+ + D abstract class that wraps `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 abstract class WindowEvent : Event {
     invariant {
         assert(this.sdlEvent.type == SDL_WINDOWEVENT);
@@ -459,6 +509,9 @@ abstract class WindowEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_SHOWN` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowShownEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -475,6 +528,9 @@ final class WindowShownEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_HIDDEN` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowHiddenEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -491,6 +547,9 @@ final class WindowHiddenEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_EXPOSED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowExposedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -507,6 +566,9 @@ final class WindowExposedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_MOVED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowMovedEvent : WindowEvent {
     this(uint windowID, int[2] xy) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -537,6 +599,9 @@ final class WindowMovedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_RESIZED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowResizedEvent : WindowEvent {
     this(uint windowID, uint[2] size) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -567,6 +632,9 @@ final class WindowResizedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_SIZE_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowSizeChangedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -583,6 +651,9 @@ final class WindowSizeChangedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_MINIMIZED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowMinimizedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -599,6 +670,9 @@ final class WindowMinimizedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_MAXIMIZED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowMaximizedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -615,6 +689,9 @@ final class WindowMaximizedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_RESTORED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowRestoredEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -631,6 +708,9 @@ final class WindowRestoredEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_ENTER` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowEnterEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -647,6 +727,9 @@ final class WindowEnterEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_LEAVE` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowLeaveEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -663,6 +746,9 @@ final class WindowLeaveEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_FOCUS_GAINED` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowFocusGainedEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -679,6 +765,9 @@ final class WindowFocusGainedEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_FOCUS_LOST` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowFocusLostEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -695,6 +784,9 @@ final class WindowFocusLostEvent : WindowEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_WINDOWEVENT_CLOSE` `SDL_WINDOWEVENT` `SDL_Event`s
+ +/
 final class WindowCloseEvent : WindowEvent {
     this(uint windowID) {
         this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -712,6 +804,9 @@ final class WindowCloseEvent : WindowEvent {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_5) {
+    /++ 
+     + D class that wraps `SDL_WINDOWEVENT_TAKE_FOCUS` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.5)
+     +/
     class WindowTakeFocusEvent : WindowEvent {
         this(uint windowID) {
             this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -728,6 +823,9 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
     }
 
+    /++ 
+     + D class that wraps `SDL_WINDOWEVENT_HIT_TEST` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.5)
+     +/
     class WindowHitTestEvent : WindowEvent {
         this(uint windowID) {
             this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -746,6 +844,9 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_18) {
+    /++ 
+     + D class that wraps `SDL_WINDOWEVENT_ICCPROF_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.18)
+     +/
     class WindowICCProfileChangedEvent : WindowEvent {
         this(uint windowID) {
             this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -762,6 +863,9 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         }
     }
 
+    /++ 
+     + D class that wraps `SDL_WINDOWEVENT_DISPLAY_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.18)
+     +/
     class WindowDisplayChangedEvent : WindowEvent {
         this(uint windowID, uint display) {
             this.sdlEvent.type = SDL_WINDOWEVENT;
@@ -784,6 +888,9 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_SYSWMEVENT` `SDL_Event`s
+ +/
 final class SysWMEvent : Event {
     this(SDL_SysWMmsg* msg) @system {
         this.sdlEvent.type = SDL_SYSWMEVENT;
@@ -803,6 +910,9 @@ final class SysWMEvent : Event {
     }
 }
 
+/++ 
+ + D abstract class that wraps keyboard `SDL_Event`s
+ +/
 abstract class KeyboardEvent : Event {
     invariant {
         assert(this.sdlEvent.type == SDL_KEYDOWN || this.sdlEvent.type == SDL_KEYUP);
@@ -854,6 +964,9 @@ abstract class KeyboardEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_KEYDOWN` `SDL_Event`s
+ +/
 final class KeyDownKeyboardEvent : KeyboardEvent {
     this(uint windowID, ubyte repeat, Scancode scancode, Keycode sym, Keymod mod) {
         this.sdlEvent.type = SDL_KEYDOWN;
@@ -874,6 +987,9 @@ final class KeyDownKeyboardEvent : KeyboardEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_KEYUP` `SDL_Event`s
+ +/
 final class KeyUpKeyboardEvent : KeyboardEvent {
     this(uint windowID, ubyte repeat, Scancode scancode, Keycode sym, Keymod mod) {
         this.sdlEvent.type = SDL_KEYUP;
@@ -894,6 +1010,9 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_TEXTEDITING` `SDL_Event`s
+ +/
 final class TextEditingEvent : Event {
     this(uint windowID, string text, uint start, uint length)
     in {
@@ -941,6 +1060,9 @@ final class TextEditingEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_TEXTINPUT` `SDL_Event`s
+ +/
 final class TextInputEvent : Event {
     this(uint windowID, string text)
     in {
@@ -979,6 +1101,9 @@ final class TextInputEvent : Event {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_4) {
+    /++ 
+     + D class that wraps `SDL_KEYMAPCHANGED` `SDL_Event`s (from SDL 2.0.4)
+     +/
     final class KeymapChangedEvent : Event {
         this() {
             this.sdlEvent.type = SDL_KEYMAPCHANGED;
@@ -994,6 +1119,9 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_MOUSEMOTION` `SDL_Event`s
+ +/
 final class MouseMotionEvent : Event {
     this(uint windowID, uint which, MouseState state, int[2] xy, int[2] xyRel) {
         this.sdlEvent.type = SDL_MOUSEMOTION;
@@ -1056,6 +1184,9 @@ final class MouseMotionEvent : Event {
     }
 }
 
+/++ 
+ + D abstract class that wraps mouse button `SDL_Event`s
+ +/
 abstract class MouseButtonEvent : Event {
     invariant {
         assert(this.sdlEvent.type == SDL_MOUSEBUTTONDOWN || this.sdlEvent.type == SDL_MOUSEBUTTONUP);
@@ -1130,6 +1261,9 @@ abstract class MouseButtonEvent : Event {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_MOUSEBUTTONDOWN` `SDL_Event`s
+ +/
 final class MouseButtonDownEvent : MouseButtonEvent {
     this(uint windowID, uint which, MouseButton button, ubyte clicks, int[2] xy) {
         this.sdlEvent.type = SDL_MOUSEBUTTONDOWN;
@@ -1158,6 +1292,9 @@ final class MouseButtonDownEvent : MouseButtonEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_MOUSEBUTTONUP` `SDL_Event`s
+ +/
 final class MouseButtonUpEvent : MouseButtonEvent {
     this(uint windowID, uint which, MouseButton button, ubyte clicks, int[2] xy) {
         this.sdlEvent.type = SDL_MOUSEBUTTONDOWN;
@@ -1186,6 +1323,9 @@ final class MouseButtonUpEvent : MouseButtonEvent {
     }
 }
 
+/++ 
+ + D class that wraps `SDL_MOUSEWHEEL` `SDL_Event`s
+ +/
 final class MouseWheelEvent : Event {
     static if (sdlSupport >= SDLSupport.v2_0_18) {
         this(uint windowID, uint which, int[2] xy, MouseWheel direction = MouseWheel.normal,
