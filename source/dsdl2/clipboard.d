@@ -10,7 +10,7 @@ module dsdl2.clipboard;
 import bindbc.sdl;
 import dsdl2.sdl;
 
-import core.stdc.string;
+import core.stdc.string : strlen;
 import std.conv : to;
 import std.string : toStringz;
 
