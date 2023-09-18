@@ -30,6 +30,7 @@ void main() {
 
     // Game loop
     while (running) {
+        dsdl2.pumpEvents();
         while (auto event = dsdl2.pollEvent()) {
             if (cast(dsdl2.QuitEvent) event) {
                 running = false;
