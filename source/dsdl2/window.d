@@ -620,7 +620,7 @@ final class Window {
     /++
      + Wraps `SDL_GetWindowSize` which gets the width of the window in pixels
      +
-     + Returns: drawable width of the window in pixels
+     + Returns: width of the window in pixels
      +/
     uint width() const @property @trusted {
         uint w = void;
@@ -1004,6 +1004,51 @@ final class Window {
         if (SDL_UpdateWindowSurfaceRects(this.sdlWindow, cast(SDL_Rect*) rects.ptr,
                 rects.length.to!int) != 0) {
             throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `SDL_GL_SwapWindow` which updates the window with any OpenGL changes
+     +/
+    void swapGL() @trusted {
+        SDL_GL_SwapWindow(this.sdlWindow);
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_1) {
+        /++
+         + Wraps `SDL_GL_GetDrawableSize` (from SDL 2.0.1) which gets the drawable height of the window in OpenGL
+         + in pixels
+         +
+         + Returns: height of the window in OpenGL in pixels
+         +/
+        uint drawableGLWidth() const @property @trusted {
+            uint w = void;
+            SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&w, null);
+            return w;
+        }
+
+        /++
+         + Wraps `SDL_GL_GetDrawableSize` (from SDL 2.0.1) which gets the drawable width of the window in OpenGL
+         + in pixels
+         +
+         + Returns: width of the window in OpenGL in pixels
+         +/
+        uint drawableGLHeight() const @property @trusted {
+            uint h = void;
+            SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, null, cast(int*)&h);
+            return h;
+        }
+
+        /++
+         + Wraps `SDL_GL_GetDrawableSize` (from SDL 2.0.1) which gets the drawable size of the window in OpenGL
+         + in pixels
+         +
+         + Returns: size of the window in OpenGL in pixels
+         +/
+        uint[2] drawableGLSize() const @property @trusted {
+            uint[2] wh = void;
+            SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(int*)&wh[1]);
+            return wh;
         }
     }
 

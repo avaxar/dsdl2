@@ -41,8 +41,8 @@ static if (sdlSupport >= SDLSupport.v2_0_12) {
          + Wraps `SDL_ScaleMode*` enumeration constants
          +/
         nearest = SDL_ScaleModeNearest,
-        linear = SDL_ScaleModeLinear,
-        best = SDL_ScaleModeBest
+        linear = SDL_ScaleModeLinear, /// ditto
+        best = SDL_ScaleModeBest /// ditto
     }
 }
 
