@@ -1,0 +1,35 @@
+# Couple of IDEs' temporary/cache directory
+*~
+*.swp
+.vs/
+.vscode/
+
+# Compiled object files
+*.o
+*.obj
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled static libraries
+*.a
+*.lib
+
+# Debug files
+*.pdb
+
+# Executables
+opengles-triangle
+*.exe
+
+# DUB
+.dub
+dub.selections.json
+docs.json
+__dummy.html
+docs/
+
+# Code coverage
+*.lst

@@ -1,0 +1,24 @@
+{
+	"authors": [
+		"Avaxar <avaxar@nekkl.org>"
+	],
+	"copyright": "Copyright © 2023, Avaxar",
+	"dependencies": {
+		"dsdl2": {
+			"path": "./../.."
+		}
+	},
+	"description": "Rendering an RGB triangle in OpenGLES with dsdl2.",
+	"buildTypes": {
+		"debug": {
+			"buildOptions-windows": ["debugInfoC"]
+		}
+	},
+	"license": "none",
+	"name": "opengles-triangle",
+	"targetType": "executable",
+	"sourcePaths": ["./glad", "./source"],
+	"importPaths": ["."],
+	"stringImportPaths": ["shaders"],
+	"versions": ["SDL_2022"]
+}
