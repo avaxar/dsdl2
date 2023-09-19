@@ -17,7 +17,7 @@ import core.stdc.string : strlen;
 import std.conv : to;
 import std.format : format;
 
-/++ 
+/++
  + Wraps `SDL_PumpEvents` which retrieves events from input devices
  +/
 void pumpEvents() @trusted {
@@ -215,7 +215,7 @@ final class UnknownEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_QUIT` `SDL_Event`s
  +/
 final class QuitEvent : Event {
@@ -232,7 +232,7 @@ final class QuitEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_TERMINATING` `SDL_Event`s
  +/
 final class AppTerminatingEvent : Event {
@@ -249,7 +249,7 @@ final class AppTerminatingEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_LOWMEMORY` `SDL_Event`s
  +/
 final class AppLowMemoryEvent : Event {
@@ -266,7 +266,7 @@ final class AppLowMemoryEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_WILLENTERBACKGROUND` `SDL_Event`s
  +/
 final class AppWillEnterBackgroundEvent : Event {
@@ -283,7 +283,7 @@ final class AppWillEnterBackgroundEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_DIDENTERBACKGROUND` `SDL_Event`s
  +/
 final class AppDidEnterBackgroundEvent : Event {
@@ -300,7 +300,7 @@ final class AppDidEnterBackgroundEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_WILLENTERFOREGROUND` `SDL_Event`s
  +/
 final class AppWillEnterForegroundEvent : Event {
@@ -317,7 +317,7 @@ final class AppWillEnterForegroundEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_APP_DIDENTERFOREGROUND` `SDL_Event`s
  +/
 final class AppDidEnterForegroundEvent : Event {
@@ -335,7 +335,7 @@ final class AppDidEnterForegroundEvent : Event {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_14) {
-    /++ 
+    /++
      + D class that wraps `SDL_LOCALECHANGED` `SDL_Event`s (from SDL 2.0.14)
      +/
     class LocaleChangeEvent : Event {
@@ -354,7 +354,7 @@ static if (sdlSupport >= SDLSupport.v2_0_14) {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_9) {
-    /++ 
+    /++
      + D abstract class that wraps `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
      +/
     abstract class DisplayEvent : Event {
@@ -400,7 +400,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_DISPLAYEVENT_ORIENTATION` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
      +/
     class DisplayOrientationEvent : DisplayEvent {
@@ -424,7 +424,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_DISPLAYEVENT_CONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
      +/
     class DisplayConnectedEvent : DisplayEvent {
@@ -443,7 +443,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_DISPLAYEVENT_DISCONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
      +/
     class DisplayDisconnectedEvent : DisplayEvent {
@@ -463,7 +463,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
     }
 }
 
-/++ 
+/++
  + D abstract class that wraps `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 abstract class WindowEvent : Event {
@@ -575,7 +575,7 @@ abstract class WindowEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_SHOWN` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowShownEvent : WindowEvent {
@@ -594,7 +594,7 @@ final class WindowShownEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_HIDDEN` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowHiddenEvent : WindowEvent {
@@ -613,7 +613,7 @@ final class WindowHiddenEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_EXPOSED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowExposedEvent : WindowEvent {
@@ -632,7 +632,7 @@ final class WindowExposedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_MOVED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowMovedEvent : WindowEvent {
@@ -665,7 +665,7 @@ final class WindowMovedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_RESIZED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowResizedEvent : WindowEvent {
@@ -698,7 +698,7 @@ final class WindowResizedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_SIZE_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowSizeChangedEvent : WindowEvent {
@@ -717,7 +717,7 @@ final class WindowSizeChangedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_MINIMIZED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowMinimizedEvent : WindowEvent {
@@ -736,7 +736,7 @@ final class WindowMinimizedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_MAXIMIZED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowMaximizedEvent : WindowEvent {
@@ -755,7 +755,7 @@ final class WindowMaximizedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_RESTORED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowRestoredEvent : WindowEvent {
@@ -774,7 +774,7 @@ final class WindowRestoredEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_ENTER` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowEnterEvent : WindowEvent {
@@ -793,7 +793,7 @@ final class WindowEnterEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_LEAVE` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowLeaveEvent : WindowEvent {
@@ -812,7 +812,7 @@ final class WindowLeaveEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_FOCUS_GAINED` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowFocusGainedEvent : WindowEvent {
@@ -831,7 +831,7 @@ final class WindowFocusGainedEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_FOCUS_LOST` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowFocusLostEvent : WindowEvent {
@@ -850,7 +850,7 @@ final class WindowFocusLostEvent : WindowEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_WINDOWEVENT_CLOSE` `SDL_WINDOWEVENT` `SDL_Event`s
  +/
 final class WindowCloseEvent : WindowEvent {
@@ -870,7 +870,7 @@ final class WindowCloseEvent : WindowEvent {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_5) {
-    /++ 
+    /++
      + D class that wraps `SDL_WINDOWEVENT_TAKE_FOCUS` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.5)
      +/
     class WindowTakeFocusEvent : WindowEvent {
@@ -889,7 +889,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_WINDOWEVENT_HIT_TEST` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.5)
      +/
     class WindowHitTestEvent : WindowEvent {
@@ -910,7 +910,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_18) {
-    /++ 
+    /++
      + D class that wraps `SDL_WINDOWEVENT_ICCPROF_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.18)
      +/
     class WindowICCProfileChangedEvent : WindowEvent {
@@ -929,7 +929,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_WINDOWEVENT_DISPLAY_CHANGED` `SDL_WINDOWEVENT` `SDL_Event`s (from SDL 2.0.18)
      +/
     class WindowDisplayChangedEvent : WindowEvent {
@@ -954,7 +954,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_SYSWMEVENT` `SDL_Event`s
  +/
 final class SysWMEvent : Event {
@@ -976,7 +976,7 @@ final class SysWMEvent : Event {
     }
 }
 
-/++ 
+/++
  + D abstract class that wraps keyboard `SDL_Event`s
  +/
 abstract class KeyboardEvent : Event {
@@ -1036,7 +1036,7 @@ abstract class KeyboardEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_KEYDOWN` `SDL_Event`s
  +/
 final class KeyDownKeyboardEvent : KeyboardEvent {
@@ -1059,7 +1059,7 @@ final class KeyDownKeyboardEvent : KeyboardEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_KEYUP` `SDL_Event`s
  +/
 final class KeyUpKeyboardEvent : KeyboardEvent {
@@ -1082,7 +1082,7 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_TEXTEDITING` `SDL_Event`s
  +/
 final class TextEditingEvent : Event {
@@ -1132,7 +1132,7 @@ final class TextEditingEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_TEXTINPUT` `SDL_Event`s
  +/
 final class TextInputEvent : Event {
@@ -1173,7 +1173,7 @@ final class TextInputEvent : Event {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_4) {
-    /++ 
+    /++
      + D class that wraps `SDL_KEYMAPCHANGED` `SDL_Event`s (from SDL 2.0.4)
      +/
     final class KeymapChangedEvent : Event {
@@ -1191,7 +1191,7 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_MOUSEMOTION` `SDL_Event`s
  +/
 final class MouseMotionEvent : Event {
@@ -1256,7 +1256,7 @@ final class MouseMotionEvent : Event {
     }
 }
 
-/++ 
+/++
  + D abstract class that wraps mouse button `SDL_Event`s
  +/
 abstract class MouseButtonEvent : Event {
@@ -1339,7 +1339,7 @@ abstract class MouseButtonEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_MOUSEBUTTONDOWN` `SDL_Event`s
  +/
 final class MouseButtonDownEvent : MouseButtonEvent {
@@ -1370,7 +1370,7 @@ final class MouseButtonDownEvent : MouseButtonEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_MOUSEBUTTONUP` `SDL_Event`s
  +/
 final class MouseButtonUpEvent : MouseButtonEvent {
@@ -1401,7 +1401,7 @@ final class MouseButtonUpEvent : MouseButtonEvent {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_MOUSEWHEEL` `SDL_Event`s
  +/
 final class MouseWheelEvent : Event {
@@ -1497,7 +1497,7 @@ final class MouseWheelEvent : Event {
     }
 }
 
-/++ 
+/++
  + D abstract class that wraps drop `SDL_Event`s
  +/
 abstract class DropEvent : Event {
@@ -1570,7 +1570,7 @@ abstract class DropEvent : Event {
     }
 }
 
-/++ 
+/++
  + D class that wraps `SDL_DROPFILE` `SDL_Event`s
  +/
 class DropFileEvent : DropEvent {
@@ -1617,7 +1617,7 @@ class DropFileEvent : DropEvent {
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_5) {
-    /++ 
+    /++
      + D class that wraps `SDL_DROPTEXT` `SDL_Event`s (from SDL 2.0.5)
      +/
     class DropTextEvent : DropEvent {
@@ -1649,7 +1649,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_DROPBEGIN` `SDL_Event`s (from SDL 2.0.5)
      +/
     class DropBeginEvent : DropEvent {
@@ -1667,7 +1667,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
     }
 
-    /++ 
+    /++
      + D class that wraps `SDL_DROPCOMPLETE` `SDL_Event`s (from SDL 2.0.5)
      +/
     class DropCompleteEvent : DropEvent {
