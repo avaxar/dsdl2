@@ -18,22 +18,50 @@ import dsdl2.texture;
 import dsdl2.window;
 
 import core.memory : GC;
+import std.bitmanip : bitfields;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
 import std.typecons : Nullable, nullable;
 
-/++
- + D enum that wraps `SDL_RendererFlags` in specifying renderer constructions
- +/
-enum RendererFlag {
-    /++
-     + Wraps `SDL_RENDERER_*` enumeration constants
-     +/
-    software = SDL_RENDERER_SOFTWARE,
-    accelerated = SDL_RENDERER_ACCELERATED, /// ditto
-    presentVSync = SDL_RENDERER_PRESENTVSYNC, /// ditto
-    targetTexture = SDL_RENDERER_TARGETTEXTURE, /// ditto
+private uint toSDLRendererFlags(bool software, bool accelerated, bool presentVSync, bool targetTexture) {
+    uint flags = 0;
+
+    flags |= software ? SDL_RENDERER_SOFTWARE : 0;
+    flags |= accelerated ? SDL_RENDERER_ACCELERATED : 0;
+    flags |= presentVSync ? SDL_RENDERER_PRESENTVSYNC : 0;
+    flags |= targetTexture ? SDL_RENDERER_TARGETTEXTURE : 0;
+
+    return flags;
+}
+
+struct RendererFlagsTuple {
+    mixin(bitfields!(
+            bool, "software", 1,
+            bool, "accelerated", 1,
+            bool, "presentVSync", 1,
+            bool, "targetTexture", 1,
+            ubyte, "", 4
+    ));
+
+    this() @disable;
+
+    private this(typeof(null) _) @trusted {
+        import core.stdc.string : memset;
+
+        memset(cast(void*)&this, 0, this.sizeof);
+    }
+}
+
+private RendererFlagsTuple fromSDLRendererFlags(uint flags) {
+    RendererFlagsTuple tuple = RendererFlagsTuple(null);
+
+    tuple.software = (flags & SDL_RENDERER_SOFTWARE) != 0;
+    tuple.accelerated = (flags & SDL_RENDERER_ACCELERATED) != 0;
+    tuple.presentVSync = (flags & SDL_RENDERER_PRESENTVSYNC) != 0;
+    tuple.targetTexture = (flags & SDL_RENDERER_TARGETTEXTURE) != 0;
+
+    return tuple;
 }
 
 /++
@@ -41,9 +69,9 @@ enum RendererFlag {
  +/
 struct RendererInfo {
     string name; /// Name of the renderer
-    uint sdlFlags; /// Internal SDL bitmask of supported renderer flags
     PixelFormat[] textureFormats; /// Available texture pixel formats
     uint[2] maxTextureSize; /// Maximum texture size
+    uint sdlFlags; /// Internal SDL bitmask of supported renderer flags
 
     this() @disable;
 
@@ -71,28 +99,31 @@ struct RendererInfo {
      +
      + Params:
      +   name           = name of the renderer
-     +   flags          = array of `dsdl2.RendererFlag`s, specifying available renderer flags
      +   textureFormats = available texture pixel format(s)
      +   maxTextureSize = maximum size a texture can be
+     +   software       = adds `SDL_RENDERER_SOFTWARE` flag
+     +   accelerated    = adds `SDL_RENDERER_ACCELERATED` flag
+     +   presentVSync   = adds `SDL_RENDERER_PRESENTVSYNC` flag
+     +   targetTexture  = adds `SDL_RENDERER_TARGETTEXTURE` flag
      +/
-    this(string name, const RendererFlag[] flags, PixelFormat[] textureFormats, uint[2] maxTextureSize) @trusted {
+    this(string name, PixelFormat[] textureFormats, uint[2] maxTextureSize, bool software = false,
+        bool accelerated = false, bool presentVSync = false, bool targetTexture = false) @trusted {
         this.name = name;
-        foreach (flag; flags) {
-            this.sdlFlags |= flag;
-        }
         this.textureFormats = textureFormats;
         this.maxTextureSize = maxTextureSize;
+        this.sdlFlags = toSDLRendererFlags(software, accelerated, presentVSync, targetTexture);
     }
 
     /++
      + Formats the `dsdl2.RendererInfo` into its construction representation:
-     + `"dsdl2.RendererInfo(<name>, <flags>, <textureFormats>, <maxTextureSize>)"`
+     + `"dsdl2.RendererInfo(<name>, <textureFormats>, <maxTextureSize>, <flag> : <value> ...)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.RendererInfo(%s, %s, %s, %s)".format([this.name].to!string[1 .. $ - 1], this.flags,
-            this.textureFormats, this.maxTextureSize);
+        return "dsdl2.RendererInfo(%s, %s, %s, software : %s, accelerated : %s, presentVSync : %s, targetTexture : %s)"
+            .format([this.name].to!string[1 .. $ - 1], this.flags, this.textureFormats, this.maxTextureSize,
+                this.flags.software, this.flags.accelerated, this.flags.presentVSync, this.flags.targetTexture);
     }
 
     /++
@@ -113,31 +144,10 @@ struct RendererInfo {
     /++
      + Gets the available renderer flags
      +
-     + Returns: array of the available `dsdl2.RendererFlag`s
+     + Returns: a named bitmap tuple of the renderer flags
      +/
-    const(RendererFlag[]) flags() const @property {
-        RendererFlag[] flags;
-        foreach (flagStr; __traits(allMembers, RendererFlag)) {
-            RendererFlag flag = mixin("RendererFlag." ~ flagStr);
-            if ((this.sdlFlags & flag) == flag) {
-                flags ~= flag;
-            }
-        }
-
-        return flags;
-    }
-
-    /++
-     + Sets the available renderer flags
-     +
-     + Params:
-     +   newFlags = new array of the available `dsdl2.RendererFlag`s
-     +/
-    void flags(const RendererFlag[] newFlags) @property {
-        this.sdlFlags = 0;
-        foreach (flag; newFlags) {
-            this.sdlFlags |= flag;
-        }
+    RendererFlagsTuple flags() const @property {
+        return fromSDLRendererFlags(this.sdlFlags);
     }
 
     /++
@@ -343,8 +353,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
  + Examples:
  + ---
  + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
- + auto renderer = new dsdl2.Renderer(window, flags:
- +     [dsdl2.RendererFlag.accelerated, dsdl2.RendererFlag.presentVSync]);
+ + auto renderer = new dsdl2.Renderer(window, accelerated : true, acceleratedVSync : true);
  + ---
  +/
 final class Renderer {
@@ -376,23 +385,23 @@ final class Renderer {
      + Creates a hardware `dsdl2.Renderer` that renders to a `dsdl2.Window`, which wraps `SDL_CreateRenderer`
      +
      + Params:
-     +   window       = target `dsdl2.Window` for the renderer to draw onto which must not have a surface associated
-     +   renderDriver = the `dsdl2.RenderDriver` to use; `null` to use the default
-     +   flags        = optional flags given to the renderer
+     +   window        = target `dsdl2.Window` for the renderer to draw onto which must not have a surface associated
+     +   renderDriver  = the `dsdl2.RenderDriver` to use; `null` to use the default
+     +   software      = adds `SDL_RENDERER_SOFTWARE` flag
+     +   accelerated   = adds `SDL_RENDERER_ACCELERATED` flag
+     +   presentVSync  = adds `SDL_RENDERER_PRESENTVSYNC` flag
+     +   targetTexture = adds `SDL_RENDERER_TARGETTEXTURE` flag
      + Throws: `dsdl2.SDLException` if creation failed
      +/
-    this(Window window, const RenderDriver renderDriver = null, const RendererFlag[] flags = null) @trusted
+    this(Window window, const RenderDriver renderDriver = null, bool software = false,
+        bool accelerated = false, bool presentVSync = false, bool targetTexture = false) @trusted
     in {
         assert(window !is null);
     }
     do {
-        uint intFlags;
-        foreach (flag; flags) {
-            intFlags |= flag;
-        }
-
+        uint flags = toSDLRendererFlags(software, accelerated, presentVSync, targetTexture);
         this.sdlRenderer = SDL_CreateRenderer(window.sdlWindow,
-            renderDriver is null ? -1 : renderDriver.sdlRenderDriverIndex.to!uint, intFlags);
+            renderDriver is null ? -1 : renderDriver.sdlRenderDriverIndex.to!uint, flags);
         if (this.sdlRenderer is null) {
             throw new SDLException;
         }

@@ -6,7 +6,7 @@ static import dsdl2;
 void main() {
     // SDL initialization
     dsdl2.loadSO();
-    dsdl2.init();
+    dsdl2.init(everything : true);
 
     // Prints backend information
     writeln("Version of SDL used: ", dsdl2.getVersion());
@@ -15,8 +15,9 @@ void main() {
 
     // Creates a simple 800x600 window in the center of the screen, as well as its associated GPU renderer
     auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
-    auto renderer = new dsdl2.Renderer(window, flags:
-        [dsdl2.RendererFlag.accelerated, dsdl2.RendererFlag.presentVSync]);
+    // dfmt off
+    auto renderer = new dsdl2.Renderer(window, accelerated : true, presentVSync : true);
+    // dfmt on
 
     // The application loop
     bool running = true;

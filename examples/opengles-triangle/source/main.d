@@ -8,7 +8,7 @@ import glad.gl.loader;
 void main() {
     // Initializes SDL2 and OpenGLES 3.0
     dsdl2.loadSO();
-    dsdl2.init();
+    dsdl2.init(everything : true);
     dsdl2.setGLAttribute(dsdl2.GLAttribute.contextProfileMask, dsdl2.GLProfile.es);
     dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMajorVersion, 3);
     dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMinorVersion, 0);
@@ -18,9 +18,11 @@ void main() {
     writeln("List of drivers: ", dsdl2.getVideoDrivers());
     writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
 
+    // dfmt off
     auto window = new dsdl2.Window("OpenGLES Window", [
         dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
-    ], [800, 600], [dsdl2.WindowFlag.openGL]);
+    ], [800, 600], openGL : true, resizable : true);
+    // dfmt on
     auto context = new dsdl2.GLContext(window);
 
     // Loads OpenGLES 3.0 functions from GLAD
@@ -68,6 +70,7 @@ void main() {
 
     // Making VBO
     GLuint vbo;
+    // dfmt off
     float[] vertices = [
         0.0, 0.75, 0.0, // Vertex 1 position
         1.0, 0.0, 0.0, 1.0, // Vertex 1 color
@@ -76,9 +79,9 @@ void main() {
         0.0, 1.0, 0.0, 1.0, // Vertex 2 color
 
         -0.75, -0.75, 0.0, // Vertex 3 position
-        0.0, 0.0, 1.0,
-        1.0 // Vertex 3 color
+        0.0, 0.0, 1.0, 1.0 // Vertex 3 color
     ];
+    // dfmt on
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.length * float.sizeof, vertices.ptr, GL_STATIC_DRAW);
@@ -111,6 +114,9 @@ void main() {
             if (cast(dsdl2.QuitEvent) event) {
                 running = false;
                 break;
+            }
+            else if (auto resizeEvent = cast(dsdl2.WindowResizedEvent) event) {
+                glViewport(0, 0, resizeEvent.width, resizeEvent.height);
             }
         }
 

@@ -8,7 +8,7 @@ static import dsdl2;
 
 void main() {
     dsdl2.loadSO();
-    dsdl2.init();
+    dsdl2.init(everything : true);
 
     auto window = new dsdl2.Window("Pong", [
         dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
