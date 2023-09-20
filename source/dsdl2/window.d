@@ -16,6 +16,7 @@ import dsdl2.renderer;
 import dsdl2.surface;
 
 import core.memory : GC;
+import std.bitmanip : bitfields;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
@@ -29,233 +30,152 @@ enum WindowPos : uint {
     undefined = SDL_WINDOWPOS_UNDEFINED /// Wraps `SDL_WINDOWPOS_UNDEFINED` which leaves the window's position undefined
 }
 
-static if (sdlSupport >= SDLSupport.v2_0_16) {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN, /// ditto
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
-         +/
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
-         +/
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
-         +/
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
-        skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
-        utility = SDL_WINDOW_UTILITY, /// ditto
-        tooltip = SDL_WINDOW_TOOLTIP, /// ditto
-        popupMenu = SDL_WINDOW_POPUP_MENU, /// ditto
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.6)
-         +/
-        vulkan = SDL_WINDOW_VULKAN,
-        metal = SDL_WINDOW_METAL, /// ditto
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.16)
-         +/
-        mouseGrabbed = SDL_WINDOW_MOUSE_GRABBED,
-        keyboardGrabbed = SDL_WINDOW_KEYBOARD_GRABBED /// ditto
+private uint toSDLWindowFlags(bool fullscreen, bool fullscreenDesktop, bool openGL, bool shown, bool hidden,
+    bool borderless, bool resizable, bool minimized, bool maximized, bool inputGrabbed, bool inputFocus,
+    bool mouseFocus, bool foreign, bool allowHighDPI, bool mouseCapture, bool alwaysOnTop, bool skipTaskbar,
+    bool utility, bool tooltip, bool popupMenu, bool vulkan, bool metal, bool mouseGrabbed, bool keyboardGrabbed)
+in {
+    static if (sdlSupport < SDLSupport.v2_0_1) {
+        assert(allowHighDPI == false);
+    }
+    static if (sdlSupport < SDLSupport.v2_0_4) {
+        assert(mouseCapture == false);
+    }
+    static if (sdlSupport < SDLSupport.v2_0_5) {
+        assert(alwaysOnTop == false);
+        assert(skipTaskbar == false);
+        assert(utility == false);
+        assert(tooltip == false);
+        assert(popupMenu == false);
+    }
+    static if (sdlSupport < SDLSupport.v2_0_6) {
+        assert(vulkan == false);
+        assert(metal == false);
+    }
+    static if (sdlSupport < SDLSupport.v2_0_16) {
+        assert(mouseGrabbed == false);
+        assert(keyboardGrabbed == false);
     }
 }
-else static if (sdlSupport >= SDLSupport.v2_0_6) {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN, /// ditto
+do {
+    uint flags = 0;
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
-         +/
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+    flags |= fullscreen ? SDL_WINDOW_FULLSCREEN : 0;
+    flags |= fullscreenDesktop ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0;
+    flags |= openGL ? SDL_WINDOW_OPENGL : 0;
+    flags |= shown ? SDL_WINDOW_SHOWN : 0;
+    flags |= hidden ? SDL_WINDOW_HIDDEN : 0;
+    flags |= borderless ? SDL_WINDOW_BORDERLESS : 0;
+    flags |= resizable ? SDL_WINDOW_RESIZABLE : 0;
+    flags |= minimized ? SDL_WINDOW_MINIMIZED : 0;
+    flags |= maximized ? SDL_WINDOW_MAXIMIZED : 0;
+    flags |= inputGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0;
+    flags |= inputFocus ? SDL_WINDOW_INPUT_FOCUS : 0;
+    flags |= mouseFocus ? SDL_WINDOW_MOUSE_FOCUS : 0;
+    flags |= foreign ? SDL_WINDOW_FOREIGN : 0;
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
-         +/
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
+    static if (sdlSupport >= SDLSupport.v2_0_1) {
+        flags |= allowHighDPI ? SDL_WINDOW_ALLOW_HIGHDPI : 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_4) {
+        flags |= mouseCapture ? SDL_WINDOW_MOUSE_CAPTURE : 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        flags |= alwaysOnTop ? SDL_WINDOW_ALWAYS_ON_TOP : 0;
+        flags |= skipTaskbar ? SDL_WINDOW_SKIP_TASKBAR : 0;
+        flags |= utility ? SDL_WINDOW_UTILITY : 0;
+        flags |= tooltip ? SDL_WINDOW_TOOLTIP : 0;
+        flags |= popupMenu ? SDL_WINDOW_POPUP_MENU : 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_6) {
+        flags |= vulkan ? SDL_WINDOW_VULKAN : 0;
+        flags |= metal ? SDL_WINDOW_METAL : 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_16) {
+        flags |= mouseGrabbed ? SDL_WINDOW_MOUSE_GRABBED : 0;
+        flags |= keyboardGrabbed ? SDL_WINDOW_KEYBOARD_GRABBED : 0;
+    }
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
-         +/
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
-        skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
-        utility = SDL_WINDOW_UTILITY, /// ditto
-        tooltip = SDL_WINDOW_TOOLTIP, /// ditto
-        popupMenu = SDL_WINDOW_POPUP_MENU, /// ditto
+    return flags;
+}
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.6)
-         +/
-        vulkan = SDL_WINDOW_VULKAN,
-        metal = SDL_WINDOW_METAL /// ditto
+struct WindowFlagsTuple {
+    mixin(bitfields!(
+            bool, "fullscreen", 1,
+            bool, "fullscreenDesktop", 1,
+            bool, "openGL", 1,
+            bool, "shown", 1,
+            bool, "hidden", 1,
+            bool, "borderless", 1,
+            bool, "resizable", 1,
+            bool, "minimized", 1,
+            bool, "maximized", 1,
+            bool, "inputGrabbed", 1,
+            bool, "inputFocus", 1,
+            bool, "mouseFocus", 1,
+            bool, "foreign", 1,
+            bool, "allowHighDPI", 1,
+            bool, "mouseCapture", 1,
+            bool, "alwaysOnTop", 1,
+            bool, "skipTaskbar", 1,
+            bool, "utility", 1,
+            bool, "tooltip", 1,
+            bool, "popupMenu", 1,
+            bool, "vulkan", 1,
+            bool, "metal", 1,
+            bool, "mouseGrabbed", 1,
+            bool, "keyboardGrabbed", 1,
+            ubyte, "", 8));
+
+    this() @disable;
+
+    private this(typeof(null) _) @trusted {
+        import core.stdc.string : memset;
+
+        memset(cast(void*)&this, 0, this.sizeof);
     }
 }
-else static if (sdlSupport >= SDLSupport.v2_0_5) {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN, /// ditto
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
-         +/
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
+private WindowFlagsTuple fromSDLWindowFlags(uint flags) {
+    WindowFlagsTuple tuple = WindowFlagsTuple(null);
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
-         +/
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE,
+    tuple.fullscreen = (flags & SDL_WINDOW_FULLSCREEN) != 0;
+    tuple.fullscreenDesktop = (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
+    tuple.openGL = (flags & SDL_WINDOW_OPENGL) != 0;
+    tuple.shown = (flags & SDL_WINDOW_SHOWN) != 0;
+    tuple.hidden = (flags & SDL_WINDOW_HIDDEN) != 0;
+    tuple.borderless = (flags & SDL_WINDOW_BORDERLESS) != 0;
+    tuple.resizable = (flags & SDL_WINDOW_RESIZABLE) != 0;
+    tuple.minimized = (flags & SDL_WINDOW_MINIMIZED) != 0;
+    tuple.maximized = (flags & SDL_WINDOW_MAXIMIZED) != 0;
+    tuple.inputGrabbed = (flags & SDL_WINDOW_INPUT_GRABBED) != 0;
+    tuple.inputFocus = (flags & SDL_WINDOW_INPUT_FOCUS) != 0;
+    tuple.mouseFocus = (flags & SDL_WINDOW_MOUSE_FOCUS) != 0;
+    tuple.foreign = (flags & SDL_WINDOW_FOREIGN) != 0;
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.5)
-         +/
-        alwaysOnTop = SDL_WINDOW_ALWAYS_ON_TOP,
-        skipTaskbar = SDL_WINDOW_SKIP_TASKBAR, /// ditto
-        utility = SDL_WINDOW_UTILITY, /// ditto
-        tooltip = SDL_WINDOW_TOOLTIP, /// ditto
-        popupMenu = SDL_WINDOW_POPUP_MENU /// ditto
+    static if (sdlSupport >= SDLSupport.v2_0_1) {
+        tuple.allowHighDPI = (flags & SDL_WINDOW_ALLOW_HIGHDPI) != 0;
     }
-}
-else static if (sdlSupport >= SDLSupport.v2_0_4) {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN, /// ditto
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
-         +/
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI,
-
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.4)
-         +/
-        mouseCapture = SDL_WINDOW_MOUSE_CAPTURE
+    static if (sdlSupport >= SDLSupport.v2_0_4) {
+        tuple.mouseCapture = (flags & SDL_WINDOW_MOUSE_CAPTURE) != 0;
     }
-}
-else static if (sdlSupport >= SDLSupport.v2_0_1) {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN, /// ditto
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        tuple.alwaysOnTop = (flags & SDL_WINDOW_ALWAYS_ON_TOP) != 0;
+        tuple.skipTaskbar = (flags & SDL_WINDOW_SKIP_TASKBAR) != 0;
+        tuple.utility = (flags & SDL_WINDOW_UTILITY) != 0;
+        tuple.tooltip = (flags & SDL_WINDOW_TOOLTIP) != 0;
+        tuple.popupMenu = (flags & SDL_WINDOW_POPUP_MENU) != 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_6) {
+        tuple.vulkan = (flags & SDL_WINDOW_VULKAN) != 0;
+        tuple.metal = (flags & SDL_WINDOW_METAL) != 0;
+    }
+    static if (sdlSupport >= SDLSupport.v2_0_16) {
+        tuple.mouseGrabbed = (flags & SDL_WINDOW_MOUSE_GRABBED) != 0;
+        tuple.keyboardGrabbed = (flags & SDL_WINDOW_KEYBOARD_GRABBED) != 0;
+    }
 
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants (from SDL 2.0.1)
-         +/
-        allowHighDPI = SDL_WINDOW_ALLOW_HIGHDPI
-    }
-}
-else {
-    /++
-     + D enum that wraps `SDL_WindowFlags` in specifying window constructions
-     +/
-    enum WindowFlag {
-        /++
-         + Wraps `SDL_WINDOW_*` enumeration constants
-         +/
-        fullscreen = SDL_WINDOW_FULLSCREEN,
-        fullscreenDesktop = SDL_WINDOW_FULLSCREEN_DESKTOP, /// ditto
-        openGL = SDL_WINDOW_OPENGL, /// ditto
-        shown = SDL_WINDOW_SHOWN, /// ditto
-        hidden = SDL_WINDOW_HIDDEN, /// ditto
-        borderless = SDL_WINDOW_BORDERLESS, /// ditto
-        resizable = SDL_WINDOW_RESIZABLE, /// ditto
-        minimized = SDL_WINDOW_MINIMIZED, /// ditto
-        maximized = SDL_WINDOW_MAXIMIZED, /// ditto
-        inputGrabbed = SDL_WINDOW_INPUT_GRABBED, /// ditto
-        inputFocus = SDL_WINDOW_INPUT_FOCUS, /// ditto
-        mouseFocus = SDL_WINDOW_MOUSE_FOCUS, /// ditto
-        foreign = SDL_WINDOW_FOREIGN /// ditto
-    }
+    return tuple;
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_16) {
@@ -337,25 +257,53 @@ final class Window {
      + Creates a window on the desktop placed at a coordinate in the screen, which wraps `SDL_CreateWindow`
      +
      + Params:
-     +   title    = title given to the shown window
-     +   position = top-left position of the window in the desktop environment (pair of two `uint`s or flags
-     +              from `dsdl2.WindowPos`)
-     +   size     = size of the window in pixels
-     +   flags    = optional flags given to the window
+     +   title             = title given to the shown window
+     +   position          = top-left position of the window in the desktop environment (pair of two `uint`s or flags
+     +                       from `dsdl2.WindowPos`)
+     +   size              = size of the window in pixels
+     +   fullscreen        = adds `SDL_WINDOW_FULLSCREEN` flag
+     +   fullscreenDesktop = adds `SDL_WINDOW_FULLSCREEN_DESKTOP` flag
+     +   openGL            = adds `SDL_WINDOW_OPENGL` flag
+     +   shown             = adds `SDL_WINDOW_SHOWN` flag
+     +   hidden            = adds `SDL_WINDOW_HIDDEN` flag
+     +   borderless        = adds `SDL_WINDOW_BORDERLESS` flag
+     +   resizable         = adds `SDL_WINDOW_RESIZABLE` flag
+     +   minimized         = adds `SDL_WINDOW_MINIMIZED` flag
+     +   maximized         = adds `SDL_WINDOW_MAXIMIZED` flag
+     +   inputGrabbed      = adds `SDL_WINDOW_INPUT_GRABBED` flag
+     +   inputFocus        = adds `SDL_WINDOW_INPUT_FOCUS` flag
+     +   mouseFocus        = adds `SDL_WINDOW_MOUSE_FOCUS` flag
+     +   foreign           = adds `SDL_WINDOW_FOREIGN` flag
+     +   allowHighDPI      = adds `SDL_WINDOW_ALLOW_HIGHDPI` flag (from SDL 2.0.1)
+     +   mouseCapture      = adds `SDL_WINDOW_MOUSE_CAPTURE` flag (from SDL 2.0.2)
+     +   alwaysOnTop       = adds `SDL_WINDOW_ALWAYS_ON_TOP` flag (from SDL 2.0.5)
+     +   skipTaskbar       = adds `SDL_WINDOW_SKIP_TASKBAR` flag (from SDL 2.0.5)
+     +   utility           = adds `SDL_WINDOW_UTILITY` flag (from SDL 2.0.5)
+     +   tooltip           = adds `SDL_WINDOW_TOOLTIP` flag (from SDL 2.0.5)
+     +   popupMenu         = adds `SDL_WINDOW_POPUP_MENU` flag (from SDL 2.0.5)
+     +   vulkan            = adds `SDL_WINDOW_VULKAN` flag (from SDL 2.0.6)
+     +   metal             = adds `SDL_WINDOW_METAL` flag (from SDL 2.0.6)
+     +   mouseGrabbed      = adds `SDL_WINDOW_MOUSE_GRABBED` flag (from SDL 2.0.16)
+     +   keyboardGrabbed   = adds `SDL_WINDOW_KEYBOARD_GRABBED` flag (from SDL 2.0.16)
      + Throws: `dsdl2.SDLException` if window creation failed
      +/
-    this(string title, uint[2] position, uint[2] size, const WindowFlag[] flags = null) @trusted
+    this(string title, uint[2] position, uint[2] size, bool fullscreen = false, bool fullscreenDesktop = false,
+        bool openGL = false, bool shown = false, bool hidden = false, bool borderless = false, bool resizable = false,
+        bool minimized = false, bool maximized = false, bool inputGrabbed = false, bool inputFocus = false,
+        bool mouseFocus = false, bool foreign = false, bool allowHighDPI = false, bool mouseCapture = false,
+        bool alwaysOnTop = false, bool skipTaskbar = false, bool utility = false, bool tooltip = false,
+        bool popupMenu = false, bool vulkan = false, bool metal = false, bool mouseGrabbed = false,
+        bool keyboardGrabbed = false) @trusted
     in {
         assert(title !is null);
     }
     do {
-        uint intFlags;
-        foreach (flag; flags) {
-            intFlags |= flag;
-        }
+        uint flags = toSDLWindowFlags(fullscreen, fullscreenDesktop, openGL, shown, hidden, borderless, resizable,
+            minimized, maximized, inputGrabbed, inputFocus, mouseFocus, foreign, allowHighDPI, mouseCapture,
+            alwaysOnTop, skipTaskbar, utility, tooltip, popupMenu, vulkan, metal, mouseGrabbed, keyboardGrabbed);
 
         this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int, position[1].to!int,
-            size[0].to!int, size[1].to!int, intFlags);
+            size[0].to!int, size[1].to!int, flags);
         if (this.sdlWindow is null) {
             throw new SDLException;
         }
@@ -475,33 +423,13 @@ final class Window {
     }
 
     /++
-     + Checks whether the `dsdl2.Window` was created with the following `flag`, which wraps `SDL_GetWindowFlags`
+     + Wraps `SDL_GetWindowFlags` which gets the flags the window has
      +
-     + Params:
-     +   flag = corresponding `dsdl2.WindowFlag`
-     + Returns: `true` it was, otherwise `false`
+     + Returns: a named bitmap tuple of the window flags
      +/
-    bool hasFlag(WindowFlag flag) const @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & flag) == flag;
-    }
-
-    /++
-     + Wraps `SDL_GetWindowFlags` which gets an array of flags the window has
-     +
-     + Returns: `dsdl2.WindowFlag` array of the window
-     +/
-    const(WindowFlag[]) flags() const @property @trusted {
-        uint sdlFlags = SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow);
-        WindowFlag[] windowFlags;
-
-        foreach (flagStr; __traits(allMembers, WindowFlag)) {
-            WindowFlag flag = mixin("WindowFlag." ~ flagStr);
-            if ((sdlFlags & flag) == flag) {
-                windowFlags ~= flag;
-            }
-        }
-
-        return windowFlags;
+    WindowFlagsTuple flags() const @property @trusted {
+        uint flags = SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow);
+        return fromSDLWindowFlags(flags);
     }
 
     /++

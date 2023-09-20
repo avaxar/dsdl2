@@ -64,62 +64,58 @@ else {
     }
 }
 
-static if (sdlSupport >= SDLSupport.v2_0_9) {
-    /++
-     + D enum that wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
-     +/
-    enum SubSystem : uint {
-        /++
-         + Wraps `SDL_INIT_*` enumeration constants
-         +/
-        timer = SDL_INIT_TIMER,
-        audio = SDL_INIT_AUDIO, /// ditto
-        video = SDL_INIT_VIDEO, /// ditto
-        joystick = SDL_INIT_JOYSTICK, /// ditto
-        haptic = SDL_INIT_HAPTIC, /// ditto
-        gameController = SDL_INIT_GAMECONTROLLER, /// ditto
-        events = SDL_INIT_EVENTS, /// ditto
-        everything = SDL_INIT_EVERYTHING, /// ditto
-        noparachute = SDL_INIT_NOPARACHUTE, /// ditto
-
-        /++
-         + Wraps `SDL_INIT_*` enumeration constants (from SDL 2.0.9)
-         +/
-        sensor = SDL_INIT_SENSOR,
+private uint toSDLInitFlags(bool timer, bool audio, bool video, bool joystick, bool haptic, bool gameController,
+    bool events, bool everything, bool noParachute, bool sensor)
+in {
+    static if (sdlSupport < SDLSupport.v2_0_9) {
+        assert(sensor == false);
     }
 }
-else {
-    /++
-     + D enum that wraps `SDL_INIT_*` to specify initialization and deinitialization of subsystems
-     +/
-    enum SubSystem : uint {
-        /++
-         + Wraps `SDL_INIT_*` enumeration constants
-         +/
-        timer = SDL_INIT_TIMER,
-        audio = SDL_INIT_AUDIO, /// ditto
-        video = SDL_INIT_VIDEO, /// ditto
-        joystick = SDL_INIT_JOYSTICK, /// ditto
-        haptic = SDL_INIT_HAPTIC, /// ditto
-        gameController = SDL_INIT_GAMECONTROLLER, /// ditto
-        events = SDL_INIT_EVENTS, /// ditto
-        everything = SDL_INIT_EVERYTHING, /// ditto
-        noparachute = SDL_INIT_NOPARACHUTE, /// ditto
+do {
+    uint flags = 0;
+
+    flags |= timer ? SDL_INIT_TIMER : 0;
+    flags |= audio ? SDL_INIT_AUDIO : 0;
+    flags |= video ? SDL_INIT_VIDEO : 0;
+    flags |= joystick ? SDL_INIT_JOYSTICK : 0;
+    flags |= haptic ? SDL_INIT_HAPTIC : 0;
+    flags |= gameController ? SDL_INIT_GAMECONTROLLER : 0;
+    flags |= events ? SDL_INIT_EVENTS : 0;
+    flags |= everything ? SDL_INIT_EVERYTHING : 0;
+    flags |= noParachute ? SDL_INIT_NOPARACHUTE : 0;
+
+    static if (sdlSupport >= SDLSupport.v2_0_9) {
+        flags |= sensor ? SDL_INIT_SENSOR : 0;
     }
+
+    return flags;
 }
 
 /++
  + Wraps `SDL_Init` which initializes selected subsystems
  +
  + Params:
- +     subsystems = an array of `dsdl2.SubSystem` to initialize (By default, `dsdl2.SubSystem.everything`)
+ +   timer          = selects the `SDL_INIT_TIMER` subsystem
+ +   audio          = selects the `SDL_INIT_AUDIO` subsystem
+ +   video          = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
+ +   events         = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
+ + Examples:
+ + ---
+ + dsdl2.init(everything : true);
+ + ---
  +/
-void init(const SubSystem[] subsystems = [SubSystem.everything]) @trusted {
-    uint flags;
-    foreach (SubSystem sub; subsystems) {
-        flags |= sub;
-    }
+void init(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
+    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
+    bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
+        noParachute, sensor);
 
     int code = SDL_Init(flags);
     if (code != 0) {
@@ -138,26 +134,55 @@ void quit() @trusted {
  + Wraps `SDL_QuitSubSystem` which deinitializes specified subsystems
  +
  + Params:
- +     subsystems = an array of `dsdl2.SubSystem`s to deinitialize
+ +   timer          = selects the `SDL_INIT_TIMER` subsystem
+ +   audio          = selects the `SDL_INIT_AUDIO` subsystem
+ +   video          = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
+ +   events         = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  +/
-void quit(const SubSystem[] subsystems) @trusted {
-    uint flags;
-    foreach (SubSystem sub; subsystems) {
-        flags |= sub;
-    }
+void quit(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
+    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
+    bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
+        noParachute, sensor);
 
     SDL_QuitSubSystem(flags);
 }
 
 /++
- + Wraps `SDL_WasInit` which checks whether a specified subsystem is already initialized
+ + Wraps `SDL_WasInit` which checks whether particular subsystem(s) is already initialized
  +
  + Params:
- +     subsystem = the `dsdl2.SubSystem` to check for the status of initialization
- + Returns: `true` if initialized, otherwise `false`
+ +   timer          = selects the `SDL_INIT_TIMER` subsystem
+ +   audio          = selects the `SDL_INIT_AUDIO` subsystem
+ +   video          = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
+ +   events         = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
+ +
+ + Returns: `true` if the selected subsystem(s) is initialized, otherwise `false`
+ + Examples:
+ + ---
+ + dsdl2.init();
+ + assert(dsdl2.wasInit(video : true) == true);
+ + ---
  +/
-bool wasInit(SubSystem subsystem) @trusted {
-    return SDL_WasInit(subsystem) != 0;
+bool wasInit(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
+    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
+    bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
+        noParachute, sensor);
+
+    return SDL_WasInit(flags) != 0;
 }
 
 /++
