@@ -187,6 +187,22 @@ abstract class Event {
                 break;
             }
 
+        case SDL_FINGERMOTION:
+        case SDL_FINGERDOWN:
+        case SDL_FINGERUP:
+            event = FingerEvent.fromSDL(sdlEvent);
+            break;
+
+        case SDL_MULTIGESTURE:
+            event = new MultiGestureEvent(sdlEvent.mgesture.touchId, sdlEvent.mgesture.dTheta,
+                sdlEvent.mgesture.dDist, sdlEvent.mgesture.x, sdlEvent.mgesture.y, sdlEvent.mgesture.numFingers);
+            break;
+
+        case SDL_DOLLARGESTURE:
+        case SDL_DOLLARRECORD:
+            event = DollarEvent.fromSDL(sdlEvent);
+            break;
+
         case SDL_DROPFILE:
             static if (sdlSupport >= SDLSupport.v2_0_5) {
         case SDL_DROPTEXT:
@@ -1494,6 +1510,388 @@ final class MouseWheelEvent : Event {
         ref inout(float[2]) preciseXY() return inout @property @trusted {
             return *cast(inout(float[2]*))&this.sdlEvent.wheel.preciseX;
         }
+    }
+}
+
+/++
+ + D abstract class that wraps touch finger `SDL_Event`s
+ +/
+abstract class FingerEvent : Event {
+    invariant {
+        assert(this.sdlEvent.type == SDL_FINGERMOTION || this.sdlEvent.type == SDL_FINGERDOWN
+                || this.sdlEvent.type == SDL_FINGERUP);
+    }
+
+    ref inout(ulong) touchID() return inout @property {
+        return *cast(inout ulong*)&this.sdlEvent.tfinger.touchId;
+    }
+
+    ref inout(ulong) fingerID() return inout @property {
+        return *cast(inout ulong*)&this.sdlEvent.tfinger.fingerId;
+    }
+
+    ref inout(float) x() return inout @property {
+        return this.sdlEvent.tfinger.x;
+    }
+
+    ref inout(float) y() return inout @property {
+        return this.sdlEvent.tfinger.y;
+    }
+
+    ref inout(float) dx() return inout @property {
+        return this.sdlEvent.tfinger.dx;
+    }
+
+    ref inout(float) dy() return inout @property {
+        return this.sdlEvent.tfinger.dy;
+    }
+
+    ref inout(float) pressure() return inout @property {
+        return this.sdlEvent.tfinger.pressure;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_12) {
+        ref inout(uint) windowID() return inout @property {
+            return this.sdlEvent.tfinger.windowID;
+        }
+    }
+
+    static Event fromSDL(SDL_Event sdlEvent)
+    in {
+        assert(sdlEvent.tfinger.type == SDL_FINGERMOTION || sdlEvent.tfinger.type == SDL_FINGERDOWN
+                || sdlEvent.tfinger.type == SDL_FINGERUP);
+    }
+    do {
+        Event event;
+        switch (sdlEvent.type) {
+        default:
+            assert(false);
+
+        case SDL_FINGERMOTION:
+            static if (sdlSupport >= SDLSupport.v2_0_12) {
+                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
+                    sdlEvent.tfinger.windowID);
+            }
+            else {
+                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+            }
+            break;
+
+        case SDL_FINGERDOWN:
+            static if (sdlSupport >= SDLSupport.v2_0_12) {
+                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
+                    sdlEvent.tfinger.windowID);
+            }
+            else {
+                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+            }
+            break;
+
+        case SDL_FINGERUP:
+            static if (sdlSupport >= SDLSupport.v2_0_12) {
+                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
+                    sdlEvent.tfinger.windowID);
+            }
+            else {
+                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
+                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+            }
+            break;
+        }
+
+        event.timestamp = sdlEvent.tfinger.timestamp;
+        return event;
+    }
+}
+
+/++
+ + D class that wraps `SDL_FINGERMOTION` `SDL_Event`s
+ +/
+class FingerMotionEvent : FingerEvent {
+    this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure) {
+        this.sdlEvent.type = SDL_FINGERMOTION;
+        this.sdlEvent.tfinger.touchId = touchID.to!long;
+        this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+        this.sdlEvent.tfinger.x = x;
+        this.sdlEvent.tfinger.y = y;
+        this.sdlEvent.tfinger.dx = dx;
+        this.sdlEvent.tfinger.dy = dy;
+        this.sdlEvent.tfinger.pressure = pressure;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_12) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
+            uint windowID) {
+            this.sdlEvent.type = SDL_FINGERMOTION;
+            this.sdlEvent.tfinger.touchId = touchID.to!long;
+            this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+            this.sdlEvent.tfinger.x = x;
+            this.sdlEvent.tfinger.y = y;
+            this.sdlEvent.tfinger.dx = dx;
+            this.sdlEvent.tfinger.dy = dy;
+            this.sdlEvent.tfinger.pressure = pressure;
+            this.sdlEvent.tfinger.windowID = windowID;
+        }
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_FINGERMOTION);
+    }
+
+    override string toString() const {
+        static if (sdlSupport >= SDLSupport.v2_0_12) {
+            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+        }
+        else {
+            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure);
+        }
+    }
+}
+
+/++
+ + D class that wraps `SDL_FINGERDOWN` `SDL_Event`s
+ +/
+class FingerDownEvent : FingerEvent {
+    this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure) {
+        this.sdlEvent.type = SDL_FINGERDOWN;
+        this.sdlEvent.tfinger.touchId = touchID.to!long;
+        this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+        this.sdlEvent.tfinger.x = x;
+        this.sdlEvent.tfinger.y = y;
+        this.sdlEvent.tfinger.dx = dx;
+        this.sdlEvent.tfinger.dy = dy;
+        this.sdlEvent.tfinger.pressure = pressure;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_12) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
+            uint windowID) {
+            this.sdlEvent.type = SDL_FINGERDOWN;
+            this.sdlEvent.tfinger.touchId = touchID.to!long;
+            this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+            this.sdlEvent.tfinger.x = x;
+            this.sdlEvent.tfinger.y = y;
+            this.sdlEvent.tfinger.dx = dx;
+            this.sdlEvent.tfinger.dy = dy;
+            this.sdlEvent.tfinger.pressure = pressure;
+            this.sdlEvent.tfinger.windowID = windowID;
+        }
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_FINGERDOWN);
+    }
+
+    override string toString() const {
+        static if (sdlSupport >= SDLSupport.v2_0_12) {
+            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+        }
+        else {
+            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure);
+        }
+    }
+}
+
+/++
+ + D class that wraps `SDL_FINGERUP` `SDL_Event`s
+ +/
+class FingerUpEvent : FingerEvent {
+    this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure) {
+        this.sdlEvent.type = SDL_FINGERUP;
+        this.sdlEvent.tfinger.touchId = touchID.to!long;
+        this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+        this.sdlEvent.tfinger.x = x;
+        this.sdlEvent.tfinger.y = y;
+        this.sdlEvent.tfinger.dx = dx;
+        this.sdlEvent.tfinger.dy = dy;
+        this.sdlEvent.tfinger.pressure = pressure;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_12) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
+            uint windowID) {
+            this.sdlEvent.type = SDL_FINGERUP;
+            this.sdlEvent.tfinger.touchId = touchID.to!long;
+            this.sdlEvent.tfinger.fingerId = fingerID.to!long;
+            this.sdlEvent.tfinger.x = x;
+            this.sdlEvent.tfinger.y = y;
+            this.sdlEvent.tfinger.dx = dx;
+            this.sdlEvent.tfinger.dy = dy;
+            this.sdlEvent.tfinger.pressure = pressure;
+            this.sdlEvent.tfinger.windowID = windowID;
+        }
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_FINGERUP);
+    }
+
+    override string toString() const {
+        static if (sdlSupport >= SDLSupport.v2_0_12) {
+            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+        }
+        else {
+            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
+                this.x, this.y, this.dx, this.dy, this.pressure);
+        }
+    }
+}
+
+/++
+ + D class that wraps `SDL_MULTIGESTURE` `SDL_Event`s
+ +/
+class MultiGestureEvent : Event {
+    this(ulong touchID, float dTheta, float dDist, float x, float y, ushort numFingers) {
+        this.sdlEvent.type = SDL_MULTIGESTURE;
+        this.sdlEvent.mgesture.touchId = touchID.to!long;
+        this.sdlEvent.mgesture.dTheta = dTheta;
+        this.sdlEvent.mgesture.dDist = dDist;
+        this.sdlEvent.mgesture.x = x;
+        this.sdlEvent.mgesture.y = y;
+        this.sdlEvent.mgesture.numFingers = numFingers;
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_MULTIGESTURE);
+    }
+
+    override string toString() const {
+        return "dsdl2.MultiGestureEvent(%d, %f, %f, %f, %f, %d)".format(this.touchID,
+            this.dTheta, this.dDist, this.x, this.y, this.numFingers);
+    }
+
+    ref inout(ulong) touchID() return inout @property {
+        return *cast(inout ulong*)&this.sdlEvent.mgesture.touchId;
+    }
+
+    ref inout(float) dTheta() return inout @property {
+        return this.sdlEvent.mgesture.dTheta;
+    }
+
+    ref inout(float) dDist() return inout @property {
+        return this.sdlEvent.mgesture.dDist;
+    }
+
+    ref inout(float) x() return inout @property {
+        return this.sdlEvent.mgesture.x;
+    }
+
+    ref inout(float) y() return inout @property {
+        return this.sdlEvent.mgesture.y;
+    }
+
+    ref inout(ushort) numFingers() return inout @property {
+        return this.sdlEvent.mgesture.numFingers;
+    }
+}
+
+/++
+ + D abstract class that wraps dollar gesture `SDL_Event`s
+ +/
+abstract class DollarEvent : Event {
+    invariant {
+        assert(this.sdlEvent.type == SDL_DOLLARGESTURE || this.sdlEvent.type == SDL_DOLLARRECORD);
+    }
+
+    ref inout(ulong) touchID() return inout @property {
+        return *cast(inout ulong*)&this.sdlEvent.dgesture.touchId;
+    }
+
+    ref inout(ulong) gestureID() return inout @property {
+        return *cast(inout ulong*)&this.sdlEvent.dgesture.gestureId;
+    }
+
+    static Event fromSDL(SDL_Event sdlEvent)
+    in {
+        assert(sdlEvent.type == SDL_DOLLARGESTURE || sdlEvent.type == SDL_DOLLARRECORD);
+    }
+    do {
+        Event event;
+        switch (sdlEvent.type) {
+        default:
+            assert(false);
+
+        case SDL_DOLLARGESTURE:
+            event = new DollarGestureEvent(sdlEvent.dgesture.touchId, sdlEvent.dgesture.gestureId,
+                sdlEvent.dgesture.numFingers, sdlEvent.dgesture.error, sdlEvent.dgesture.x, sdlEvent.dgesture.y);
+            break;
+
+        case SDL_DOLLARRECORD:
+            event = new DollarRecordEvent(sdlEvent.dgesture.touchId, sdlEvent.dgesture.gestureId);
+            break;
+        }
+
+        event.timestamp = sdlEvent.tfinger.timestamp;
+        return event;
+    }
+}
+
+/++
+ + D class that wraps `SDL_DOLLARGESTURE` `SDL_Event`s
+ +/
+class DollarGestureEvent : DollarEvent {
+    this(ulong touchID, ulong gestureID, uint numFingers, float error, float x, float y) {
+        this.sdlEvent.type = SDL_DOLLARGESTURE;
+        this.sdlEvent.dgesture.touchId = touchID.to!long;
+        this.sdlEvent.dgesture.gestureId = gestureID.to!long;
+        this.sdlEvent.dgesture.numFingers = numFingers;
+        this.sdlEvent.dgesture.error = error;
+        this.sdlEvent.dgesture.x = x;
+        this.sdlEvent.dgesture.y = y;
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_DOLLARGESTURE);
+    }
+
+    override string toString() const {
+        return "dsdl2.DollarGestureEvent(%d, %d, %d, %f, %f, %f)".format(this.touchID, this.gestureID, this.numFingers,
+            this.error, this.x, this.y);
+    }
+
+    ref inout(uint) numFingers() return inout @property {
+        return this.sdlEvent.dgesture.numFingers;
+    }
+
+    ref inout(float) error() return inout @property {
+        return this.sdlEvent.dgesture.error;
+    }
+
+    ref inout(float) x() return inout @property {
+        return this.sdlEvent.dgesture.x;
+    }
+
+    ref inout(float) y() return inout @property {
+        return this.sdlEvent.dgesture.y;
+    }
+}
+
+/++
+ + D class that wraps `SDL_DOLLARRECORD` `SDL_Event`s
+ +/
+class DollarRecordEvent : DollarEvent {
+    this(ulong touchID, ulong gestureID) {
+        this.sdlEvent.type = SDL_DOLLARRECORD;
+        this.sdlEvent.dgesture.touchId = touchID.to!long;
+        this.sdlEvent.dgesture.gestureId = gestureID.to!long;
+    }
+
+    invariant {
+        assert(this.sdlEvent.type == SDL_DOLLARRECORD);
+    }
+
+    override string toString() const {
+        return "dsdl2.DollarRecordEvent(%d, %d)".format(this.touchID, this.gestureID);
     }
 }
 
