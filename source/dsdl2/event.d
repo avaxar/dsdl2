@@ -402,13 +402,21 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
                     cast(DisplayOrientation) sdlEvent.display.data1);
                 break;
 
+                static if (sdlSupport >= SDLSupport.v2_0_14) {
             case SDL_DISPLAYEVENT_CONNECTED:
-                event = new DisplayConnectedEvent(sdlEvent.display.display);
-                break;
+                    event = new DisplayConnectedEvent(sdlEvent.display.display);
+                    break;
 
             case SDL_DISPLAYEVENT_DISCONNECTED:
-                event = new DisplayDisconnectedEvent(sdlEvent.display.display);
-                break;
+                    event = new DisplayDisconnectedEvent(sdlEvent.display.display);
+                    break;
+                }
+
+                static if (sdlSupport >= SDLSupport.v2_28) {
+            case SDL_DISPLAYEVENT_MOVED:
+                    event = new DisplayMovedEvent(sdlEvent.display.display);
+                    break;
+                }
             }
 
             event.timestamp = sdlEvent.display.timestamp;
@@ -439,9 +447,11 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
             return *cast(inout(DisplayOrientation*))&this.sdlEvent.display.data1;
         }
     }
+}
 
+static if (sdlSupport >= SDLSupport.v2_0_14) {
     /++
-     + D class that wraps `SDL_DISPLAYEVENT_CONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     + D class that wraps `SDL_DISPLAYEVENT_CONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.14)
      +/
     class DisplayConnectedEvent : DisplayEvent {
         this(uint display) {
@@ -460,7 +470,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
     }
 
     /++
-     + D class that wraps `SDL_DISPLAYEVENT_DISCONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.9)
+     + D class that wraps `SDL_DISPLAYEVENT_DISCONNECTED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.14)
      +/
     class DisplayDisconnectedEvent : DisplayEvent {
         this(uint display) {
@@ -475,6 +485,27 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
 
         override string toString() const {
             return "dsdl2.DisplayDisconnectedEvent(%d)".format(this.display);
+        }
+    }
+}
+
+static if (sdlSupport >= SDLSupport.v2_28) {
+    /++
+     + D class that wraps `SDL_DISPLAYEVENT_MOVED` `SDL_DISPLAYEVENT` `SDL_Event`s (from SDL 2.0.28)
+     +/
+    class DisplayMovedEvent : DisplayEvent {
+        this(uint display) {
+            this.sdlEvent.type = SDL_DISPLAYEVENT;
+            this.sdlEvent.display.event = SDL_DISPLAYEVENT_MOVED;
+            this.sdlEvent.display.display = display;
+        }
+
+        invariant {
+            assert(this.sdlEvent.display.event == SDL_DISPLAYEVENT_MOVED);
+        }
+
+        override string toString() const {
+            return "dsdl2.DisplayMovedEvent(%d)".format(this.display);
         }
     }
 }
