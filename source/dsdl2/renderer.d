@@ -122,8 +122,8 @@ struct RendererInfo {
      +/
     string toString() const {
         return "dsdl2.RendererInfo(%s, %s, %s, software : %s, accelerated : %s, presentVSync : %s, targetTexture : %s)"
-            .format([this.name].to!string[1 .. $ - 1], this.flags, this.textureFormats, this.maxTextureSize,
-                this.flags.software, this.flags.accelerated, this.flags.presentVSync, this.flags.targetTexture);
+            .format([this.name].to!string[1 .. $ - 1], this.textureFormats, this.maxTextureSize,
+                this.software, this.accelerated, this.presentVSync, this.targetTexture);
     }
 
     /++
@@ -142,12 +142,79 @@ struct RendererInfo {
     }
 
     /++
-     + Gets the available renderer flags
+     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
      +
-     + Returns: a named bitmap tuple of the renderer flags
+     + Returns: `true` if it has `SDL_RENDERER_SOFTWARE` flag, otherwise `false`
      +/
-    RendererFlagsTuple flags() const @property {
-        return fromSDLRendererFlags(this.sdlFlags);
+    bool software() const @property {
+        return (this.sdlFlags & SDL_RENDERER_SOFTWARE) != 0;
+    }
+
+    /++
+     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
+     +
+     + Params:
+     +   value = `true` to set `SDL_RENDERER_SOFTWARE` flag; `false` to unset it
+     +/
+    void software(bool value) @property {
+        this.sdlFlags |= value ? SDL_RENDERER_SOFTWARE : 0;
+    }
+
+    /++
+     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
+     +
+     + Returns: `true` if it has `SDL_RENDERER_ACCELERATED` flag, otherwise `false`
+     +/
+    bool accelerated() const @property {
+        return (this.sdlFlags & SDL_RENDERER_ACCELERATED) != 0;
+    }
+
+    /++
+     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
+     +
+     + Params:
+     +   value = `true` to set `SDL_RENDERER_ACCELERATED` flag; `false` to unset it
+     +/
+    void accelerated(bool value) @property {
+        this.sdlFlags |= value ? SDL_RENDERER_ACCELERATED : 0;
+    }
+
+    /++
+     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
+     +
+     + Returns: `true` if it has `SDL_RENDERER_PRESENTVSYNC` flag, otherwise `false`
+     +/
+    bool presentVSync() const @property {
+        return (this.sdlFlags & SDL_RENDERER_PRESENTVSYNC) != 0;
+    }
+
+    /++
+     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
+     +
+     + Params:
+     +   value = `true` to set `SDL_RENDERER_PRESENTVSYNC` flag; `false` to unset it
+     +/
+    void presentVSync(bool value) @property {
+        this.sdlFlags |= value ? SDL_RENDERER_PRESENTVSYNC : 0;
+    }
+
+    /++
+     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
+     +
+     + Returns: `true` if it has `SDL_RENDERER_TARGETTEXTURE` flag, otherwise `false`
+     +/
+    bool targetTexture() const @property {
+        return (this.sdlFlags & SDL_RENDERER_TARGETTEXTURE) != 0;
+    }
+
+    /++
+     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
+     +
+     + Params:
+     +   value = `true` to set `SDL_RENDERER_TARGETTEXTURE` flag; `false` to unset it
+     +/
+    void targetTexture(bool value) @property {
+        this.sdlFlags |= value ? SDL_RENDERER_TARGETTEXTURE : 0;
     }
 
     /++
