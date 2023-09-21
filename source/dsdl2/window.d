@@ -38,9 +38,21 @@ in {
     static if (sdlSupport < SDLSupport.v2_0_1) {
         assert(allowHighDPI == false);
     }
+    else {
+        if (allowHighDPI) {
+            assert(getVersion() >= Version(2, 0, 1));
+        }
+    }
+
     static if (sdlSupport < SDLSupport.v2_0_4) {
         assert(mouseCapture == false);
     }
+    else {
+        if (mouseCapture) {
+            assert(getVersion() >= Version(2, 0, 4));
+        }
+    }
+
     static if (sdlSupport < SDLSupport.v2_0_5) {
         assert(alwaysOnTop == false);
         assert(skipTaskbar == false);
@@ -48,13 +60,30 @@ in {
         assert(tooltip == false);
         assert(popupMenu == false);
     }
+    else {
+        if (alwaysOnTop || skipTaskbar || utility || tooltip || popupMenu) {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+    }
+
     static if (sdlSupport < SDLSupport.v2_0_6) {
         assert(vulkan == false);
         assert(metal == false);
     }
+    else {
+        if (vulkan || metal) {
+            assert(getVersion() >= Version(2, 0, 6));
+        }
+    }
+
     static if (sdlSupport < SDLSupport.v2_0_16) {
         assert(mouseGrabbed == false);
         assert(keyboardGrabbed == false);
+    }
+    else {
+        if (mouseGrabbed || keyboardGrabbed) {
+            assert(getVersion() >= Version(2, 0, 16));
+        }
     }
 }
 do {
@@ -892,7 +921,11 @@ final class Window {
          +
          + Throws: `dsdl2.SDLException` if failed to destruct the surface
          +/
-        void surface(typeof(null) _) @property @trusted {
+        void surface(typeof(null) _) @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 28, 0));
+        }
+        do {
             if (SDL_DestroyWindowSurface(this.sdlWindow) != 0) {
                 throw new SDLException;
             }
@@ -904,7 +937,11 @@ final class Window {
          +
          + Returns: `true` if the window has an associated surface, otherwise `false`
          +/
-        bool hasSurface() const @property @trusted {
+        bool hasSurface() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 28, 0));
+        }
+        do {
             return SDL_HasWindowSurface(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
         }
     }
@@ -949,7 +986,11 @@ final class Window {
          +
          + Returns: height of the window in OpenGL in pixels
          +/
-        uint drawableGLWidth() const @property @trusted {
+        uint drawableGLWidth() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 1));
+        }
+        do {
             uint w = void;
             SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&w, null);
             return w;
@@ -961,7 +1002,11 @@ final class Window {
          +
          + Returns: width of the window in OpenGL in pixels
          +/
-        uint drawableGLHeight() const @property @trusted {
+        uint drawableGLHeight() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 1));
+        }
+        do {
             uint h = void;
             SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, null, cast(int*)&h);
             return h;
@@ -973,7 +1018,11 @@ final class Window {
          +
          + Returns: size of the window in OpenGL in pixels
          +/
-        uint[2] drawableGLSize() const @property @trusted {
+        uint[2] drawableGLSize() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 1));
+        }
+        do {
             uint[2] wh = void;
             SDL_GL_GetDrawableSize(cast(SDL_Window*) this.sdlWindow, cast(int*)&wh[0], cast(int*)&wh[1]);
             return wh;

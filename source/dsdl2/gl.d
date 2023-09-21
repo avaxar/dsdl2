@@ -136,7 +136,11 @@ static if (sdlSupport >= SDLSupport.v2_0_2) {
     /++
      + Wraps `SDL_GL_ResetAttributes` (from SDL 2.0.2) which resets all OpenGL attributes previously set to default
      +/
-    void resetGLAttributes() @trusted {
+    void resetGLAttributes() @trusted
+    in {
+        assert(getVersion() >= Version(2, 0, 2));
+    }
+    do {
         SDL_GL_ResetAttributes();
     }
 }

@@ -419,7 +419,11 @@ final class Texture {
          +
          + Returns: `dsdl2.ScaleMode` of the texture
          +/
-        ScaleMode scaleMode() const @property @trusted {
+        ScaleMode scaleMode() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 12));
+        }
+        do {
             SDL_ScaleMode sdlScaleMode = void;
             if (SDL_GetTextureScaleMode(cast(SDL_Texture*) this.sdlTexture, &sdlScaleMode) != 0) {
                 throw new SDLException;
@@ -434,7 +438,11 @@ final class Texture {
          + Params:
          +   newMode = new `dsdl2.ScaleMode` set
          +/
-        void scaleMode(ScaleMode newMode) @property @trusted {
+        void scaleMode(ScaleMode newMode) @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 12));
+        }
+        do {
             if (SDL_SetTextureScaleMode(this.sdlTexture, cast(SDL_ScaleMode) newMode) != 0) {
                 throw new SDLException;
             }
