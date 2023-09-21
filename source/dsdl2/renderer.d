@@ -1260,7 +1260,11 @@ final class Renderer {
          +
          + Returns: `true` if a clipping rectangle is set, otherwise `false`
          +/
-        bool hasClipRect() const @property @trusted {
+        bool hasClipRect() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 4));
+        }
+        do {
             return SDL_RenderIsClipEnabled(cast(SDL_Renderer*) this.sdlRenderer) == SDL_TRUE;
         }
     }
@@ -1271,7 +1275,11 @@ final class Renderer {
          +
          + Returns: `true` if integer scaling is enabled, otherwise `false`
          +/
-        bool integerScaling() const @property @trusted {
+        bool integerScaling() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
             return SDL_RenderGetIntegerScale(cast(SDL_Renderer*) this.sdlRenderer) == SDL_TRUE;
         }
 
@@ -1282,7 +1290,11 @@ final class Renderer {
          +   newScale = `true` to enable integer scaling, otherwise `false`
          + Throws: `dsdl2.SDLException` if failed to set integer scaling
          +/
-        void integerScaling(bool newScale) @property @trusted {
+        void integerScaling(bool newScale) @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
             if (SDL_RenderSetIntegerScale(this.sdlRenderer, newScale) != 0) {
                 throw new SDLException;
             }
@@ -1296,7 +1308,11 @@ final class Renderer {
          +
          + Returns: pointer to the `CAMetalLayer`, otherwise `null` if not using a Metal renderer
          +/
-        void* getMetalLayer() @system {
+        void* getMetalLayer() @system
+        in {
+            assert(getVersion() >= Version(2, 0, 8));
+        }
+        do {
             return SDL_RenderGetMetalLayer(this.sdlRenderer);
         }
 
@@ -1306,7 +1322,11 @@ final class Renderer {
          +
          + Returns: ID of the `MTLRenderCommandEncoder`, otherwise `null` if not using a Metal renderer
          +/
-        void* getMetalCommandEncoder() @system {
+        void* getMetalCommandEncoder() @system
+        in {
+            assert(getVersion() >= Version(2, 0, 8));
+        }
+        do {
             return SDL_RenderGetMetalCommandEncoder(this.sdlRenderer);
         }
     }
@@ -1320,7 +1340,11 @@ final class Renderer {
          +   point = `dsdl2.FPoint` position the point is drawn at
          + Throws: `dsdl2.SDLException` if point failed to draw
          +/
-        void drawPoint(FPoint point) @trusted {
+        void drawPoint(FPoint point) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawPointF(this.sdlRenderer, point.x, point.y) != 0) {
                 throw new SDLException;
             }
@@ -1334,7 +1358,11 @@ final class Renderer {
          +   points = array of `dsdl2.FPoint` positions the points are drawn at
          + Throws: `dsdl2.SDLException` if points failed to draw
          +/
-        void drawPoints(const FPoint[] points) @trusted {
+        void drawPoints(const FPoint[] points) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawPointsF(this.sdlRenderer, cast(SDL_FPoint*) points.ptr, points.length.to!int) != 0) {
                 throw new SDLException;
             }
@@ -1348,7 +1376,11 @@ final class Renderer {
          +   line = array of two `dsdl2.FPoint`s indicating the line's start and end
          + Throws: `dsdl2.SDLException` if line failed to draw
          +/
-        void drawLine(FPoint[2] line) @trusted {
+        void drawLine(FPoint[2] line) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawLineF(this.sdlRenderer, line[0].x, line[0].y, line[1].x, line[1].y) != 0) {
                 throw new SDLException;
             }
@@ -1362,7 +1394,11 @@ final class Renderer {
          +   points = array of `dsdl2.FPoint` edges the lines are drawn from and to
          + Throws: `dsdl2.SDLException` if lines failed to draw
          +/
-        void drawLines(const FPoint[] points) @trusted {
+        void drawLines(const FPoint[] points) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawLinesF(this.sdlRenderer, cast(SDL_FPoint*) points.ptr, points.length.to!int) != 0) {
                 throw new SDLException;
             }
@@ -1375,7 +1411,11 @@ final class Renderer {
          +   rect = `dsdl2.FRect` of the rectangle
          + Throws: `dsdl2.SDLException` if rectangle failed to draw
          +/
-        void drawRect(FRect rect) @trusted {
+        void drawRect(FRect rect) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawRectF(this.sdlRenderer, &rect.sdlFRect) != 0) {
                 throw new SDLException;
             }
@@ -1389,7 +1429,11 @@ final class Renderer {
          +   rects = array of `dsdl2.FRect` of the rectangles
          + Throws: `dsdl2.SDLException` if rectangles failed to draw
          +/
-        void drawRects(const FRect[] rects) @trusted {
+        void drawRects(const FRect[] rects) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderDrawRectsF(this.sdlRenderer, cast(SDL_FRect*) rects.ptr, rects.length.to!int) != 0) {
                 throw new SDLException;
             }
@@ -1402,7 +1446,11 @@ final class Renderer {
          +   rect = `dsdl2.FRect` of the rectangle
          + Throws: `dsdl2.SDLException` if rectangle failed to fill
          +/
-        void fillRect(FRect rect) @trusted {
+        void fillRect(FRect rect) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderFillRectF(this.sdlRenderer, &rect.sdlFRect) != 0) {
                 throw new SDLException;
             }
@@ -1415,7 +1463,11 @@ final class Renderer {
          +   rects = array of `dsdl2.FRect` of the rectangles
          + Throws: `dsdl2.SDLException` if rectangles failed to fill
          +/
-        void fillRects(const FRect[] rects) @trusted {
+        void fillRects(const FRect[] rects) @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderFillRectsF(this.sdlRenderer, cast(SDL_FRect*) rects.ptr, rects.length.to!int) != 0) {
                 throw new SDLException;
             }
@@ -1432,6 +1484,7 @@ final class Renderer {
          +/
         void copy(const Texture texture, FRect destRect) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1453,6 +1506,7 @@ final class Renderer {
          +/
         void copy(const Texture texture, FRect destRect, Rect srcRect) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1477,6 +1531,7 @@ final class Renderer {
         void copyEx(const Texture texture, FRect destRect, double angle, bool flippedHorizontally = false,
             bool flippedVertically = false) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1503,6 +1558,7 @@ final class Renderer {
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect, bool flippedHorizontally = false,
             bool flippedVertically = false) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1529,6 +1585,7 @@ final class Renderer {
         void copyEx(const Texture texture, FRect destRect, double angle, FPoint center,
             bool flippedHorizontally = false, bool flippedVertically = false) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1556,6 +1613,7 @@ final class Renderer {
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect, FPoint center,
             bool flippedHorizontally = false, bool flippedVertically = false) @trusted
         in {
+            assert(getVersion() >= Version(2, 0, 10));
             assert(texture !is null);
         }
         do {
@@ -1571,7 +1629,11 @@ final class Renderer {
          +
          + Throws: `dsdl2.SDLException` if cannot flush
          +/
-        void flush() @trusted {
+        void flush() @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 10));
+        }
+        do {
             if (SDL_RenderFlush(this.sdlRenderer) != 0) {
                 throw new SDLException;
             }
@@ -1586,7 +1648,11 @@ final class Renderer {
          +   xy = `int[2]` window coordinate of X and Y
          + Returns: mapped `float[2]` logical coordinate of X and Y
          +/
-        float[2] windowToLogical(int[2] xy) const @trusted {
+        float[2] windowToLogical(int[2] xy) const @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 18));
+        }
+        do {
             float[2] fxy = void;
             SDL_RenderWindowToLogical(cast(SDL_Renderer*) this.sdlRenderer, xy[0], xy[1], &fxy[0], &fxy[1]);
             return fxy;
@@ -1599,7 +1665,11 @@ final class Renderer {
          +   fxy = `float[2]` logical coordinate of X and Y
          + Returns: mapped `int[2]` window coordinate of X and Y
          +/
-        int[2] logicalToWindow(float[2] fxy) const @trusted {
+        int[2] logicalToWindow(float[2] fxy) const @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 18));
+        }
+        do {
             int[2] xy = void;
             SDL_RenderLogicalToWindow(cast(SDL_Renderer*) this.sdlRenderer, fxy[0], fxy[1], &xy[0], &xy[1]);
             return xy;
@@ -1645,7 +1715,11 @@ final class Renderer {
          + Returns: `dsdl2.Window` proxy to the window
          + Throws: `dsdl2.SDLException` if failed to get window
          +/
-        inout(Window) window() inout @property @trusted {
+        inout(Window) window() inout @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 22));
+        }
+        do {
             SDL_Window* sdlWindow = SDL_RenderGetWindow(cast(SDL_Renderer*) this.sdlRenderer);
             if (sdlWindow is null) {
                 throw new SDLException;

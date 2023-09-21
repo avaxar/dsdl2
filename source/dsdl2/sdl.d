@@ -70,6 +70,11 @@ in {
     static if (sdlSupport < SDLSupport.v2_0_9) {
         assert(sensor == false);
     }
+    else {
+        if (sensor) {
+            assert(getVersion() >= Version(2, 0, 9));
+        }
+    }
 }
 do {
     uint flags = 0;
