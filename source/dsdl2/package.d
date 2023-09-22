@@ -17,8 +17,8 @@
  +/
 
 module dsdl2;
-
 public:
+
 import dsdl2.blend;
 import dsdl2.clipboard;
 import dsdl2.display;
@@ -33,3 +33,5 @@ import dsdl2.sdl;
 import dsdl2.surface;
 import dsdl2.video;
 import dsdl2.window;
+
+import image = dsdl2.image;

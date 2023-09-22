@@ -138,7 +138,7 @@ static if (sdlSupport >= SDLSupport.v2_24) {
      +/
     void resetKeyboard() @trusted
     in {
-        assert(getVersion() >= Version(2, 24, 0));
+        assert(getVersion() >= Version(2, 24));
     }
     do {
         SDL_ResetKeyboard();
@@ -242,20 +242,15 @@ struct Keymod {
      +/
     SDL_Keymod sdlKeymod() const @property {
         return (this.lShift ? KMOD_LSHIFT : 0)
-            | (this.rShift ? KMOD_RSHIFT
-                    : 0)
+            | (this.rShift ? KMOD_RSHIFT : 0)
             | (this.lCtrl ? KMOD_LCTRL : 0)
-            | (this.rCtrl ? KMOD_RCTRL
-                    : 0)
+            | (this.rCtrl ? KMOD_RCTRL : 0)
             | (this.lAlt ? KMOD_LALT : 0)
-            | (this.rAlt ? KMOD_RALT
-                    : 0)
+            | (this.rAlt ? KMOD_RALT : 0)
             | (this.lGUI ? KMOD_LGUI : 0)
-            | (this.rGUI ? KMOD_RGUI
-                    : 0)
+            | (this.rGUI ? KMOD_RGUI : 0)
             | (this.num ? KMOD_NUM : 0)
-            | (this.caps ? KMOD_CAPS
-                    : 0)
+            | (this.caps ? KMOD_CAPS : 0)
             | (this.mode ? KMOD_MODE : 0)
             | (this.scroll ? KMOD_SCROLL : 0);
     }

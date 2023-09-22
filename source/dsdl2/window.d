@@ -923,7 +923,7 @@ final class Window {
          +/
         void surface(typeof(null) _) @property @trusted
         in {
-            assert(getVersion() >= Version(2, 28, 0));
+            assert(getVersion() >= Version(2, 28));
         }
         do {
             if (SDL_DestroyWindowSurface(this.sdlWindow) != 0) {
@@ -939,7 +939,7 @@ final class Window {
          +/
         bool hasSurface() const @property @trusted
         in {
-            assert(getVersion() >= Version(2, 28, 0));
+            assert(getVersion() >= Version(2, 28));
         }
         do {
             return SDL_HasWindowSurface(cast(SDL_Window*) this.sdlWindow) == SDL_TRUE;
@@ -1306,7 +1306,7 @@ final class Window {
          +/
         uint[2] sizeInPixels() const @property @trusted
         in {
-            assert(getVersion() >= Version(2, 26, 0));
+            assert(getVersion() >= Version(2, 26));
         }
         do {
             uint[2] size = void;
