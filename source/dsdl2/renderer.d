@@ -417,7 +417,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
  + of the renderer can be displayed to a `dsdl2.Window` if desired, or be done in software to the RAM as a
  + `dsdl2.Surface`.
  +
- + Examples:
+ + Example:
  + ---
  + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
  + auto renderer = new dsdl2.Renderer(window, accelerated : true, acceleratedVSync : true);

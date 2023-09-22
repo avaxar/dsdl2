@@ -227,7 +227,7 @@ static if (sdlSupport >= SDLSupport.v2_0_16) {
  + `dsdl2.Window` provides access to creating windows and managing them for rendering. Internally, SDL uses
  + OS functions to summon the window.
  +
- + Examples:
+ + Example:
  + ---
  + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
  + window.surface.fill(dsdl2.Color(255, 0, 0));

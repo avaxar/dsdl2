@@ -111,7 +111,7 @@ do {
  +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
  +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
- + Examples:
+ + Example:
  + ---
  + dsdl2.init(everything : true);
  + ---
@@ -124,6 +124,16 @@ void init(bool timer = false, bool audio = false, bool video = false, bool joyst
 
     if (SDL_Init(flags) != 0) {
         throw new SDLException;
+    }
+}
+
+version (unittest) {
+    static this() {
+        version (BindSDL_Static) {
+        }
+        else {
+            loadSO();
+        }
     }
 }
 
@@ -174,7 +184,7 @@ void quit(bool timer = false, bool audio = false, bool video = false, bool joyst
  +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  +
  + Returns: `true` if the selected subsystem(s) is initialized, otherwise `false`
- + Examples:
+ + Example:
  + ---
  + dsdl2.init();
  + assert(dsdl2.wasInit(video : true) == true);
@@ -192,14 +202,10 @@ bool wasInit(bool timer = false, bool audio = false, bool video = false, bool jo
 /++
  + D struct that wraps `SDL_version` containing version information
  +
- + Examples:
+ + Example:
  + ---
- + auto minimumVersion = dsdl2.Version(2, 0, 0);
- + auto ourVersion = dsdl2.getVersion();
- + assert(ourVersion >= minimumVersion);
- +
  + import std.stdio;
- + writeln("We're currently using SDL version ", ourVersion.format());
+ + writeln("We're currently using SDL version ", dsdl2.getVersion().format());
  + ---
  +/
 struct Version {
@@ -244,6 +250,14 @@ struct Version {
         else {
             return this.patch - other.patch;
         }
+    }
+    ///
+    unittest {
+        assert(dsdl2.Version(2, 0, 0) == dsdl2.Version(2, 0, 0));
+        assert(dsdl2.Version(2, 0, 1) > dsdl2.Version(2, 0, 0));
+        assert(dsdl2.Version(2, 0, 1) < dsdl2.Version(2, 0, 2));
+        assert(dsdl2.Version(2, 0, 2) >= dsdl2.Version(2, 0, 1));
+        assert(dsdl2.Version(2, 0, 2) <= dsdl2.Version(2, 0, 2));
     }
 
     /++
@@ -301,6 +315,18 @@ struct Version {
     string format() const {
         return "%d.%d.%d".format(this.major, this.minor, this.patch);
     }
+}
+///
+unittest {
+    auto minimumVersion = dsdl2.Version(2, 0, 0);
+    auto ourVersion = dsdl2.getVersion();
+    assert(ourVersion >= minimumVersion);
+}
+///
+unittest {
+    assert(dsdl2.Version(2, 0, 2) > dsdl2.Version(2, 0, 0));
+    assert(dsdl2.Version(2, 2, 0) >= dsdl2.Version(2, 0, 2));
+    assert(dsdl2.Version(3, 0, 0) >= dsdl2.Version(2, 2, 0));
 }
 
 /++
