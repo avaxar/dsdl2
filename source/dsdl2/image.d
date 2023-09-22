@@ -76,6 +76,18 @@ do {
     }
 }
 
+version (unittest) {
+    static this() {
+        version (BindSDL_Static) {
+        }
+        else {
+            dsdl2.image.loadSO();
+        }
+
+        dsdl2.image.init(everything : true);
+    }
+}
+
 void quit() @trusted {
     IMG_Quit();
 }

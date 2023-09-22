@@ -28,7 +28,7 @@ void pumpEvents() @trusted {
  + Wraps `SDL_PollEvent` which returns the latest event in queue
  +
  + Returns: `dsdl2.Event` if there's an event, otherwise `null`
- + Examples:
+ + Example:
  + ---
  + // Polls every upcoming event in queue
  + dsdl2.pumpEvents();

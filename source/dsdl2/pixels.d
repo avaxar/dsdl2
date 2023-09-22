@@ -143,13 +143,6 @@ struct Color {
 /++
  + D class that wraps `SDL_Palette` storing multiple `dsdl2.Color` as a palette to use along with indexed
  + `dsdl2.PixelFormat` instances
- +
- + Examples:
- + ---
- + auto myPalette = new dsdl2.Palette([dsdl2.Color(1, 2, 3), dsdl2.Color(3, 2, 1)]);
- + assert(myPalette.length == 2);
- + assert(myPalette[0] == dsdl2.Color(1, 2, 3));
- + ---
  +/
 final class Palette {
     private bool isOwner = true;
@@ -294,17 +287,16 @@ final class Palette {
         return this.sdlPalette.ncolors;
     }
 }
+///
+unittest {
+    auto myPalette = new dsdl2.Palette([dsdl2.Color(1, 2, 3), dsdl2.Color(3, 2, 1)]);
+    assert(myPalette.length == 2);
+    assert(myPalette[0] == dsdl2.Color(1, 2, 3));
+}
 
 /++
  + D class that wraps `SDL_PixelFormat` defining the color and alpha channel bit layout in the internal
  + representation of a pixel
- +
- + Examples:
- + ---
- + const auto rgba = dsdl2.PixelFormat.rgba32
- + assert(rgba.map(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
- + assert(rgba.get(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
- + ---
  +/
 final class PixelFormat {
     static PixelFormat _multiton(SDL_PixelFormatEnum sdlPixelFormatEnum, ubyte minMinorVer = 0,
@@ -716,5 +708,23 @@ final class PixelFormat {
      +/
     bool isFourCC() const @property @trusted {
         return SDL_ISPIXELFORMAT_FOURCC(this.sdlPixelFormatEnum) != 0;
+    }
+}
+///
+unittest {
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        const auto rgba32 = dsdl2.PixelFormat.rgba32;
+        assert(rgba32.mapRGBA(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
+        assert(rgba32.getRGBA(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
+    }
+
+    const auto rgba8888 = dsdl2.PixelFormat.rgba8888;
+    version (LittleEndian) {
+        assert(rgba8888.mapRGBA(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x12345678);
+        assert(rgba8888.getRGBA(0x12345678) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
+    }
+    version (BigEndian) {
+        assert(rgba8888.mapRGBA(dsdl2.Color(0x12, 0x34, 0x56, 0x78)) == 0x78563412);
+        assert(rgba8888.get(0x78563412) == dsdl2.Color(0x12, 0x34, 0x56, 0x78));
     }
 }

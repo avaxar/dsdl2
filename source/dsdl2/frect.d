@@ -23,16 +23,6 @@ import std.typecons : Nullable, nullable;
  +
  + `dsdl2.FPoint` stores `float`ing point `x` and `y` coordinate points. This wrapper also implements
  + vector-like operator overloading.
- +
- + Examples:
- + ---
- + auto a = dsdl2.FPoint(1.0, 2.0);
- + auto b = a + a;
- + assert(b == dsdl2.FPoint(2.0, 4.0));
- +
- + auto c = a * 2.0;
- + assert(b == c);
- + ---
  +/
 struct FPoint {
     SDL_FPoint sdlFPoint; /// Internal `SDL_FPoint` struct
@@ -159,6 +149,15 @@ struct FPoint {
         return *cast(inout(float[2]*))&this.sdlFPoint;
     }
 }
+///
+unittest {
+    auto a = dsdl2.FPoint(1.0, 2.0);
+    auto b = a + a;
+    assert(b == dsdl2.FPoint(2.0, 4.0));
+
+    auto c = a * 2.0;
+    assert(b == c);
+}
 
 /++
  + D struct that wraps `SDL_FRect` (from SDL 2.0.10) representing a rectangle of floating point 2D
@@ -167,15 +166,6 @@ struct FPoint {
  + `dsdl2.FRect` stores `float`ing point `x` and `y` coordinate points, as well as `w`idth and `h`eight which
  + specifies the rectangle's dimension. `x` and `y` symbolize the top-left coordinate of the rectangle, and
  + the `w`idth and `h`eight extend to the positive plane of both axes.
- +
- + Examples:
- + ---
- + auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
- + auto rect2 = dsdl2.FRect(-1.0, -1.0, 3.0, 3.0);
- +
- + assert(rect1.hasIntersection(rect2));
- + assert(rect1.intersectRect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
- + ---
  +/
 struct FRect {
     SDL_FRect sdlFRect; /// Internal `SDL_FRect` struct
@@ -451,4 +441,12 @@ struct FRect {
             return union_;
         }
     }
+}
+///
+unittest {
+    auto rect1 = dsdl2.FRect(-2.0, -2.0, 3.0, 3.0);
+    auto rect2 = dsdl2.FRect(-1.0, -1.0, 3.0, 3.0);
+
+    assert(rect1.hasIntersection(rect2));
+    assert(rect1.intersectRect(rect2).get == dsdl2.FRect(-1.0, -1.0, 2.0, 2.0));
 }

@@ -53,7 +53,7 @@ static if (sdlSupport >= SDLSupport.v2_0_12) {
  + GPU RAM (VRAM) according to its defined `dsdl2.PixelFormat`. A `dsdl2.Texture` is associated with its
  + `dsdl2.Renderer`, and can only be operated with/by it.
  +
- + Examples:
+ + Example:
  + ---
  + auto renderer = new dsdl2.Renderer(...);
  + auto surface = new dsdl2.Surface(...);

@@ -23,16 +23,6 @@ import std.typecons : Nullable, nullable;
  +
  + `dsdl2.Surface` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
  + RAM according to its defined `dsdl2.PixelFormat`.
- +
- + Examples:
- + ---
- + auto surface = new dsdl2.Surface([100, 100], dsdl2.PixelFormat.rgba32);
- + surface.fill(dsdl2.Color(24, 24, 24));
- + surface.fillRect(dsdl2.Rect(25, 25, 50, 50), dsdl2.Color(42, 42, 42));
- +
- + assert(surface.getAt([0, 0]) == dsdl2.Color(24, 24, 24));
- + assert(surface.getAt([50, 50]) == dsdl2.Color(42, 42, 42));
- + ---
  +/
 final class Surface {
     private PixelFormat pixelFormatProxy = null;
@@ -863,4 +853,13 @@ final class Surface {
             throw new SDLException;
         }
     }
+}
+///
+unittest {
+    auto surface = new dsdl2.Surface([100, 100], dsdl2.PixelFormat.rgba8888);
+    surface.fill(dsdl2.Color(24, 24, 24));
+    surface.fillRect(dsdl2.Rect(25, 25, 50, 50), dsdl2.Color(42, 42, 42));
+
+    assert(surface.getAt([0, 0]) == dsdl2.Color(24, 24, 24));
+    assert(surface.getAt([50, 50]) == dsdl2.Color(42, 42, 42));
 }

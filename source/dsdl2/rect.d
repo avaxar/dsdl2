@@ -20,16 +20,6 @@ import std.typecons : Nullable, nullable;
  +
  + `dsdl2.Point` stores signed `int`eger `x` and `y` coordinate points. This wrapper also implements vector-like
  + operator overloading.
- +
- + Examples:
- + ---
- + auto a = dsdl2.Point(1, 2);
- + auto b = a + a;
- + assert(b == dsdl2.Point(2, 4));
- +
- + auto c = a * 2;
- + assert(b == c);
- + ---
  +/
 struct Point {
     SDL_Point sdlPoint; /// Internal `SDL_Point` struct
@@ -158,6 +148,15 @@ struct Point {
         return *cast(inout(int[2]*))&this.sdlPoint;
     }
 }
+///
+unittest {
+    auto a = dsdl2.Point(1, 2);
+    auto b = a + a;
+    assert(b == dsdl2.Point(2, 4));
+
+    auto c = a * 2;
+    assert(b == c);
+}
 
 /++
  + D struct that wraps `SDL_Rect` representing a rectangle of integer 2D coordinate and dimension
@@ -165,15 +164,6 @@ struct Point {
  + `dsdl2.Rect` stores signed `int`eger `x` and `y` coordinate points, as well as `w`idth and `h`eight which
  + specifies the rectangle's dimension. `x` and `y` symbolize the top-left coordinate of the rectangle, and
  + the `w`idth and `h`eight extend to the positive plane of both axes.
- +
- + Examples:
- + ---
- + auto rect1 = dsdl2.Rect(-2, -2, 3, 3);
- + auto rect2 = dsdl2.Rect(-1, -1, 3, 3);
- +
- + assert(rect1.hasIntersection(rect2));
- + assert(rect1.intersectRect(rect2).get == dsdl2.Rect(-1, -1, 2, 2));
- + ---
  +/
 struct Rect {
     SDL_Rect sdlRect; /// Internal `SDL_Rect` struct
@@ -410,4 +400,12 @@ struct Rect {
         SDL_UnionRect(&this.sdlRect, &other.sdlRect, &union_.sdlRect);
         return union_;
     }
+}
+///
+unittest {
+    auto rect1 = dsdl2.Rect(-2, -2, 3, 3);
+    auto rect2 = dsdl2.Rect(-1, -1, 3, 3);
+
+    assert(rect1.hasIntersection(rect2));
+    assert(rect1.intersectRect(rect2).get == dsdl2.Rect(-1, -1, 2, 2));
 }
