@@ -64,7 +64,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      +/
     string getPrimarySelection() @trusted
     in {
-        assert(getVersion() >= Version(2, 26, 0));
+        assert(getVersion() >= Version(2, 26));
     }
     do {
         char* primarySelection = SDL_GetPrimarySelectionText();
@@ -87,7 +87,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      +/
     bool hasPrimarySelection() @trusted
     in {
-        assert(getVersion() >= Version(2, 26, 0));
+        assert(getVersion() >= Version(2, 26));
     }
     do {
         return SDL_HasPrimarySelectionText() == SDL_TRUE;
@@ -103,7 +103,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      +/
     void setPrimarySelection(string text) @trusted
     in {
-        assert(getVersion() >= Version(2, 26, 0));
+        assert(getVersion() >= Version(2, 26));
     }
     do {
         if (SDL_SetPrimarySelectionText(text.toStringz()) != 0) {

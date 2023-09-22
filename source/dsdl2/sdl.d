@@ -122,8 +122,7 @@ void init(bool timer = false, bool audio = false, bool video = false, bool joyst
     uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
         noParachute, sensor);
 
-    int code = SDL_Init(flags);
-    if (code != 0) {
+    if (SDL_Init(flags) != 0) {
         throw new SDLException;
     }
 }
@@ -226,7 +225,7 @@ struct Version {
      +   minor = minor version number
      +   patch = patch verion number
      +/
-    this(ubyte major, ubyte minor, ubyte patch) {
+    this(ubyte major, ubyte minor, ubyte patch = 0) {
         this.sdlVersion.major = major;
         this.sdlVersion.minor = minor;
         this.sdlVersion.patch = patch;
@@ -356,7 +355,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
      +/
     void resetHints() @trusted
     in {
-        assert(getVersion() >= Version(2, 26, 0));
+        assert(getVersion() >= Version(2, 26));
     }
     do {
         SDL_ResetHints();
