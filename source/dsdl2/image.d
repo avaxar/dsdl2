@@ -24,6 +24,16 @@ import std.string : toStringz;
 version (BindSDL_Static) {
 }
 else {
+    /++
+     + Loads the SDL2_image shared dynamic library, which wraps bindbc-sdl's `loadSDLImage` function
+     +
+     + Unless if bindbc-sdl is on static mode (by adding a `BindSDL_Static` version), this function will exist and must
+     + be called before any calls are made to the library. Otherwise, a segfault will happen upon any function calls.
+     +
+     + Params:
+     +   libName = name or path to look the SDL2_image SO/DLL for, otherwise `null` for default searching path
+     + Throws: `dsdl2.SDLException` if failed to find the library
+     +/
     void loadSO(string libName = null) @trusted {
         SDLImageSupport current = libName is null ? loadSDLImage() : loadSDLImage(libName.toStringz());
         if (current == sdlImageSupport) {
@@ -43,10 +53,27 @@ else {
     }
 }
 
+/++
+ + Wraps `IMG_Init` which initializes selected SDL2_image image format subsystems
+ +
+ + Params:
+ +   jpg        = selects the `IMG_INIT_JPG` subsystem
+ +   png        = selects the `IMG_INIT_PNG` subsystem
+ +   tif        = selects the `IMG_INIT_TIF` subsystem
+ +   webp       = selects the `IMG_INIT_WEBP` subsystem
+ +   jxl        = selects the `IMG_INIT_JXL` subsystem (from SDL_image 2.6)
+ +   avif       = selects the `IMG_INIT_AVIF` subsystem (from SDL_image 2.6)
+ +   everything = selects every available subsystem
+ + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
+ + Example:
+ + ---
+ + dsdl2.image.init(everything : true);
+ + ---
+ +/
 void init(bool jpg = false, bool png = false, bool tif = false, bool webp = false, bool jxl = false, bool avif = false,
     bool everything = false) @trusted
 in {
-    static if (sdlImageSupport >= SDLImageSupport.v2_6) {
+    static if (sdlImageSupport < SDLImageSupport.v2_6) {
         assert(jxl == false);
         assert(avif == false);
     }
@@ -88,14 +115,36 @@ version (unittest) {
     }
 }
 
+/++
+ + Wraps `IMG_Quit` which entirely deinitializes SDL2_image
+ +/
 void quit() @trusted {
     IMG_Quit();
 }
 
+version (unittest) {
+    static ~this() {
+        dsdl2.image.quit();
+    }
+}
+
+/++
+ + Wraps `IMG_Linked_version` which gets the version of the linked SDL2_image library
+ +
+ + Returns: `dsdl2.Version` of the linked SDL2_image library
+ +/
 Version getVersion() @trusted {
     return Version(*IMG_Linked_Version());
 }
 
+/++
+ + Wraps `IMG_Load` which loads an image from a filesystem path into a software `dsdl2.Surface`
+ +
+ + Params:
+ +   file = path to the image file
+ + Returns: `dsdl2.Surface` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Surface load(string file) @trusted {
     if (SDL_Surface* sdlSurface = IMG_Load(file.toStringz())) {
         return new Surface(sdlSurface);
@@ -105,6 +154,14 @@ Surface load(string file) @trusted {
     }
 }
 
+/++
+ + Wraps `IMG_Load_RW` which loads an image from a data buffer into a software `dsdl2.Surface`
+ +
+ + Params:
+ +   data = data buffer of the image
+ + Returns: `dsdl2.Surface` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Surface loadRaw(const void[] data) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
     if (sdlRWops is null) {
@@ -119,6 +176,15 @@ Surface loadRaw(const void[] data) @trusted {
     }
 }
 
+/++
+ + Wraps `IMG_LoadTyped_RW` which loads a typed image from a data buffer into a software `dsdl2.Surface`
+ +
+ + Params:
+ +   data = data buffer of the image
+ +   type = specified type of the image
+ + Returns: `dsdl2.Surface` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Surface loadTypedRaw(const void[] data, string type) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
     if (sdlRWops is null) {
@@ -133,6 +199,15 @@ Surface loadTypedRaw(const void[] data, string type) @trusted {
     }
 }
 
+/++
+ + Wraps `IMG_LoadTexture` which loads an image from a filesystem path into a hardware `dsdl2.Texture`
+ +
+ + Params:
+ +   renderer = given `dsdl2.Renderer` to initialize the texture
+ +   file     = path to the image file
+ + Returns: `dsdl2.Texture` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Texture loadTexture(Renderer renderer, string file) @trusted
 in {
     assert(renderer !is null);
@@ -146,6 +221,15 @@ do {
     }
 }
 
+/++
+ + Wraps `IMG_LoadTexture_RW` which loads an image from a data buffer into a hardware `dsdl2.Texture`
+ +
+ + Params:
+ +   renderer = given `dsdl2.Renderer` to initialize the texture
+ +   data     = data buffer of the image
+ + Returns: `dsdl2.Texture` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Texture loadTextureRaw(Renderer renderer, const void[] data) @trusted
 in {
     assert(renderer !is null);
@@ -164,6 +248,16 @@ do {
     }
 }
 
+/++
+ + Wraps `IMG_LoadTextureTyped_RW` which loads a typed image from a data buffer into a hardware `dsdl2.Texture`
+ +
+ + Params:
+ +   renderer = given `dsdl2.Renderer` to initialize the texture
+ +   data     = data buffer of the image
+ +   type     = specified type of the image
+ + Returns: `dsdl2.Texture` of the loaded image
+ + Throws: `dsdl2.SDLException` if failed to load the image
+ +/
 Texture loadTextureTypedRaw(Renderer renderer, const void[] data, string type) @trusted
 in {
     assert(renderer !is null);
@@ -269,8 +363,49 @@ static if (sdlImageSupport >= SDLImageSupport.v2_6) {
     alias loadAVIFRaw = _loadTypeRaw!(IMG_LoadAVIF_RW, 6); /// Wraps `IMG_LoadAVIF_RW` which loads `data` as an AVIF image (from SDL_image 2.6)
     alias loadJXLRaw = _loadTypeRaw!(IMG_LoadJXL_RW, 6); /// Wraps `IMG_LoadJXL_RW` which loads `data` as a JXL image (from SDL_image 2.6)
     alias loadQOIRaw = _loadTypeRaw!(IMG_LoadQOI_RW, 6); /// Wraps `IMG_LoadQOI_RW` which loads `data` as a QOI image (from SDL_image 2.6)
+
+    /++
+     + Wraps `IMG_LoadSizedSVG_RW` (from SDL_image 2.6) which loads a `dsdl2.Surface` image into a buffer of SVG file
+     + format, while providing the desired flattened size of the vector image
+     +
+     + Params:
+     +   data = data buffer of the image
+     +   size = desized size in pixels (width and height) of the flattened SVG image; `0` to either one of the
+     +          dimensions to be adjusted for aspect ratio
+     + Returns: `dsdl2.Surface` of the loaded image
+     + Throws: `dsdl2.SDLException` if failed to load
+     +/
+    Surface loadSizedSVGRaw(const void[] data, uint[2] size) @trusted
+    in {
+        assert(dsdl2.image.getVersion() >= Version(2, 6));
+    }
+    do {
+        SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
+        if (sdlRWops is null) {
+            throw new SDLException;
+        }
+        scope (exit)
+            if (SDL_RWclose(sdlRWops) != 0) {
+                throw new SDLException;
+            }
+
+        if (SDL_Surface* sdlSurface = IMG_LoadSizedSVG_RW(sdlRWops, size[0].to!int, size[1].to!int)) {
+            return new Surface(sdlSurface);
+        }
+        else {
+            throw new SDLException;
+        }
+    }
 }
 
+/++
+ + Wraps `IMG_SavePNG` which saves a `dsdl2.Surface` image into a PNG file in the filesystem
+ +
+ + Params:
+ +   surface = given `dsdl2.Surface` of the image to save
+ +   file    = target file path to save
+ + Throws: `dsdl2.SDLException` if failed to save
+ +/
 void savePNG(Surface surface, string file) @trusted
 in {
     assert(surface !is null);
@@ -281,15 +416,32 @@ do {
     }
 }
 
+/++
+ + Wraps `IMG_SavePNG_RW` which saves a `dsdl2.Surface` image into a buffer of PNG file format
+ +
+ + Params:
+ +   surface = given `dsdl2.Surface` of the image to save
+ + Returns: `dsdl2.SDLException` if failed to save
+ +/
 void[] savePNGRaw(Surface surface) @trusted
 in {
     assert(surface !is null);
 }
 do {
+    // Challenge: making a writable `SDL_RWops` to dynamic memory
     assert(false, "Not implemented");
 }
 
 static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
+    /++
+     + Wraps `IMG_SaveJPG` (from SDL_image 2.0.2) which saves a `dsdl2.Surface` image into a JPG file in the filesystem
+     +
+     + Params:
+     +   surface = given `dsdl2.Surface` of the image to save
+     +   file    = target file path to save
+     +   quality = value ranging from `0` to `100` specifying the image quality compensating for compression
+     + Throws: `dsdl2.SDLException` if failed to save
+     +/
     void saveJPG(Surface surface, string file, ubyte quality) @trusted
     in {
         assert(dsdl2.image.getVersion() >= Version(2, 0, 2));
@@ -301,12 +453,21 @@ static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
         }
     }
 
-    void[] saveJPGRaw(Surface surface) @trusted
+    /++
+     + Wraps `IMG_SaveJPG_RW` which saves a `dsdl2.Surface` image into a buffer of JPG file format
+     +
+     + Params:
+     +   surface = given `dsdl2.Surface` of the image to save
+     +   quality = value ranging from `0` to `100` specifying the image quality compensating for compression
+     + Returns: `dsdl2.SDLException` if failed to save
+     +/
+    void[] saveJPGRaw(Surface surface, ubyte quality) @trusted
     in {
         assert(dsdl2.image.getVersion() >= Version(2, 0, 2));
         assert(surface !is null);
     }
     do {
+        // Challenge: making a writable `SDL_RWops` to dynamic memory
         assert(false, "Not implemented");
     }
 }

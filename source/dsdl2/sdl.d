@@ -30,20 +30,14 @@ version (BindSDL_Static) {
 }
 else {
     /++
-     + Loads any SDL2 SO/DLL dynamically
+     + Loads the SDL2 shared dynamic library, which wraps bindbc-sdl's `loadSDL` function
      +
-     + If bindbc-sdl is compiled in dynamic-linking mode (the mode set by default), this function will exist to
-     + load any SDL2 shared libraries found. This function wraps bindbc-sdl's `loadSDL`. In the aforementioned
-     + dynamic-linking mode, this function has to be called before any calls to SDL2 is made. Otherwise, the
-     + program would cause a segfault.
-     +
-     + In static-linking mode (through `BindSDL_Static` or `BindBC_Static` version), this function doesn't exist,
-     + thus will result in a compilation error when referenced.
+     + Unless if bindbc-sdl is on static mode (by adding a `BindSDL_Static` version), this function will exist and must
+     + be called before any calls are made to the library. Otherwise, a segfault will happen upon any function calls.
      +
      + Params:
-     +     libName = base SDL SO/DLL file name or path to look for (By default, it looks through the path)
-     + Throws: `dsdl2.SDLException` if library not found. If the library was found, but the version was incompatible,
-     +         a warning through `stdin` would be issued.
+     +   libName = name or path to look the SDL2 SO/DLL for, otherwise `null` for default searching path
+     + Throws: `dsdl2.SDLException` if failed to find the library
      +/
     void loadSO(string libName = null) @trusted {
         SDLSupport current = libName is null ? loadSDL() : loadSDL(libName.toStringz());
@@ -142,6 +136,12 @@ version (unittest) {
  +/
 void quit() @trusted {
     SDL_Quit();
+}
+
+version (unittest) {
+    static ~this() {
+        quit();
+    }
 }
 
 /++
@@ -332,7 +332,7 @@ unittest {
 /++
  + Wraps `SDL_GetVersion` which gets the version of the linked SDL2 library
  +
- + Returns: `dsdl2.Version` of the version of the linked SDL2 library
+ + Returns: `dsdl2.Version` of the linked SDL2 library
  +/
 Version getVersion() @trusted {
     Version ver = void;
