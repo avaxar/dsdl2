@@ -247,8 +247,8 @@ final class Window {
      +
      + Params:
      +   sdlWindow = the `SDL_Window` pointer to manage
-     +   isOwner   = whether the instance owns the given `SDL_Window*` and should destroy it on its own
-     +   userRef   = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Window*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Window* sdlWindow, bool isOwner = true, void* userRef = null) @system
     in {
@@ -286,34 +286,34 @@ final class Window {
      + Creates a window on the desktop placed at a coordinate in the screen, which wraps `SDL_CreateWindow`
      +
      + Params:
-     +   title             = title given to the shown window
-     +   position          = top-left position of the window in the desktop environment (pair of two `uint`s or flags
-     +                       from `dsdl2.WindowPos`)
-     +   size              = size of the window in pixels
-     +   fullscreen        = adds `SDL_WINDOW_FULLSCREEN` flag
+     +   title = title given to the shown window
+     +   position = top-left position of the window in the desktop environment (pair of two `uint`s or flags from
+     +              `dsdl2.WindowPos`)
+     +   size = size of the window in pixels
+     +   fullscreen = adds `SDL_WINDOW_FULLSCREEN` flag
      +   fullscreenDesktop = adds `SDL_WINDOW_FULLSCREEN_DESKTOP` flag
-     +   openGL            = adds `SDL_WINDOW_OPENGL` flag
-     +   shown             = adds `SDL_WINDOW_SHOWN` flag
-     +   hidden            = adds `SDL_WINDOW_HIDDEN` flag
-     +   borderless        = adds `SDL_WINDOW_BORDERLESS` flag
-     +   resizable         = adds `SDL_WINDOW_RESIZABLE` flag
-     +   minimized         = adds `SDL_WINDOW_MINIMIZED` flag
-     +   maximized         = adds `SDL_WINDOW_MAXIMIZED` flag
-     +   inputGrabbed      = adds `SDL_WINDOW_INPUT_GRABBED` flag
-     +   inputFocus        = adds `SDL_WINDOW_INPUT_FOCUS` flag
-     +   mouseFocus        = adds `SDL_WINDOW_MOUSE_FOCUS` flag
-     +   foreign           = adds `SDL_WINDOW_FOREIGN` flag
-     +   allowHighDPI      = adds `SDL_WINDOW_ALLOW_HIGHDPI` flag (from SDL 2.0.1)
-     +   mouseCapture      = adds `SDL_WINDOW_MOUSE_CAPTURE` flag (from SDL 2.0.2)
-     +   alwaysOnTop       = adds `SDL_WINDOW_ALWAYS_ON_TOP` flag (from SDL 2.0.5)
-     +   skipTaskbar       = adds `SDL_WINDOW_SKIP_TASKBAR` flag (from SDL 2.0.5)
-     +   utility           = adds `SDL_WINDOW_UTILITY` flag (from SDL 2.0.5)
-     +   tooltip           = adds `SDL_WINDOW_TOOLTIP` flag (from SDL 2.0.5)
-     +   popupMenu         = adds `SDL_WINDOW_POPUP_MENU` flag (from SDL 2.0.5)
-     +   vulkan            = adds `SDL_WINDOW_VULKAN` flag (from SDL 2.0.6)
-     +   metal             = adds `SDL_WINDOW_METAL` flag (from SDL 2.0.6)
-     +   mouseGrabbed      = adds `SDL_WINDOW_MOUSE_GRABBED` flag (from SDL 2.0.16)
-     +   keyboardGrabbed   = adds `SDL_WINDOW_KEYBOARD_GRABBED` flag (from SDL 2.0.16)
+     +   openGL = adds `SDL_WINDOW_OPENGL` flag
+     +   shown = adds `SDL_WINDOW_SHOWN` flag
+     +   hidden = adds `SDL_WINDOW_HIDDEN` flag
+     +   borderless = adds `SDL_WINDOW_BORDERLESS` flag
+     +   resizable = adds `SDL_WINDOW_RESIZABLE` flag
+     +   minimized = adds `SDL_WINDOW_MINIMIZED` flag
+     +   maximized = adds `SDL_WINDOW_MAXIMIZED` flag
+     +   inputGrabbed = adds `SDL_WINDOW_INPUT_GRABBED` flag
+     +   inputFocus = adds `SDL_WINDOW_INPUT_FOCUS` flag
+     +   mouseFocus = adds `SDL_WINDOW_MOUSE_FOCUS` flag
+     +   foreign = adds `SDL_WINDOW_FOREIGN` flag
+     +   allowHighDPI = adds `SDL_WINDOW_ALLOW_HIGHDPI` flag (from SDL 2.0.1)
+     +   mouseCapture = adds `SDL_WINDOW_MOUSE_CAPTURE` flag (from SDL 2.0.2)
+     +   alwaysOnTop = adds `SDL_WINDOW_ALWAYS_ON_TOP` flag (from SDL 2.0.5)
+     +   skipTaskbar = adds `SDL_WINDOW_SKIP_TASKBAR` flag (from SDL 2.0.5)
+     +   utility = adds `SDL_WINDOW_UTILITY` flag (from SDL 2.0.5)
+     +   tooltip = adds `SDL_WINDOW_TOOLTIP` flag (from SDL 2.0.5)
+     +   popupMenu = adds `SDL_WINDOW_POPUP_MENU` flag (from SDL 2.0.5)
+     +   vulkan = adds `SDL_WINDOW_VULKAN` flag (from SDL 2.0.6)
+     +   metal = adds `SDL_WINDOW_METAL` flag (from SDL 2.0.6)
+     +   mouseGrabbed = adds `SDL_WINDOW_MOUSE_GRABBED` flag (from SDL 2.0.16)
+     +   keyboardGrabbed = adds `SDL_WINDOW_KEYBOARD_GRABBED` flag (from SDL 2.0.16)
      + Throws: `dsdl2.SDLException` if window creation failed
      +/
     this(string title, uint[2] position, uint[2] size, bool fullscreen = false, bool fullscreenDesktop = false,
@@ -867,8 +867,8 @@ final class Window {
     /++
      + Wraps `SDL_GetMouseState` which gets the mouse position in the window
      +
-     + Returns: `[x, y]` of the mouse position relative to the window, otherwise `[-1, -1]` if mouse input
-     +          is not focused to the window
+     + Returns: `[x, y]` of the mouse position relative to the window, otherwise `[-1, -1]` if mouse input is not
+     +          focused to the window
      +/
     int[2] mousePosition() const @property @trusted {
         if (SDL_GetMouseFocus() != this.sdlWindow) {
@@ -1087,8 +1087,7 @@ final class Window {
          + Wraps `SDL_SetWindowOpacity` (from SDL 2.0.5) which sets the opacity of the window
          +
          + Params:
-         +   newOpacity = `float` indicating the opacity of the window from `0.0` (transparent) to
-         +                `1.0` (opaque)
+         +   newOpacity = `float` indicating the opacity of the window from `0.0` (transparent) to `1.0` (opaque)
          + Throws: `dsdl2.SDLException` if failed to set the window's opacity
          +/
         void opacity(float newOpacity) @property @trusted
@@ -1244,8 +1243,8 @@ final class Window {
          + Wraps `SDL_SetWindowMouseRect` (from SDL 2.0.18) which sets the window's mouse confinement rectangle
          +
          + Params:
-         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the
-         +                  mouse pointer in
+         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the mouse
+         +                  pointer in
          + Throws: `dsdl2.SDLException` if failed to set the confinement
          +/
         void mouseRect(Rect newMouseRect) @property @trusted
@@ -1279,8 +1278,8 @@ final class Window {
          + confinement rectangle
          +
          + Params:
-         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the
-         +                  mouse pointer in; `null` to reset the confinement
+         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the mouse
+         +                  pointer in; `null` to reset the confinement
          + Throws: `dsdl2.SDLException` if failed to set or reset the confinement
          +/
         void mouseRect(Nullable!Rect newMouseRect) @property @trusted

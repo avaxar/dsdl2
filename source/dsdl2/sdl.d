@@ -94,16 +94,16 @@ do {
  + Wraps `SDL_Init` which initializes selected subsystems
  +
  + Params:
- +   timer          = selects the `SDL_INIT_TIMER` subsystem
- +   audio          = selects the `SDL_INIT_AUDIO` subsystem
- +   video          = selects the `SDL_INIT_VIDEO` subsystem
- +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
- +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   timer = selects the `SDL_INIT_TIMER` subsystem
+ +   audio = selects the `SDL_INIT_AUDIO` subsystem
+ +   video = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic = selects the `SDL_INIT_HAPTIC` subsystem
  +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
- +   events         = selects the `SDL_INIT_EVENTS` subsystem
- +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
- +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
- +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
+ +   events = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
  + Example:
  + ---
@@ -148,16 +148,16 @@ version (unittest) {
  + Wraps `SDL_QuitSubSystem` which deinitializes specified subsystems
  +
  + Params:
- +   timer          = selects the `SDL_INIT_TIMER` subsystem
- +   audio          = selects the `SDL_INIT_AUDIO` subsystem
- +   video          = selects the `SDL_INIT_VIDEO` subsystem
- +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
- +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   timer = selects the `SDL_INIT_TIMER` subsystem
+ +   audio = selects the `SDL_INIT_AUDIO` subsystem
+ +   video = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic = selects the `SDL_INIT_HAPTIC` subsystem
  +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
- +   events         = selects the `SDL_INIT_EVENTS` subsystem
- +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
- +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
- +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
+ +   events = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  +/
 void quit(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
     bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
@@ -172,16 +172,16 @@ void quit(bool timer = false, bool audio = false, bool video = false, bool joyst
  + Wraps `SDL_WasInit` which checks whether particular subsystem(s) is already initialized
  +
  + Params:
- +   timer          = selects the `SDL_INIT_TIMER` subsystem
- +   audio          = selects the `SDL_INIT_AUDIO` subsystem
- +   video          = selects the `SDL_INIT_VIDEO` subsystem
- +   joystick       = selects the `SDL_INIT_JOYSTICK` subsystem
- +   haptic         = selects the `SDL_INIT_HAPTIC` subsystem
+ +   timer = selects the `SDL_INIT_TIMER` subsystem
+ +   audio = selects the `SDL_INIT_AUDIO` subsystem
+ +   video = selects the `SDL_INIT_VIDEO` subsystem
+ +   joystick = selects the `SDL_INIT_JOYSTICK` subsystem
+ +   haptic = selects the `SDL_INIT_HAPTIC` subsystem
  +   gameController = selects the `SDL_INIT_GAMECONTROLLER` subsystem
- +   events         = selects the `SDL_INIT_EVENTS` subsystem
- +   everything     = selects the `SDL_INIT_EVERYTHING` subsystem
- +   noParachute    = selects the `SDL_INIT_NOPARACHUTE` subsystem
- +   sensor         = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
+ +   events = selects the `SDL_INIT_EVENTS` subsystem
+ +   everything = selects the `SDL_INIT_EVERYTHING` subsystem
+ +   noParachute = selects the `SDL_INIT_NOPARACHUTE` subsystem
+ +   sensor = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  +
  + Returns: `true` if the selected subsystem(s) is initialized, otherwise `false`
  + Example:
@@ -365,9 +365,9 @@ enum HintPriority : SDL_HintPriority {
  + Wraps `SDL_SetHintWithPriority` which provides giving a hint to SDL2 in runtime
  +
  + Params:
- +     name     = name of the hint
- +     value    = value to set the hint as
- +     priority = priority of the hint configuration (by default, `dsdl2.HintPriority.normal`)
+ +   name = name of the hint
+ +   value = value to set the hint as
+ +   priority = priority of the hint configuration (by default, `dsdl2.HintPriority.normal`)
  +
  + Returns: `true` if the hint was set, `false` otherwise
  +/
@@ -392,7 +392,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
  + Wraps `SDL_GetHint` which gets the value of a specified user-set hint
  +
  + Params:
- +     name = name of the hint
+ +   name = name of the hint
  + Returns: value of the given `name` of the hint
  +/
 string getHint(string name) @trusted {
@@ -409,8 +409,8 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
      + Wraps `SDL_GetHintBoolean` (from SDL 2.0.5) which gets the value of a specified user-set hint as a `bool`
      +
      + Params:
-     +     name         = name of the hint
-     +     defaultValue = default returned value if the hint wasn't set
+     +   name = name of the hint
+     +   defaultValue = default returned value if the hint wasn't set
      + Returns: `bool` value of the given `name` of the hint or `defaultValue` if the hint wasn't set
      +/
     bool getHintBool(string name, bool defaultValue = false) @trusted

@@ -98,13 +98,13 @@ struct RendererInfo {
      + Constructs a `dsdl2.RendererInfo` by feeding it its attributes
      +
      + Params:
-     +   name           = name of the renderer
+     +   name = name of the renderer
      +   textureFormats = available texture pixel format(s)
      +   maxTextureSize = maximum size a texture can be
-     +   software       = adds `SDL_RENDERER_SOFTWARE` flag
-     +   accelerated    = adds `SDL_RENDERER_ACCELERATED` flag
-     +   presentVSync   = adds `SDL_RENDERER_PRESENTVSYNC` flag
-     +   targetTexture  = adds `SDL_RENDERER_TARGETTEXTURE` flag
+     +   software = adds `SDL_RENDERER_SOFTWARE` flag
+     +   accelerated = adds `SDL_RENDERER_ACCELERATED` flag
+     +   presentVSync = adds `SDL_RENDERER_PRESENTVSYNC` flag
+     +   targetTexture = adds `SDL_RENDERER_TARGETTEXTURE` flag
      +/
     this(string name, PixelFormat[] textureFormats, uint[2] maxTextureSize, bool software = false,
         bool accelerated = false, bool presentVSync = false, bool targetTexture = false) @trusted {
@@ -326,7 +326,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
          +
          + Params:
          +   position = vertex target position
-         +   color    = color and alpha modulation of the vertex
+         +   color = color and alpha modulation of the vertex
          +   texCoord = vertex texture coordinate
          +/
         this(FPoint position, Color color, FPoint texCoord) {
@@ -435,8 +435,8 @@ final class Renderer {
      +
      + Params:
      +   sdlRenderer = the `SDL_Renderer` pointer to manage
-     +   isOwner     = whether the instance owns the given `SDL_Renderer*` and should destroy it on its own
-     +   userRef     = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Renderer*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Renderer* sdlRenderer, bool isOwner = true, void* userRef = null) @system
     in {
@@ -452,11 +452,11 @@ final class Renderer {
      + Creates a hardware `dsdl2.Renderer` that renders to a `dsdl2.Window`, which wraps `SDL_CreateRenderer`
      +
      + Params:
-     +   window        = target `dsdl2.Window` for the renderer to draw onto which must not have a surface associated
-     +   renderDriver  = the `dsdl2.RenderDriver` to use; `null` to use the default
-     +   software      = adds `SDL_RENDERER_SOFTWARE` flag
-     +   accelerated   = adds `SDL_RENDERER_ACCELERATED` flag
-     +   presentVSync  = adds `SDL_RENDERER_PRESENTVSYNC` flag
+     +   window = target `dsdl2.Window` for the renderer to draw onto which must not have a surface associated
+     +   renderDriver = the `dsdl2.RenderDriver` to use; `null` to use the default
+     +   software = adds `SDL_RENDERER_SOFTWARE` flag
+     +   accelerated = adds `SDL_RENDERER_ACCELERATED` flag
+     +   presentVSync = adds `SDL_RENDERER_PRESENTVSYNC` flag
      +   targetTexture = adds `SDL_RENDERER_TARGETTEXTURE` flag
      + Throws: `dsdl2.SDLException` if creation failed
      +/
@@ -630,8 +630,8 @@ final class Renderer {
      + Wraps `SDL_SetRenderTarget` which sets the renderer's target
      +
      + Params:
-     +   newTarget = `null` to set the target to be the default target (usually the window), or a valid
-     +               target `dsdl2.Texture` as the texture target
+     +   newTarget = `null` to set the target to be the default target (usually the window), or a valid target
+     +               `dsdl2.Texture` as the texture target
      + Throws: `dsdl2.SDLException` if failed to set the renderer's target
      +/
     void target(Texture newTarget) @property @trusted {
@@ -1062,7 +1062,7 @@ final class Renderer {
      + the renderer's target
      +
      + Params:
-     +   texture  = `dsdl2.Texture` to be copied/drawn
+     +   texture = `dsdl2.Texture` to be copied/drawn
      +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
@@ -1080,9 +1080,9 @@ final class Renderer {
      + Wraps `SDL_RenderCopy` which copies a part of the texture at `srcRect` to `destRect` at the renderer's target
      +
      + Params:
-     +   texture  = `dsdl2.Texture` to be copied/drawn
+     +   texture = `dsdl2.Texture` to be copied/drawn
      +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   srcRect  = source `dsdl2.Rect` which clips the given texture
+     +   srcRect = source `dsdl2.Rect` which clips the given texture
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
     void copy(const Texture texture, Rect destRect, Rect srcRect) @trusted
@@ -1101,11 +1101,11 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture             = `dsdl2.Texture` to be copied/drawn
-     +   destRect            = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   angle               = angle in degrees to rotate the texture counterclockwise
+     +   texture = `dsdl2.Texture` to be copied/drawn
+     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   angle = angle in degrees to rotate the texture counterclockwise
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-     +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+     +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, bool flippedHorizontally = false,
@@ -1126,12 +1126,12 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture             = `dsdl2.Texture` to be copied/drawn
-     +   destRect            = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   angle               = angle in degrees to rotate the texture counterclockwise
-     +   srcRect             = source `dsdl2.Rect` which clips the given texture
+     +   texture = `dsdl2.Texture` to be copied/drawn
+     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   angle = angle in degrees to rotate the texture counterclockwise
+     +   srcRect = source `dsdl2.Rect` which clips the given texture
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-     +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+     +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Rect srcRect, bool flippedHorizontally = false,
@@ -1152,12 +1152,12 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture             = `dsdl2.Texture` to be copied/drawn
-     +   destRect            = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   angle               = angle in degrees to rotate the texture counterclockwise
-     +   center              = pivot `dsdl2.Point` of the texture for rotation
+     +   texture = `dsdl2.Texture` to be copied/drawn
+     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   angle = angle in degrees to rotate the texture counterclockwise
+     +   center = pivot `dsdl2.Point` of the texture for rotation
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-     +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+     +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Point center, bool flippedHorizontally = false,
@@ -1178,13 +1178,13 @@ final class Renderer {
      + `angle` and flipping
      +
      + Params:
-     +   texture             = `dsdl2.Texture` to be copied/drawn
-     +   destRect            = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   angle               = angle in degrees to rotate the texture counterclockwise
-     +   srcRect             = source `dsdl2.Rect` which clips the given texture
-     +   center              = pivot `dsdl2.Point` of the texture for rotation
+     +   texture = `dsdl2.Texture` to be copied/drawn
+     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   angle = angle in degrees to rotate the texture counterclockwise
+     +   srcRect = source `dsdl2.Rect` which clips the given texture
+     +   center = pivot `dsdl2.Point` of the texture for rotation
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-     +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+     +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
      + Throws: `dsdl2.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Rect srcRect, Point center,
@@ -1227,7 +1227,7 @@ final class Renderer {
      + renderer's target
      +
      + Params:
-     +   rect   = `dsdl2.Rect` boundary to be read and copied
+     +   rect = `dsdl2.Rect` boundary to be read and copied
      +   format = requested `dsdl2.PixelFormat` of the returned `dsdl2.Surface`
      + Returns: `dsdl2.Surface` copy of the specified rectangle boundary in the renderer's target
      + Throws: `dsdl2.SDLException` if pixels failed to be read
@@ -1478,7 +1478,7 @@ final class Renderer {
          + texture to `destRect` at the renderer's target
          +
          + Params:
-         +   texture  = `dsdl2.Texture` to be copied/drawn
+         +   texture = `dsdl2.Texture` to be copied/drawn
          +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
@@ -1499,9 +1499,9 @@ final class Renderer {
          + the renderer's target
          +
          + Params:
-         +   texture  = `dsdl2.Texture` to be copied/drawn
+         +   texture = `dsdl2.Texture` to be copied/drawn
          +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   srcRect  = source `dsdl2.Rect` which clips the given texture
+         +   srcRect = source `dsdl2.Rect` which clips the given texture
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
         void copy(const Texture texture, FRect destRect, Rect srcRect) @trusted
@@ -1521,11 +1521,11 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture             = `dsdl2.Texture` to be copied/drawn
-         +   destRect            = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   angle               = angle in degrees to rotate the texture counterclockwise
+         +   texture = `dsdl2.Texture` to be copied/drawn
+         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   angle = angle in degrees to rotate the texture counterclockwise
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-         +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+         +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, bool flippedHorizontally = false,
@@ -1547,12 +1547,12 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture             = `dsdl2.Texture` to be copied/drawn
-         +   destRect            = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   angle               = angle in degrees to rotate the texture counterclockwise
-         +   srcRect             = source `dsdl2.Rect` which clips the given texture
+         +   texture = `dsdl2.Texture` to be copied/drawn
+         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   angle = angle in degrees to rotate the texture counterclockwise
+         +   srcRect = source `dsdl2.Rect` which clips the given texture
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-         +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+         +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect, bool flippedHorizontally = false,
@@ -1574,12 +1574,12 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture             = `dsdl2.Texture` to be copied/drawn
-         +   destRect            = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   angle               = angle in degrees to rotate the texture counterclockwise
-         +   center              = pivot `dsdl2.FPoint` of the texture for rotation
+         +   texture = `dsdl2.Texture` to be copied/drawn
+         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   angle = angle in degrees to rotate the texture counterclockwise
+         +   center = pivot `dsdl2.FPoint` of the texture for rotation
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-         +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+         +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, FPoint center,
@@ -1601,13 +1601,13 @@ final class Renderer {
          + target with certain `angle` and flipping
          +
          + Params:
-         +   texture             = `dsdl2.Texture` to be copied/drawn
-         +   destRect            = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   angle               = angle in degrees to rotate the texture counterclockwise
-         +   srcRect             = source `dsdl2.Rect` which clips the given texture
-         +   center              = pivot `dsdl2.FPoint` of the texture for rotation
+         +   texture = `dsdl2.Texture` to be copied/drawn
+         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   angle = angle in degrees to rotate the texture counterclockwise
+         +   srcRect = source `dsdl2.Rect` which clips the given texture
+         +   center = pivot `dsdl2.FPoint` of the texture for rotation
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
-         +   flippedVertically   = `true` to flip the texture vertically, otherwise `false`
+         +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
          + Throws: `dsdl2.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect, FPoint center,
@@ -1680,9 +1680,9 @@ final class Renderer {
          +
          + Params:
          +   vertices = array of `dsdl2.Vertex`es of the triangles
-         +   texture  = `dsdl2.Texture` for the drawn triangles; `null` for none
-         +   indices  = array of `uint` indices for the vertices to be drawn (must be in multiples of three); `null`
-         +              for order defined by `vertices` directly
+         +   texture = `dsdl2.Texture` for the drawn triangles; `null` for none
+         +   indices = array of `uint` indices for the vertices to be drawn (must be in multiples of three); `null`
+         +             for order defined by `vertices` directly
          + Throws: `dsdl2.SDLException` if failed to render
          +/
         void renderGeometry(const Vertex[] vertices, Texture texture = null, const uint[] indices = null) @trusted {

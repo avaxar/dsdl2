@@ -33,7 +33,7 @@ struct DisplayMode {
      + Contructs a `dsdl2.DisplayMode` from a vanilla `SDL_DisplayMode` from bindbc-sdl
      +
      + Params:
-     +     sdlDisplayMode = the `SDL_DisplayMode` struct
+     +   sdlDisplayMode = the `SDL_DisplayMode` struct
      +/
     this(SDL_DisplayMode sdlDisplayMode) {
         this.pixelFormat = new PixelFormat(sdlDisplayMode.format);
@@ -47,9 +47,9 @@ struct DisplayMode {
      +
      + Params:
      +   pixelFormat = pixel format
-     +   size        = size in pixels
+     +   size = size in pixels
      +   refreshRate = refresh rate per second
-     +   driverData  = internal driver data
+     +   driverData = internal driver data
      +/
     this(const PixelFormat pixelFormat, uint[2] size, uint refreshRate, void* driverData = null)
     in {

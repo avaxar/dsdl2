@@ -155,8 +155,8 @@ final class Palette {
      +
      + Params:
      +   sdlPalette = the `SDL_Palette` pointer to manage
-     +   isOwner    = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
-     +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Palette*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Palette* sdlPalette, bool isOwner = true, void* userRef = null) @system
     in {
@@ -399,8 +399,8 @@ final class PixelFormat {
      +
      + Params:
      +   sdlPixelFormat = the `SDL_PixelFormat` pointer to manage
-     +   isOwner        = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
-     +   userRef        = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_PixelFormat*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_PixelFormat* sdlPixelFormat, bool isOwner = true, void* userRef = null) @system
     in {
@@ -441,7 +441,7 @@ final class PixelFormat {
      +
      + Params:
      +   sdlPixelFormatEnum = the `SDL_PixelFormatEnum` enumeration (indexed)
-     +   palette            = the `dsdl2.Palette` class instance to bind as the color palette
+     +   palette = the `dsdl2.Palette` class instance to bind as the color palette
      + Throws: `dsdl2.SDLException` if allocation or palette-setting failed
      +/
     this(SDL_PixelFormatEnum sdlPixelFormatEnum, Palette palette) @trusted
@@ -467,7 +467,7 @@ final class PixelFormat {
      + using `SDL_MasksToPixelFormatEnum` to retrieve the `SDL_PixelFormatEnum`
      +
      + Params:
-     +   bitDepth  = bit depth of a pixel (size of one pixel in bits)
+     +   bitDepth = bit depth of a pixel (size of one pixel in bits)
      +   rgbaMasks = bit masks for the red, green, blue, and alpha channels
      + Throws: `dsdl2.SDLException` if pixel format conversion not possible
      +/
