@@ -73,8 +73,8 @@ final class Texture {
      +
      + Params:
      +   sdlTexture = the `SDL_Texture` pointer to manage
-     +   isOwner    = whether the instance owns the given `SDL_Texture*` and should destroy it on its own
-     +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Texture*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Texture* sdlTexture, bool isOwner = true, void* userRef = null) @system
     in {
@@ -90,10 +90,10 @@ final class Texture {
      + Creates a blank `dsdl2.Texture` in the VRAM, which wraps `SDL_CreateTexture`
      +
      + Params:
-     +   renderer    = `dsdl2.Renderer` the texture belongs to
+     +   renderer = `dsdl2.Renderer` the texture belongs to
      +   pixelFormat = `dsdl2.PixelFormat` that the texture pixel data is stored as
-     +   access      = `dsdl2.TextureAccess` enumeration which indicates its access rule
-     +   size        = the size of the texture (width and height)
+     +   access = `dsdl2.TextureAccess` enumeration which indicates its access rule
+     +   size = the size of the texture (width and height)
      + Throws: `dsdl2.SDLException` if creation failed
      +/
     this(Renderer renderer, PixelFormat pixelFormat, TextureAccess access, uint[2] size) @trusted
@@ -114,7 +114,7 @@ final class Texture {
      +
      + Params:
      +   renderer = `dsdl2.Renderer` the texture belongs to
-     +   surface  = `dsdl2.Surface` for its pixel data to be copied over to the texture
+     +   surface = `dsdl2.Surface` for its pixel data to be copied over to the texture
      + Throws: `dsdl2.SDLException` if creation failed
      +/
     this(Renderer renderer, Surface surface) @trusted
@@ -270,8 +270,7 @@ final class Texture {
      + `SDL_SetTextureAlphaMod`
      +
      + Params:
-     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha
-     +            multiplier
+     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
      +/
     void mod(Color newMod) @property @trusted {
         SDL_SetTextureColorMod(this.sdlTexture, newMod.r, newMod.g, newMod.b);
@@ -353,7 +352,7 @@ final class Texture {
      +
      + Params:
      +   pixels = array of pixels for the entire `dsdl2.Texture`'s pixels to be replaced with
-     +   pitch  = skips in bytes per line/row of the `pixels`
+     +   pitch = skips in bytes per line/row of the `pixels`
      + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
      +/
     void update(void[] pixels, size_t pitch) @trusted
@@ -371,9 +370,9 @@ final class Texture {
      + Wraps `SDL_UpdateTexture` which updates the `dsdl2.Texture`'s pixel data at a certain `dsdl2.Rect` boundary
      +
      + Params:
-     +   rect   = `dsdl2.Rect` boundary marking the part of the texture whose pixels are to be updated
+     +   rect = `dsdl2.Rect` boundary marking the part of the texture whose pixels are to be updated
      +   pixels = array of pixels for the `dsdl2.Texture`'s `rect` pixels to be replaced with
-     +   pitch  = skips in bytes per line/row of the `pixels`
+     +   pitch = skips in bytes per line/row of the `pixels`
      + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
      +/
     void update(Rect rect, void[] pixels, size_t pitch) @trusted

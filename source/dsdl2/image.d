@@ -57,12 +57,12 @@ else {
  + Wraps `IMG_Init` which initializes selected SDL2_image image format subsystems
  +
  + Params:
- +   jpg        = selects the `IMG_INIT_JPG` subsystem
- +   png        = selects the `IMG_INIT_PNG` subsystem
- +   tif        = selects the `IMG_INIT_TIF` subsystem
- +   webp       = selects the `IMG_INIT_WEBP` subsystem
- +   jxl        = selects the `IMG_INIT_JXL` subsystem (from SDL_image 2.6)
- +   avif       = selects the `IMG_INIT_AVIF` subsystem (from SDL_image 2.6)
+ +   jpg = selects the `IMG_INIT_JPG` subsystem
+ +   png = selects the `IMG_INIT_PNG` subsystem
+ +   tif = selects the `IMG_INIT_TIF` subsystem
+ +   webp = selects the `IMG_INIT_WEBP` subsystem
+ +   jxl = selects the `IMG_INIT_JXL` subsystem (from SDL_image 2.6)
+ +   avif = selects the `IMG_INIT_AVIF` subsystem (from SDL_image 2.6)
  +   everything = selects every available subsystem
  + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
  + Example:
@@ -204,7 +204,7 @@ Surface loadTypedRaw(const void[] data, string type) @trusted {
  +
  + Params:
  +   renderer = given `dsdl2.Renderer` to initialize the texture
- +   file     = path to the image file
+ +   file = path to the image file
  + Returns: `dsdl2.Texture` of the loaded image
  + Throws: `dsdl2.SDLException` if failed to load the image
  +/
@@ -226,7 +226,7 @@ do {
  +
  + Params:
  +   renderer = given `dsdl2.Renderer` to initialize the texture
- +   data     = data buffer of the image
+ +   data = data buffer of the image
  + Returns: `dsdl2.Texture` of the loaded image
  + Throws: `dsdl2.SDLException` if failed to load the image
  +/
@@ -253,8 +253,8 @@ do {
  +
  + Params:
  +   renderer = given `dsdl2.Renderer` to initialize the texture
- +   data     = data buffer of the image
- +   type     = specified type of the image
+ +   data = data buffer of the image
+ +   type = specified type of the image
  + Returns: `dsdl2.Texture` of the loaded image
  + Throws: `dsdl2.SDLException` if failed to load the image
  +/
@@ -403,7 +403,7 @@ static if (sdlImageSupport >= SDLImageSupport.v2_6) {
  +
  + Params:
  +   surface = given `dsdl2.Surface` of the image to save
- +   file    = target file path to save
+ +   file = target file path to save
  + Throws: `dsdl2.SDLException` if failed to save
  +/
 void savePNG(Surface surface, string file) @trusted
@@ -438,7 +438,7 @@ static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
      +
      + Params:
      +   surface = given `dsdl2.Surface` of the image to save
-     +   file    = target file path to save
+     +   file = target file path to save
      +   quality = value ranging from `0` to `100` specifying the image quality compensating for compression
      + Throws: `dsdl2.SDLException` if failed to save
      +/

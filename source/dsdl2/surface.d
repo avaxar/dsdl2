@@ -36,8 +36,8 @@ final class Surface {
      +
      + Params:
      +   sdlSurface = the `SDL_Surface` pointer to manage
-     +   isOwner    = whether the instance owns the given `SDL_Surface*` and should destroy it on its own
-     +   userRef    = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Surface*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Surface* sdlSurface, bool isOwner = true, void* userRef = null) @system
     in {
@@ -54,7 +54,7 @@ final class Surface {
      + `SDL_CreateRGBSurface`
      +
      + Params:
-     +   size           = size (width and height) of the `dsdl2.Surface` in pixels
+     +   size = size (width and height) of the `dsdl2.Surface` in pixels
      +   rgbPixelFormat = an RGB(A) `dsdl2.PixelFormat`
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
@@ -77,9 +77,9 @@ final class Surface {
      + Constructs an RGB(A) `dsdl2.Surface` from an array of `pixels`
      +
      + Params:
-     +   pixels         = array of pixel data (copied internally)
-     +   size           = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch          = skips in bytes per line/row of the `dsdl2.Surface`
+     +   pixels = array of pixel data (copied internally)
+     +   size = size (width and height) of the `dsdl2.Surface` in pixels
+     +   pitch = skips in bytes per line/row of the `dsdl2.Surface`
      +   rgbPixelFormat = an RGB(A) `dsdl2.PixelFormat`
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
@@ -109,9 +109,9 @@ final class Surface {
      + which wraps `SDL_CreateRGBSurface`
      +
      + Params:
-     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
+     +   size = size (width and height) of the `dsdl2.Surface` in pixels
      +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette  = `dsdl2.Palette` to use
+     +   palette = `dsdl2.Palette` to use
      + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
      +/
     this(uint[2] size, ubyte bitDepth, Palette palette) @trusted
@@ -132,11 +132,11 @@ final class Surface {
      + Constructs a blank indexed palette-using `dsdl2.Surface` from an array of `pixels`
      +
      + Params:
-     +   pixels   = array of pixel data (copied internally)
-     +   size     = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch    = skips in bytes per line/row of the `dsdl2.Surface`
+     +   pixels = array of pixel data (copied internally)
+     +   size = size (width and height) of the `dsdl2.Surface` in pixels
+     +   pitch = skips in bytes per line/row of the `dsdl2.Surface`
      +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette  = `dsdl2.Palette` to use
+     +   palette = `dsdl2.Palette` to use
      + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
      +/
     this(void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette palette) @trusted
@@ -349,7 +349,7 @@ final class Surface {
      + Sets the pixel value in the `dsdl2.Surface` at the given coordinate
      +
      + Params:
-     +   xy    = X and Y values of the coordinate
+     +   xy = X and Y values of the coordinate
      +   value = pixel value to set at the given coordinate
      +/
     void setPixelAt(uint[2] xy, uint value) @trusted
@@ -424,7 +424,7 @@ final class Surface {
      + Sets the pixel color in the `dsdl2.Surface` at the given coordinate
      +
      + Params:
-     +   xy    = X and Y values of the coordinate
+     +   xy = X and Y values of the coordinate
      +   color = pixel color to set at the given coordinate
      +/
     void setAt(uint[2] xy, Color color)
@@ -460,8 +460,7 @@ final class Surface {
      + `SDL_SetSurfaceAlphaMod`
      +
      + Params:
-     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha
-     +            multiplier
+     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
      +/
     void mod(Color newMod) @property @trusted {
         SDL_SetSurfaceColorMod(this.sdlSurface, newMod.r, newMod.g, newMod.b);
@@ -731,7 +730,7 @@ final class Surface {
      + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl2.Surface` with specifying a pixel color value
      +
      + Params:
-     +   rect  = `dsdl2.Rect` specifying the position and size
+     +   rect = `dsdl2.Rect` specifying the position and size
      +   pixel = pixel value of the color to fill the rectangle
      + Throws: `dsdl2.SDLException` if rectangle failed to draw
      +/
@@ -745,7 +744,7 @@ final class Surface {
      + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl2.Surface` with specifying a `dsdl2.Color` value
      +
      + Params:
-     +   rect  = `dsdl2.Rect` specifying the position and size
+     +   rect = `dsdl2.Rect` specifying the position and size
      +   color = `dsdl2.Color` of the color to fill the rectangle
      + Throws: `dsdl2.SDLException` if rectangle failed to draw
      +/
@@ -796,7 +795,7 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
      +
      + Params:
-     +   source    = `dsdl2.Surface` to blit/draw
+     +   source = `dsdl2.Surface` to blit/draw
      +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
      +/
     void blit(const Surface source, Point destPoint) @trusted {
@@ -811,9 +810,9 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
      +
      + Params:
-     +   source     = `dsdl2.Surface` to blit/draw
-     +   destPoint  = top-left `dsdl2.Point` of where `source` is drawn
-     +   srcRect    = the clipping rect of `source` specifying which part is drawn
+     +   source = `dsdl2.Surface` to blit/draw
+     +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
+     +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blit(const Surface source, Point destPoint, Rect srcRect) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
@@ -828,7 +827,7 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` with scaling
      +
      + Params:
-     +   source   = `dsdl2.Surface` to blit/draw
+     +   source = `dsdl2.Surface` to blit/draw
      +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +/
     void blitScaled(const Surface source, Rect destRect) @trusted {
@@ -843,8 +842,8 @@ final class Surface {
      + point as the top-left point of the drawn `dsdl2.Surface` with scaling
      +
      + Params:
-     +   source     = `dsdl2.Surface` to blit/draw
-     +   destRect   = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
+     +   source = `dsdl2.Surface` to blit/draw
+     +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blitScaled(const Surface source, Rect destRect, Rect srcRect) @trusted {

@@ -184,9 +184,9 @@ struct Rect {
      + Constructs a `dsdl2.Rect` by feeding in the `x`, `y`, `width`, and `height` of the rectangle
      +
      + Params:
-     +   x      = top-left x coordinate point of the rectangle
-     +   y      = top-left y coordinate point of the rectangle
-     +   width  = rectangle width
+     +   x = top-left x coordinate point of the rectangle
+     +   y = top-left y coordinate point of the rectangle
+     +   width = rectangle width
      +   height = rectangle height
      +/
     this(int x, int y, int width, int height) {
@@ -201,8 +201,8 @@ struct Rect {
      + rectangle
      +
      + Params:
-     +   point  = top-left point of the rectangle
-     +   width  = rectangle width
+     +   point = top-left point of the rectangle
+     +   width = rectangle width
      +   height = rectangle height
      +/
     this(Point point, int width, int height) {
@@ -343,8 +343,8 @@ struct Rect {
      + Wraps `SDL_IntersectRectAndLine` which sees whether a line intersects with the `dsdl2.Rect`
      +
      + Params:
-     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to check its
-     +          intersection of with the `dsdl2.Rect`
+     +   line = set of two `dsdl2.Point`s denoting the start and end coordinates of the line to check its intersection
+     +          of with the `dsdl2.Rect`
      + Returns: `true` if it intersects, otherwise `false`
      +/
     bool hasLineIntersection(Point[2] line) const @trusted {

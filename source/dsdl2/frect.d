@@ -43,8 +43,8 @@ struct FPoint {
      + Constructs a `dsdl2.FPoint` by feeding in an `x` and `y` pair
      +
      + Params:
-     +     x = x coordinate point
-     +     y = y coordinate point
+     +   x = x coordinate point
+     +   y = y coordinate point
      +/
     this(float x, float y) {
         this.x = x;
@@ -188,9 +188,9 @@ struct FRect {
      + Constructs a `dsdl2.FRect` by feeding in the `x`, `y`, `width`, and `height` of the rectangle
      +
      + Params:
-     +   x      = top-left x coordinate point of the rectangle
-     +   y      = top-left y coordinate point of the rectangle
-     +   width  = rectangle width
+     +   x = top-left x coordinate point of the rectangle
+     +   y = top-left y coordinate point of the rectangle
+     +   width = rectangle width
      +   height = rectangle height
      +/
     this(float x, float y, float width, float height) {
@@ -205,8 +205,8 @@ struct FRect {
      + the rectangle
      +
      + Params:
-     +   point  = top-left point of the rectangle
-     +   width  = rectangle width
+     +   point = top-left point of the rectangle
+     +   width = rectangle width
      +   height = rectangle height
      +/
     this(FPoint point, float width, float height) {
@@ -363,8 +363,8 @@ struct FRect {
          + `dsdl2.FRect`
          +
          + Params:
-         +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to check
-         +          its intersection of with the `dsdl2.FRect`
+         +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to check its
+         +          intersection of with the `dsdl2.FRect`
          + Returns: `true` if it intersects, otherwise `false`
          +/
         bool hasLineIntersection(FPoint[2] line) const @trusted
@@ -403,10 +403,9 @@ struct FRect {
          + boundaries of the `dsdl2.FRect`
          +
          + Params:
-         +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to clip from
-         +          its intersection with the `dsdl2.FRect`
-         + Returns: non-null `Nullable!(FPoint[2])` as the clipped line if there is an intersection,
-         +          otherwise a null one
+         +   line = set of two `dsdl2.FPoint`s denoting the start and end coordinates of the line to clip from its
+         +          intersection with the `dsdl2.FRect`
+         + Returns: non-null `Nullable!(FPoint[2])` as the clipped line if there's an intersection, otherwise a null one
          +/
         Nullable!(FPoint[2]) intersectLine(FPoint[2] line) const @trusted
         in {

@@ -225,12 +225,12 @@ struct MouseState {
      + Constructs a `dsdl2.MouseState` by providing the flags
      +
      + Params:
-     +   base   = base flag to assign (`0` for none)
-     +   left   = whether the left mouse button is pressed
+     +   base = base flag to assign (`0` for none)
+     +   left = whether the left mouse button is pressed
      +   middle = whether the middle mouse button is pressed
-     +   right  = whether the right mouse button is pressed
-     +   x1     = whether the X1 mouse button is pressed
-     +   x2     = whether the X2 mouse button is pressed
+     +   right = whether the right mouse button is pressed
+     +   x1 = whether the X1 mouse button is pressed
+     +   x2 = whether the X2 mouse button is pressed
      +/
     this(uint base, bool left = false, bool middle = false, bool right = false, bool x1 = false, bool x2 = false) {
         this(base);
@@ -259,9 +259,9 @@ struct MouseState {
      +/
     uint sdlMouseState() const @property {
         return (this.left ? SDL_BUTTON_LMASK : 0)
-            | (this.middle ? SDL_BUTTON_MMASK
+            | (this.middle ? SDL_BUTTON_MMASK : 0)
+            | (this.right ? SDL_BUTTON_RMASK
                     : 0)
-            | (this.right ? SDL_BUTTON_RMASK : 0)
             | (this.x1 ? SDL_BUTTON_X1MASK : 0)
             | (this.x2 ? SDL_BUTTON_X2MASK : 0);
     }
@@ -351,8 +351,8 @@ final class Cursor {
      +
      + Params:
      +   sdlCursor = the `SDL_Cursor` pointer to manage
-     +   isOwner     = whether the instance owns the given `SDL_Cursor*` and should destroy it on its own
-     +   userRef     = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_Cursor*` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_Cursor* sdlCursor, bool isOwner = true, void* userRef = null) @system
     in {
@@ -368,7 +368,7 @@ final class Cursor {
      + Constructs a `dsdl2.Cursor` from a `dsdl2.Surface`, which wraps `SDL_CreateColorCursor`
      +
      + Params:
-     +   surface     = surface image of the cursor
+     +   surface = surface image of the cursor
      +   hotPosition = pixel position of the cursor hotspot
      + Throws: `dsdl2.Exception` if cursor creation failed
      +/

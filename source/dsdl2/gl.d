@@ -106,7 +106,7 @@ enum GLProfile : uint {
  +
  + Params:
  +   attribute = the `dsdl2.GLAttribute` to set
- +   value     = requested value for the attribute to be set as
+ +   value = requested value for the attribute to be set as
  + Throws: `dsdl2.SDLException` if unable to set the attribute
  +/
 void setGLAttribute(GLAttribute attribute, uint value) @trusted {
@@ -222,8 +222,8 @@ class GLContext {
      +
      + Params:
      +   sdlGLContext = the `SDL_GLContext` to manage
-     +   isOwner      = whether the instance owns the given `SDL_GLContext` and should destroy it on its own
-     +   userRef      = optional pointer to maintain reference link, avoiding GC cleanup
+     +   isOwner = whether the instance owns the given `SDL_GLContext` and should destroy it on its own
+     +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
      +/
     this(SDL_GLContext sdlGLContext, bool isOwner = true, void* userRef = null) @system
     in {

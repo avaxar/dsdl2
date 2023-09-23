@@ -191,18 +191,18 @@ struct Keymod {
      + Constructs a `dsdl2.Keymod` by providing the flags
      +
      + Params:
-     +   base   = base `SDL_Keymod` to assign (Put `0` for none)
+     +   base = base `SDL_Keymod` to assign (Put `0` for none)
      +   lShift = whether the left shift key is pressed
      +   rShift = whether the right shift key is pressed
-     +   lCtrl  = whether the left ctrl key is pressed
-     +   rCtrl  = whether the right ctrl key is pressed
-     +   lAlt   = whether the left alt key is pressed
-     +   rAlt   = whether the right alt key is pressed
-     +   lGUI   = whether the left GUI/"Windows" key is pressed
-     +   rGUI   = whether the right GUI/"Windows" key is pressed
-     +   num    = whether num lock is toggled
-     +   caps   = whether caps lock is toggled
-     +   mode   = whether the AltGr keys are toggled
+     +   lCtrl = whether the left ctrl key is pressed
+     +   rCtrl = whether the right ctrl key is pressed
+     +   lAlt = whether the left alt key is pressed
+     +   rAlt = whether the right alt key is pressed
+     +   lGUI = whether the left GUI/"Windows" key is pressed
+     +   rGUI = whether the right GUI/"Windows" key is pressed
+     +   num = whether num lock is toggled
+     +   caps = whether caps lock is toggled
+     +   mode = whether the AltGr keys are toggled
      +   scroll = whether scroll lock is toggled
      +/
     this(SDL_Keymod base, bool lShift = false, bool rShift = false, bool lCtrl = false, bool rCtrl = false,
