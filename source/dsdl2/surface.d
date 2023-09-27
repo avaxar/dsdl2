@@ -94,7 +94,7 @@ final class Surface {
     do {
         this(size, rgbPixelFormat);
 
-        size_t lineBitSize = size[0].to!size_t * rgbPixelFormat.bitDepth;
+        size_t lineBitSize = cast(size_t) size[0] * rgbPixelFormat.bitDepth;
         size_t lineSize = lineBitSize / 8 + (lineBitSize % 8 != 0);
 
         foreach (line; 0 .. size[1]) {

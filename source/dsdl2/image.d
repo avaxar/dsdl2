@@ -17,6 +17,7 @@ import dsdl2.renderer;
 import dsdl2.surface;
 import dsdl2.texture;
 
+import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
@@ -365,7 +366,7 @@ static if (sdlImageSupport >= SDLImageSupport.v2_6) {
     alias loadQOIRaw = _loadTypeRaw!(IMG_LoadQOI_RW, 6); /// Wraps `IMG_LoadQOI_RW` which loads `data` as a QOI image (from SDL_image 2.6)
 
     /++
-     + Wraps `IMG_LoadSizedSVG_RW` (from SDL_image 2.6) which loads a `dsdl2.Surface` image into a buffer of SVG file
+     + Wraps `IMG_LoadSizedSVG_RW` (from SDL_image 2.6) which loads a `dsdl2.Surface` image from a buffer of SVG file
      + format, while providing the desired flattened size of the vector image
      +
      + Params:
@@ -454,7 +455,7 @@ static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
     }
 
     /++
-     + Wraps `IMG_SaveJPG_RW` which saves a `dsdl2.Surface` image into a buffer of JPG file format
+     + Wraps `IMG_SaveJPG_RW` (from SDL_image 2.0.2) which saves a `dsdl2.Surface` image into a buffer of JPG file format
      +
      + Params:
      +   surface = given `dsdl2.Surface` of the image to save
@@ -469,5 +470,248 @@ static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
     do {
         // Challenge: making a writable `SDL_RWops` to dynamic memory
         assert(false, "Not implemented");
+    }
+}
+
+static if (sdlImageSupport >= SDLImageSupport.v2_6) {
+    /++
+     + D class that wraps `IMG_Animation` (from SDL_image 2.6) storing multiple `dsdl2.Surface`s of an animation
+     +/
+    class Animation {
+        private Surface[] framesProxy = null;
+        private bool isOwner = true;
+        private void* userRef = null;
+
+        @system IMG_Animation* imgAnimation = null; /// Internal `IMG_Animation` pointer
+
+        /++
+         + Constructs a `dsdl2.image.Animation` from a vanilla `IMG_Animation*` from bindbc-sdl
+         +
+         + Params:
+         +   imgAnimation = the `IMG_Animation` pointer to manage
+         +   isOwner = whether the instance owns the given `IMG_Animation*` and should destroy it on its own
+         +   userRef = optional pointer to maintain reference link, avoiding GC cleanup
+         +/
+        this(IMG_Animation* imgAnimation, bool isOwner = true, void* userRef = null) @system
+        in {
+            assert(imgAnimation !is null);
+        }
+        do {
+            this.imgAnimation = imgAnimation;
+            this.isOwner = isOwner;
+            this.userRef = userRef;
+        }
+
+        ~this() @trusted {
+            if (this.isOwner) {
+                IMG_FreeAnimation(this.imgAnimation);
+            }
+        }
+
+        @trusted invariant {
+            // Instance might be in an invalid state due to holding a non-owned externally-freed object when
+            // destructed in an unpredictable order.
+            if (!this.isOwner && GC.inFinalizer) {
+                return;
+            }
+
+            assert(this.imgAnimation !is null);
+        }
+
+        /++
+         + Equality operator overload
+         +/
+        bool opEquals(const Animation rhs) const @trusted {
+            return this.imgAnimation is rhs.imgAnimation;
+        }
+
+        /++
+         + Gets the hash of the `dsdl2.image.Animation`
+         +
+         + Returns: unique hash for the instance being the pointer of the internal `IMG_Animation` pointer
+         +/
+        override hash_t toHash() const @trusted {
+            return cast(hash_t) this.imgAnimation;
+        }
+
+        /++
+         + Formats the `dsdl2.image.Animation` into its construction representation:
+         + `"dsdl2.image.Animation(<imgAnimation>)"`
+         +
+         + Returns: the formatted `string`
+         +/
+        override string toString() const @trusted {
+            return "dsdl2.image.Animation(0x%x)".format(this.imgAnimation);
+        }
+
+        /++
+         + Gets the width of the `dsdl2.image.Animation` in pixels
+         +
+         + Returns: width of the `dsdl2.image.Animation` in pixels
+         +/
+        uint width() const @property @trusted {
+            return this.imgAnimation.w.to!uint;
+        }
+
+        /++
+         + Gets the height of the `dsdl2.image.Animation` in pixels
+         +
+         + Returns: height of the `dsdl2.image.Animation` in pixels
+         +/
+        uint height() const @property @trusted {
+            return this.imgAnimation.h.to!uint;
+        }
+
+        /++
+         + Gets the size of the `dsdl2.image.Animation` in pixels
+         +
+         + Returns: size of the `dsdl2.image.Animation` in pixels
+         +/
+        uint[2] size() const @property @trusted {
+            return [this.imgAnimation.w.to!uint, this.imgAnimation.h.to!uint];
+        }
+
+        /++
+         + Gets the frame count of the `dsdl2.image.Animation`
+         +
+         + Returns: frame count of the `dsdl2.image.Animation`
+         +/
+        size_t count() const @property @trusted {
+            return cast(size_t) this.imgAnimation.count;
+        }
+
+        /++
+         + Gets an array of `dsdl2.Surface` frames of the `dsdl2.image.Animation`
+         +
+         + Returns: array of `dsdl2.Surface` frames of the `dsdl2.image.Animation`
+         +/
+        const(Surface[]) frames() const @property @trusted {
+            if (this.framesProxy is null) {
+                (cast(Animation) this).framesProxy = new Surface[this.count];
+                foreach (i; 0 .. this.count) {
+                    (cast(Animation) this).framesProxy[i] = new Surface(
+                        cast(SDL_Surface*) this.imgAnimation.frames[i], false, cast(void*) this);
+                }
+            }
+
+            return this.framesProxy;
+        }
+
+        /++
+         + Gets an array of delay per frame of the `dsdl2.image.Animation`
+         +
+         + Returns: array of delay per frame of the `dsdl2.image.Animation`
+         +/
+        const(uint[]) delays() const @property @trusted {
+            return (cast(uint*)&this.imgAnimation.delays)[0 .. this.count];
+        }
+    }
+
+    /++
+     + Wraps `IMG_LoadAnimation` (from SDL_image 2.6) which loads an animation from a filesystem path into an
+     + `dsdl2.image.Animation`
+     +
+     + Params:
+     +   file = path to the animation file
+     + Returns: `dsdl2.image.Animation` of the loaded animated image
+     + Throws: `dsdl2.SDLException` if failed to load the animation
+     +/
+    Animation loadAnimation(string file) @trusted
+    in {
+        assert(dsdl2.image.getVersion() >= Version(2, 6));
+    }
+    do {
+        if (IMG_Animation* imgAnimation = IMG_LoadAnimation(file.toStringz())) {
+            return new Animation(imgAnimation);
+        }
+        else {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `IMG_LoadAnimation_RW` (from SDL_image 2.6) which loads an animation from a data buffer into a
+     + `dsdl2.image.Animation`
+     +
+     + Params:
+     +   data = data buffer of the animation
+     + Returns: `dsdl2.image.Animation` of the loaded animated image
+     + Throws: `dsdl2.SDLException` if failed to load the animation
+     +/
+    Animation loadAnimationRaw(const void[] data) @trusted
+    in {
+        assert(dsdl2.image.getVersion() >= Version(2, 6));
+    }
+    do {
+        SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
+        if (sdlRWops is null) {
+            throw new SDLException;
+        }
+
+        if (IMG_Animation* imgAnimation = IMG_LoadAnimation_RW(sdlRWops, 1)) {
+            return new Animation(imgAnimation);
+        }
+        else {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `IMG_LoadAnimationTyped_RW` (from SDL_image 2.6) which loads a typed image from a data buffer into a
+     + `dsdl2.image.Animation`
+     +
+     + Params:
+     +   data = data buffer of the animation
+     +   type = specified type of the animation
+     + Returns: `dsdl2.image.Animation` of the loaded animated image
+     + Throws: `dsdl2.SDLException` if failed to load the animation
+     +/
+    Animation loadAnimationTypedRaw(const void[] data, string type) @trusted
+    in {
+        assert(dsdl2.image.getVersion() >= Version(2, 6));
+    }
+    do {
+        SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
+        if (sdlRWops is null) {
+            throw new SDLException;
+        }
+
+        if (IMG_Animation* imgAnimation = IMG_LoadAnimationTyped_RW(sdlRWops, 1, type.toStringz())) {
+            return new Animation(imgAnimation);
+        }
+        else {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `IMG_LoadGIFAnimation_RW` (from SDL_image 2.6) which loads a `dsdl2.image.Animation` from a buffer of
+     + animated GIF file format
+     +
+     + Params:
+     +   data = data buffer of the animation
+     + Returns: `dsdl2.image.Animation` of the animated GIF
+     + Throws: `dsdl2.SDLException` if failed to load
+     +/
+    Animation loadGIFAnimationRaw(const void[] data) @trusted
+    in {
+        assert(dsdl2.image.getVersion() >= Version(2, 6));
+    }
+    do {
+        SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
+        if (sdlRWops is null) {
+            throw new SDLException;
+        }
+        scope (exit)
+            if (SDL_RWclose(sdlRWops) != 0) {
+                throw new SDLException;
+            }
+
+        if (IMG_Animation* imgAnimation = IMG_LoadGIFAnimation_RW(sdlRWops)) {
+            return new Animation(imgAnimation);
+        }
+        else {
+            throw new SDLException;
+        }
     }
 }
