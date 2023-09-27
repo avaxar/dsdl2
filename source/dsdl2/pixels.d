@@ -286,6 +286,15 @@ final class Palette {
     size_t length() const @property @trusted {
         return this.sdlPalette.ncolors;
     }
+
+    /++
+     + Proxy to the `dsdl2.Color` array of the `dsdl2.Palette`
+     +
+     + Returns: `dsdl2.Color` array of the `dsdl2.Palette`
+     +/
+    inout(Color[]) colors() inout @property @trusted {
+        return (cast(inout(Color*))&this.sdlPalette.colors)[0 .. this.length];
+    }
 }
 ///
 unittest {

@@ -258,8 +258,6 @@ final class Window {
         this.sdlWindow = sdlWindow;
         this.isOwner = isOwner;
         this.userRef = userRef;
-
-        this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
     }
 
     /++
@@ -278,8 +276,6 @@ final class Window {
         if (this.sdlWindow is null) {
             throw new SDLException;
         }
-
-        this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
     }
 
     /++
@@ -336,8 +332,6 @@ final class Window {
         if (this.sdlWindow is null) {
             throw new SDLException;
         }
-
-        this.pixelFormatProxy = new PixelFormat(SDL_GetWindowPixelFormat(this.sdlWindow));
     }
 
     ~this() @trusted {
@@ -354,7 +348,6 @@ final class Window {
         }
 
         assert(this.sdlWindow !is null);
-        assert(this.pixelFormatProxy !is null);
     }
 
     /++
@@ -441,11 +434,11 @@ final class Window {
      + Returns: read-only `dsdl2.PixelFormat` instance
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
-        // If the pixel format of the window happen to change, redo the proxy.
-        if (pixelFormat.sdlPixelFormatEnum != SDL_GetWindowPixelFormat(
-                cast(SDL_Window*) this.sdlWindow)) {
-            (cast(Window) this).pixelFormatProxy = new PixelFormat(
-                SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow));
+        // If the internal pixel format pointer happens to change, rewire the proxy.
+        if (this.pixelFormatProxy is null ||
+            this.pixelFormatProxy.sdlPixelFormatEnum !is SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow)) {
+            (cast(Window) this).pixelFormatProxy =
+                new PixelFormat(SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow));
         }
 
         return this.pixelFormatProxy;
