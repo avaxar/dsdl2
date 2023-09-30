@@ -429,7 +429,7 @@ in {
     assert(surface !is null);
 }
 do {
-    // Challenge: making a writable `SDL_RWops` to dynamic memory
+    // TODO: make a writable `SDL_RWops` to dynamic memory
     assert(false, "Not implemented");
 }
 
@@ -468,7 +468,7 @@ static if (sdlImageSupport >= SDLImageSupport.v2_0_2) {
         assert(surface !is null);
     }
     do {
-        // Challenge: making a writable `SDL_RWops` to dynamic memory
+        // TODO: make a writable `SDL_RWops` to dynamic memory
         assert(false, "Not implemented");
     }
 }
