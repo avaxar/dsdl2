@@ -19,6 +19,7 @@
 module dsdl2;
 public:
 
+import dsdl2.audio;
 import dsdl2.blend;
 import dsdl2.clipboard;
 import dsdl2.display;

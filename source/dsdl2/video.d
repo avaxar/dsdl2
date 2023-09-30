@@ -39,7 +39,7 @@ void quitVideo() @trusted {
  + Returns: `string` names of the available video drivers
  + Throws: `dsdl2.SDLException` if failed to get the available video drivers
  +/
-string[] getVideoDrivers() @trusted {
+const(string[]) getVideoDrivers() @trusted {
     int numDrivers = SDL_GetNumVideoDrivers();
     if (numDrivers <= 0) {
         throw new SDLException;
