@@ -1,3 +1,5 @@
+![](https://code.dlang.org/packages/dsdl2/logo)
+
 # dsdl2
 
  An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs compatible with `@safe` code, accompanied with the [bindbc-sdl](https://code.dlang.org/packages/bindbc-sdl) binding.
