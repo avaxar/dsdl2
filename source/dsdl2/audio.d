@@ -15,7 +15,7 @@ import std.format : format;
 import std.string : toStringz;
 
 /++
- + D enum that wraps `AUDIO_*` format enumerations
+ + D enum that wraps `SDL_AudioFormat` defining scalar type per audio sample
  +/
 enum AudioFormat {
     /++
@@ -39,7 +39,7 @@ enum AudioFormat {
     u16Sys = AUDIO_U16SYS, /// ditto
     s16Sys = AUDIO_S16SYS, /// ditto
     s32Sys = AUDIO_S32SYS, /// ditto
-    f32Sys = AUDIO_F32SYS, /// ditto
+    f32Sys = AUDIO_F32SYS /// ditto
 }
 
 /++
@@ -51,10 +51,10 @@ enum AudioStatus {
      +/
     stopped = SDL_AUDIO_STOPPED,
     playing = SDL_AUDIO_PLAYING, /// ditto
-    paused = SDL_AUDIO_PAUSED, /// ditto
+    paused = SDL_AUDIO_PAUSED /// ditto
 }
 
-alias maxVolume = SDL_MIX_MAXVOLUME; /// Alias to `SDL_MIX_MAXVOLUME`
+enum maxVolume = cast(ubyte) SDL_MIX_MAXVOLUME; /// Alias to `SDL_MIX_MAXVOLUME`
 
 /++
  + Wraps `SDL_AudioInit` which initializes the audio subsystem while specifying the audio driver used

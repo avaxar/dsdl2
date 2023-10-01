@@ -16,7 +16,6 @@ import dsdl2.renderer;
 import dsdl2.surface;
 
 import core.memory : GC;
-import std.bitmanip : bitfields;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
@@ -126,85 +125,6 @@ do {
     }
 
     return flags;
-}
-
-struct WindowFlagsTuple {
-    mixin(bitfields!(
-            bool, "fullscreen", 1,
-            bool, "fullscreenDesktop", 1,
-            bool, "openGL", 1,
-            bool, "shown", 1,
-            bool, "hidden", 1,
-            bool, "borderless", 1,
-            bool, "resizable", 1,
-            bool, "minimized", 1,
-            bool, "maximized", 1,
-            bool, "inputGrabbed", 1,
-            bool, "inputFocus", 1,
-            bool, "mouseFocus", 1,
-            bool, "foreign", 1,
-            bool, "allowHighDPI", 1,
-            bool, "mouseCapture", 1,
-            bool, "alwaysOnTop", 1,
-            bool, "skipTaskbar", 1,
-            bool, "utility", 1,
-            bool, "tooltip", 1,
-            bool, "popupMenu", 1,
-            bool, "vulkan", 1,
-            bool, "metal", 1,
-            bool, "mouseGrabbed", 1,
-            bool, "keyboardGrabbed", 1,
-            ubyte, "", 8));
-
-    this() @disable;
-
-    private this(typeof(null) _) @trusted {
-        import core.stdc.string : memset;
-
-        memset(cast(void*)&this, 0, this.sizeof);
-    }
-}
-
-private WindowFlagsTuple fromSDLWindowFlags(uint flags) {
-    WindowFlagsTuple tuple = WindowFlagsTuple(null);
-
-    tuple.fullscreen = (flags & SDL_WINDOW_FULLSCREEN) != 0;
-    tuple.fullscreenDesktop = (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
-    tuple.openGL = (flags & SDL_WINDOW_OPENGL) != 0;
-    tuple.shown = (flags & SDL_WINDOW_SHOWN) != 0;
-    tuple.hidden = (flags & SDL_WINDOW_HIDDEN) != 0;
-    tuple.borderless = (flags & SDL_WINDOW_BORDERLESS) != 0;
-    tuple.resizable = (flags & SDL_WINDOW_RESIZABLE) != 0;
-    tuple.minimized = (flags & SDL_WINDOW_MINIMIZED) != 0;
-    tuple.maximized = (flags & SDL_WINDOW_MAXIMIZED) != 0;
-    tuple.inputGrabbed = (flags & SDL_WINDOW_INPUT_GRABBED) != 0;
-    tuple.inputFocus = (flags & SDL_WINDOW_INPUT_FOCUS) != 0;
-    tuple.mouseFocus = (flags & SDL_WINDOW_MOUSE_FOCUS) != 0;
-    tuple.foreign = (flags & SDL_WINDOW_FOREIGN) != 0;
-
-    static if (sdlSupport >= SDLSupport.v2_0_1) {
-        tuple.allowHighDPI = (flags & SDL_WINDOW_ALLOW_HIGHDPI) != 0;
-    }
-    static if (sdlSupport >= SDLSupport.v2_0_4) {
-        tuple.mouseCapture = (flags & SDL_WINDOW_MOUSE_CAPTURE) != 0;
-    }
-    static if (sdlSupport >= SDLSupport.v2_0_5) {
-        tuple.alwaysOnTop = (flags & SDL_WINDOW_ALWAYS_ON_TOP) != 0;
-        tuple.skipTaskbar = (flags & SDL_WINDOW_SKIP_TASKBAR) != 0;
-        tuple.utility = (flags & SDL_WINDOW_UTILITY) != 0;
-        tuple.tooltip = (flags & SDL_WINDOW_TOOLTIP) != 0;
-        tuple.popupMenu = (flags & SDL_WINDOW_POPUP_MENU) != 0;
-    }
-    static if (sdlSupport >= SDLSupport.v2_0_6) {
-        tuple.vulkan = (flags & SDL_WINDOW_VULKAN) != 0;
-        tuple.metal = (flags & SDL_WINDOW_METAL) != 0;
-    }
-    static if (sdlSupport >= SDLSupport.v2_0_16) {
-        tuple.mouseGrabbed = (flags & SDL_WINDOW_MOUSE_GRABBED) != 0;
-        tuple.keyboardGrabbed = (flags & SDL_WINDOW_KEYBOARD_GRABBED) != 0;
-    }
-
-    return tuple;
 }
 
 static if (sdlSupport >= SDLSupport.v2_0_16) {
@@ -445,16 +365,6 @@ final class Window {
     }
 
     /++
-     + Wraps `SDL_GetWindowFlags` which gets the flags the window has
-     +
-     + Returns: a named bitmap tuple of the window flags
-     +/
-    WindowFlagsTuple flags() const @property @trusted {
-        uint flags = SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow);
-        return fromSDLWindowFlags(flags);
-    }
-
-    /++
      + Wraps `SDL_GetRenderer` which gets the renderer of the window
      +
      + Returns: `dsdl2.Renderer` proxy
@@ -679,26 +589,6 @@ final class Window {
     }
 
     /++
-     + Checks whether the borders of the window are visible
-     +
-     + Returns: `true` if borders are visible, otherwise `false`
-     +/
-    bool bordered() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_BORDERLESS) !=
-            SDL_WINDOW_BORDERLESS;
-    }
-
-    /++
-     + Wraps `SDL_SetWindowBordered` which sets whether the borders' visibility
-     +
-     + Params:
-     +   newBordered = `true` to make the borders visible, otherwise `false`
-     +/
-    void bordered(bool newBordered) @property @trusted {
-        SDL_SetWindowBordered(this.sdlWindow, newBordered);
-    }
-
-    /++
      + Wraps `SDL_ShowWindow` which sets the window to be visible in the desktop environment
      +/
     void show() @trusted {
@@ -741,13 +631,136 @@ final class Window {
     }
 
     /++
-     + Checks whether the window's size is resizable by the user
+     + Wraps `SDL_GetWindowFlags` to check whether the window is in real fullscreen
+     +
+     + Returns: `true` if the the window is in real fullscreen, otherwise `false`
+     +/
+    bool fullscreen() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowFullscreen` which sets the fullscreen mode of the window
+     +
+     + Params:
+     +   newFullscreen = `true` to make the window fullscreen, otherwise `false`
+     + Throws: `dsdl2.SDLException` if failed to set the window's fullscreen mode
+     +/
+    void fullscreen(bool newFullscreen) @property @trusted {
+        if (SDL_SetWindowFullscreen(this.sdlWindow, newFullscreen ? SDL_WINDOW_FULLSCREEN : 0) != 0) {
+            throw new SDLException;
+        }
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window is in desktop fullscreen
+     +
+     + Returns: `true` if the the window is in desktop fullscreen, otherwise `false`
+     +/
+    bool fullscreenDesktop() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP) ==
+            SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window utilizes OpenGL
+     +
+     + Returns: `true` if the the window utilizes OpenGL, otherwise `false`
+     +/
+    bool openGL() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_OPENGL) == SDL_WINDOW_OPENGL;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_6) {
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window utilizes Vulkan (from SDL 2.0.6)
+         +
+         + Returns: `true` if the the window utilizes Vulkan, otherwise `false`
+         +/
+        bool vulkan() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 6));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_VULKAN) == SDL_WINDOW_VULKAN;
+        }
+
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window utilizes Metal (from SDL 2.0.6)
+         +
+         + Returns: `true` if the the window utilizes Metal, otherwise `false`
+         +/
+        bool metal() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 6));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_METAL) == SDL_WINDOW_METAL;
+        }
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window is foreign
+     +
+     + Returns: `true` if the the window is foreign, otherwise `false`
+     +/
+    bool foreign() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FOREIGN) == SDL_WINDOW_FOREIGN;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window is shown
+     +
+     + Returns: `true` if the the window is shown, otherwise `false`
+     +/
+    bool shown() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_SHOWN) == SDL_WINDOW_SHOWN;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window is hidden
+     +
+     + Returns: `true` if the the window is hidden, otherwise `false`
+     +/
+    bool hidden() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_HIDDEN) == SDL_WINDOW_HIDDEN;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the borders of the window are non-existent
+     +
+     + Returns: `true` if borders of the window are non-existent, otherwise `false`
+     +/
+    bool borderless() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_BORDERLESS) == SDL_WINDOW_BORDERLESS;
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the borders of the window are visible
+     +
+     + Returns: `true` if borders are visible, otherwise `false`
+     +/
+    bool bordered() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_BORDERLESS) != SDL_WINDOW_BORDERLESS;
+    }
+
+    /++
+     + Wraps `SDL_SetWindowBordered` which sets whether the borders' visibility
+     +
+     + Params:
+     +   newBordered = `true` to make the borders visible, otherwise `false`
+     +/
+    void bordered(bool newBordered) @property @trusted {
+        SDL_SetWindowBordered(this.sdlWindow, newBordered);
+    }
+
+    /++
+     + Wraps `SDL_GetWindowFlags` to check whether the window's size is resizable by the user
      +
      + Returns: `true` if the window is resizable, otherwise `false`
      +/
     bool resizable() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_RESIZABLE) ==
-            SDL_WINDOW_RESIZABLE;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_RESIZABLE) == SDL_WINDOW_RESIZABLE;
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_5) {
@@ -767,25 +780,108 @@ final class Window {
     }
 
     /++
-     + Checks whether the window is in real fullscreen
+     + Wraps `SDL_GetWindowFlags` to check whether the window is minimized
      +
-     + Returns: `true` if the the window is in real fullscreen, otherwise `false`
+     + Returns: `true` if window is minimized, otherwise `false`
      +/
-    bool fullscreen() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN) ==
-            SDL_WINDOW_FULLSCREEN;
+    bool minimized() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_MINIMIZED) == SDL_WINDOW_MINIMIZED;
     }
 
     /++
-     + Wraps `SDL_SetWindowFullscreen` which sets the fullscreen mode of the window
+     + Wraps `SDL_GetWindowFlags` to check whether the window is maximized
      +
-     + Params:
-     +   newFullscreen = `true` to make the window fullscreen, otherwise `false`
-     + Throws: `dsdl2.SDLException` if failed to set the window's fullscreen mode
+     + Returns: `true` if window is maximized, otherwise `false`
      +/
-    void fullscreen(bool newFullscreen) @property @trusted {
-        if (SDL_SetWindowFullscreen(this.sdlWindow, newFullscreen ? SDL_WINDOW_FULLSCREEN : 0) != 0) {
-            throw new SDLException;
+    bool maximized() const @property @trusted {
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_MAXIMIZED) == SDL_WINDOW_MAXIMIZED;
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_1) {
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window allows high DPI (from SDL 2.0.1)
+         +
+         + Returns: `true` if window allows high DPI, otherwise `false`
+         +/
+        bool allowHighDPI() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 1));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALLOW_HIGHDPI) ==
+                SDL_WINDOW_ALLOW_HIGHDPI;
+        }
+    }
+
+    static if (sdlSupport >= SDLSupport.v2_0_5) {
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window is always on top (from SDL 2.0.5)
+         +
+         + Returns: `true` if window is always on top, otherwise `false`
+         +/
+        bool alwaysOnTop() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALWAYS_ON_TOP) ==
+                SDL_WINDOW_ALWAYS_ON_TOP;
+        }
+
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window is not on the taskbar (from SDL 2.0.5)
+         +
+         + Returns: `true` if window is not on the taskbar, otherwise `false`
+         +/
+        bool skipTaskbar() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_SKIP_TASKBAR) ==
+                SDL_WINDOW_SKIP_TASKBAR;
+        }
+
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window is treated as a utility window (from SDL 2.0.5)
+         +
+         + Returns: `true` if window is treated as a utility window, otherwise `false`
+         +/
+        bool utility() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_UTILITY) ==
+                SDL_WINDOW_UTILITY;
+        }
+
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window is treated as a tooltip window (from SDL 2.0.5)
+         +
+         + Returns: `true` if window is treated as a tooltip window, otherwise `false`
+         +/
+        bool tooltip() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_TOOLTIP) ==
+                SDL_WINDOW_TOOLTIP;
+        }
+
+        /++
+         + Wraps `SDL_GetWindowFlags` to check whether the window is treated as a popup menu (from SDL 2.0.5)
+         +
+         + Returns: `true` if window is treated as a popup menu, otherwise `false`
+         +/
+        bool popupMenu() const @property @trusted
+        in {
+            assert(getVersion() >= Version(2, 0, 5));
+        }
+        do {
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_POPUP_MENU) ==
+                SDL_WINDOW_POPUP_MENU;
         }
     }
 

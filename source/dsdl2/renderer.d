@@ -1210,7 +1210,7 @@ final class Renderer {
      +/
     Surface readPixels(const PixelFormat format = PixelFormat.rgba8888) const @trusted
     in {
-        assert(!format.isIndexed);
+        assert(!format.indexed);
     }
     do {
         Surface surface = new Surface(this.size, format);
@@ -1234,7 +1234,7 @@ final class Renderer {
      +/
     Surface readPixels(Rect rect, const PixelFormat format = PixelFormat.rgba8888) const @trusted
     in {
-        assert(!format.isIndexed);
+        assert(!format.indexed);
     }
     do {
         Surface surface = new Surface([rect.x, rect.x], format);
