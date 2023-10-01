@@ -632,7 +632,7 @@ final class PixelFormat {
      +/
     inout(Palette) palette() return inout @property @trusted
     in {
-        assert(this.isIndexed);
+        assert(this.indexed);
     }
     do {
         return this.paletteRef;
@@ -646,7 +646,7 @@ final class PixelFormat {
      +/
     void palette(Palette newPalette) @property @trusted
     in {
-        assert(this.isIndexed);
+        assert(this.indexed);
         assert(newPalette !is null);
     }
     do {
@@ -697,7 +697,7 @@ final class PixelFormat {
      +
      + Returns: `true` if it is indexed, otherwise `false`
      +/
-    bool isIndexed() const @property @trusted {
+    bool indexed() const @property @trusted {
         return SDL_ISPIXELFORMAT_INDEXED(this.sdlPixelFormatEnum);
     }
 
@@ -715,7 +715,7 @@ final class PixelFormat {
      +
      + Returns: `true` if it is unique, otherwise `false`
      +/
-    bool isFourCC() const @property @trusted {
+    bool fourCC() const @property @trusted {
         return SDL_ISPIXELFORMAT_FOURCC(this.sdlPixelFormatEnum) != 0;
     }
 }

@@ -54,7 +54,7 @@ struct DisplayMode {
     this(const PixelFormat pixelFormat, uint[2] size, uint refreshRate, void* driverData = null)
     in {
         assert(pixelFormat !is null);
-        assert(!pixelFormat.isIndexed);
+        assert(!pixelFormat.indexed);
     }
     do {
         this.pixelFormat = new PixelFormat(pixelFormat.sdlPixelFormatEnum);

@@ -61,7 +61,7 @@ final class Surface {
     this(uint[2] size, const PixelFormat rgbPixelFormat) @trusted
     in {
         assert(rgbPixelFormat !is null);
-        assert(!rgbPixelFormat.isIndexed);
+        assert(!rgbPixelFormat.indexed);
     }
     do {
         uint[4] masks = rgbPixelFormat.toMasks();
@@ -87,7 +87,7 @@ final class Surface {
     in {
         assert(pixels !is null);
         assert(rgbPixelFormat !is null);
-        assert(!rgbPixelFormat.isIndexed);
+        assert(!rgbPixelFormat.indexed);
         assert(pitch * 8 >= size[0] * rgbPixelFormat.bitDepth);
         assert(pixels.length == pitch * size[1]);
     }
@@ -275,7 +275,7 @@ final class Surface {
      +/
     inout(Palette) palette() inout @property @trusted
     in {
-        assert(this.pixelFormat.isIndexed);
+        assert(this.pixelFormat.indexed);
     }
     do {
         return (cast(inout PixelFormat) this.pixelFormat).palette;
@@ -289,7 +289,7 @@ final class Surface {
      +/
     void palette(Palette newPalette) @property @trusted
     in {
-        assert(this.pixelFormat.isIndexed);
+        assert(this.pixelFormat.indexed);
     }
     do {
         if (SDL_SetSurfacePalette(this.sdlSurface, newPalette.sdlPalette) != 0) {
@@ -685,7 +685,7 @@ final class Surface {
      +/
     Surface convert(const PixelFormat rgbPixelFormat) const @trusted
     in {
-        assert(!this.pixelFormat.isIndexed);
+        assert(!this.pixelFormat.indexed);
         assert(rgbPixelFormat !is null);
     }
     do {
