@@ -105,7 +105,7 @@ do {
         flags |= everything ? MIX_INIT_OPUS : 0;
     }
 
-    if (Mix_Init(flags) != 0) {
+    if ((Mix_Init(flags) & flags) != flags) {
         throw new SDLException;
     }
 }
@@ -331,37 +331,37 @@ final class Channel {
     }
 
     void panning(ubyte[2] newLR) const @property @trusted {
-        if (Mix_SetPanning(this.mixChannel, newLR[0], newLR[1]) != 0) {
+        if (Mix_SetPanning(this.mixChannel, newLR[0], newLR[1]) == 0) {
             throw new SDLException;
         }
     }
 
-    static void panning(ubyte[2] newLR) @property @trusted {
-        if (Mix_SetPanning(MIX_CHANNEL_POST, newLR[0], newLR[1]) != 0) {
+    static void allPanning(ubyte[2] newLR) @property @trusted {
+        if (Mix_SetPanning(MIX_CHANNEL_POST, newLR[0], newLR[1]) == 0) {
             throw new SDLException;
         }
     }
 
     void position(Tuple!(short, ubyte) newAngleDistance) const @property @trusted {
-        if (Mix_SetPosition(this.mixChannel, newAngleDistance[0], newAngleDistance[1]) != 0) {
+        if (Mix_SetPosition(this.mixChannel, newAngleDistance[0], newAngleDistance[1]) == 0) {
             throw new SDLException;
         }
     }
 
-    static void position(Tuple!(short, ubyte) newAngleDistance) @property @trusted {
-        if (Mix_SetPosition(MIX_CHANNEL_POST, newAngleDistance[0], newAngleDistance[1]) != 0) {
+    static void allPosition(Tuple!(short, ubyte) newAngleDistance) @property @trusted {
+        if (Mix_SetPosition(MIX_CHANNEL_POST, newAngleDistance[0], newAngleDistance[1]) == 0) {
             throw new SDLException;
         }
     }
 
     void distance(ubyte newDistance) const @property @trusted {
-        if (Mix_SetDistance(this.mixChannel, newDistance) != 0) {
+        if (Mix_SetDistance(this.mixChannel, newDistance) == 0) {
             throw new SDLException;
         }
     }
 
-    static void distance(ubyte newDistance) @property @trusted {
-        if (Mix_SetDistance(MIX_CHANNEL_POST, newDistance) != 0) {
+    static void allDistance(ubyte newDistance) @property @trusted {
+        if (Mix_SetDistance(MIX_CHANNEL_POST, newDistance) == 0) {
             throw new SDLException;
         }
     }
@@ -370,7 +370,7 @@ final class Channel {
         return cast(ubyte) Mix_Volume(this.mixChannel, -1);
     }
 
-    static ubyte volume() @property @trusted {
+    static ubyte allVolume() @property @trusted {
         return cast(ubyte) Mix_Volume(-1, -1);
     }
 
@@ -378,18 +378,18 @@ final class Channel {
         Mix_Volume(this.mixChannel, newVolume);
     }
 
-    static void volume(ubyte newVolume) @property @trusted {
+    static void allVolume(ubyte newVolume) @property @trusted {
         Mix_Volume(-1, newVolume);
     }
 
     void reverseStereo(bool newReverse) const @property @trusted {
-        if (Mix_SetReverseStereo(this.mixChannel, newReverse ? 1 : 0) != 0) {
+        if (Mix_SetReverseStereo(this.mixChannel, newReverse ? 1 : 0) == 0) {
             throw new SDLException;
         }
     }
 
-    static void reverseStereo(bool newReverse) @property @trusted {
-        if (Mix_SetReverseStereo(MIX_CHANNEL_POST, newReverse ? 1 : 0) != 0) {
+    static void allReverseStereo(bool newReverse) @property @trusted {
+        if (Mix_SetReverseStereo(MIX_CHANNEL_POST, newReverse ? 1 : 0) == 0) {
             throw new SDLException;
         }
     }
@@ -411,25 +411,13 @@ final class Channel {
     }
 
     void play(const Chunk chunk, uint loops = 1, uint ms = cast(uint)-1) const @trusted {
-        if (Mix_PlayChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, ms) != 0) {
-            throw new SDLException;
-        }
-    }
-
-    static void play(const Chunk chunk, uint loops = 1, uint ms = cast(uint)-1) @trusted {
-        if (Mix_PlayChannelTimed(-1, cast(Mix_Chunk*) chunk.mixChunk, loops, ms) != 0) {
+        if (Mix_PlayChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, ms) == -1) {
             throw new SDLException;
         }
     }
 
     void fadeIn(const Chunk chunk, uint loops = 1, uint fadeMs = 0, uint ms = cast(uint)-1) const @trusted {
-        if (Mix_FadeInChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, fadeMs, ms) != 0) {
-            throw new SDLException;
-        }
-    }
-
-    static void fadeIn(const Chunk chunk, uint loops = 1, uint fadeMs = 0, uint ms = cast(uint)-1) @trusted {
-        if (Mix_FadeInChannelTimed(-1, cast(Mix_Chunk*) chunk.mixChunk, loops, fadeMs, ms) != 0) {
+        if (Mix_FadeInChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, fadeMs, ms) == -1) {
             throw new SDLException;
         }
     }
@@ -440,29 +428,25 @@ final class Channel {
         }
     }
 
-    static void halt() @trusted {
+    static void haltAll() @trusted {
         if (Mix_HaltChannel(-1) != 0) {
             throw new SDLException;
         }
     }
 
     void expire(uint ms) const @trusted {
-        if (Mix_ExpireChannel(this.mixChannel, ms) != 0) {
-            throw new SDLException;
-        }
+        Mix_ExpireChannel(this.mixChannel, ms);
     }
 
-    static void expire(uint ms) @trusted {
-        if (Mix_ExpireChannel(-1, ms) != 0) {
-            throw new SDLException;
-        }
+    static void expireAll(uint ms) @trusted {
+        Mix_ExpireChannel(-1, ms);
     }
 
     void fadeOut(uint fadeMs) const @trusted {
         Mix_FadeOutChannel(this.mixChannel, fadeMs);
     }
 
-    static void fadeOut(uint fadeMs) @trusted {
+    static void fadeOutAll(uint fadeMs) @trusted {
         Mix_FadeOutChannel(-1, fadeMs);
     }
 
@@ -470,7 +454,7 @@ final class Channel {
         Mix_Pause(this.mixChannel);
     }
 
-    static void pause() @trusted {
+    static void pauseAll() @trusted {
         Mix_Pause(-1);
     }
 
@@ -478,7 +462,7 @@ final class Channel {
         Mix_Resume(this.mixChannel);
     }
 
-    static void resume() @trusted {
+    static void resumeAll() @trusted {
         Mix_Resume(-1);
     }
 }
@@ -626,6 +610,24 @@ final class Chunk {
 
     void volume(ubyte newVolume) @property @trusted {
         Mix_VolumeChunk(this.mixChunk, newVolume);
+    }
+
+    const(Channel) play(uint loops = 1, uint ms = cast(uint)-1) const @trusted {
+        int channel = Mix_PlayChannelTimed(-1, cast(Mix_Chunk*) this.mixChunk, loops, ms);
+        if (channel == -1) {
+            return null;
+        }
+
+        return getChannels()[channel];
+    }
+
+    const(Channel) fadeIn(uint loops = 1, uint fadeMs = 0, uint ms = cast(uint)-1) const @trusted {
+        int channel = Mix_FadeInChannelTimed(-1, cast(Mix_Chunk*) this.mixChunk, loops, fadeMs, ms);
+        if (channel == -1) {
+            return null;
+        }
+
+        return getChannels()[channel];
     }
 }
 
