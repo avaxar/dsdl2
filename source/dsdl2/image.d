@@ -99,7 +99,7 @@ do {
         flags |= everything ? IMG_INIT_JXL | IMG_INIT_AVIF : 0;
     }
 
-    if (IMG_Init(flags) != 0) {
+    if ((IMG_Init(flags) & flags) != flags) {
         throw new SDLException;
     }
 }
