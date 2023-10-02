@@ -339,9 +339,11 @@ const(Display[]) getDisplays() @trusted {
 
     static Display[] displays;
     if (displays !is null) {
+        size_t originalLength = displays.length;
         displays.length = numDisplays;
-        if (numDisplays > displays.length) {
-            foreach (i; displays.length .. numDisplays) {
+
+        if (numDisplays > originalLength) {
+            foreach (i; originalLength .. numDisplays) {
                 displays[i] = new Display(i.to!uint);
             }
         }

@@ -147,11 +147,13 @@ static if (sdlSupport >= SDLSupport.v2_0_2) {
 
 /++
  + Wraps `SDL_GL_GetCurrentWindow` which gets the current target window for OpenGL
+ + 
+ + This function is marked as `@system` due to the potential of referencing an invalid pointer.
  +
  + Returns: `dsdl2.Window` proxy to the target window for OpenGL
  + Throws: `dsdl2.SDLException` if unable to get the window
  +/
-Window getCurrentGLWindow() @trusted {
+Window getCurrentGLWindow() @system {
     if (SDL_Window* sdlWindow = SDL_GL_GetCurrentWindow()) {
         return new Window(sdlWindow, false);
     }
@@ -163,10 +165,12 @@ Window getCurrentGLWindow() @trusted {
 /++
  + Wraps `SDL_GL_GetCurrentContext` which gets the current OpenGL context used by SDL
  +
+ + This function is marked as `@system` due to the potential of referencing an invalid pointer.
+ + 
  + Returns: `dsdl2.GLContext` proxy to the OpenGL context used by SDL
  + Throws: `dsdl2.SDLException` if unable to get the context
  +/
-GLContext getCurrentGLContext() @trusted {
+GLContext getCurrentGLContext() @system {
     if (SDL_GLContext sdlGLContext = SDL_GL_GetCurrentContext()) {
         return new GLContext(sdlGLContext, false);
     }

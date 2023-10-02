@@ -19,9 +19,11 @@ import std.format : format;
 /++
  + Wraps `SDL_GetMouseFocus` which gets the mouse-focused window
  +
+ + This function is marked as `@system` due to the potential of referencing an invalid pointer.
+ +
  + Returns: `dsdl2.Window` proxy of the window with the mouse focus; `null` if no window is focused
  +/
-Window getMouseFocusedWindow() @trusted {
+Window getMouseFocusedWindow() @system {
     SDL_Window* sdlWindow = SDL_GetMouseFocus();
     if (sdlWindow is null) {
         return null;

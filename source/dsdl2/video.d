@@ -47,19 +47,21 @@ const(string[]) getVideoDrivers() @trusted {
 
     static string[] drivers;
     if (drivers !is null) {
+        size_t originalLength = drivers.length;
         drivers.length = numDrivers;
-        if (numDrivers > drivers.length) {
-            foreach (i; drivers.length .. numDrivers) {
+
+        if (numDrivers > originalLength) {
+            foreach (i; originalLength .. numDrivers) {
                 drivers[i] = SDL_GetVideoDriver(i.to!int).to!string.idup;
             }
         }
-
-        return drivers;
     }
-    drivers = new string[](numDrivers);
+    else {
+        drivers = new string[](numDrivers);
 
-    foreach (i; 0 .. numDrivers) {
-        drivers[i] = SDL_GetVideoDriver(i).to!string.idup;
+        foreach (i; 0 .. numDrivers) {
+            drivers[i] = SDL_GetVideoDriver(i).to!string.idup;
+        }
     }
 
     return drivers;

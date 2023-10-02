@@ -186,7 +186,7 @@ Surface loadRaw(const void[] data) @trusted {
  + Returns: `dsdl2.Surface` of the loaded image
  + Throws: `dsdl2.SDLException` if failed to load the image
  +/
-Surface loadTypedRaw(const void[] data, string type) @trusted {
+Surface loadRaw(const void[] data, string type) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
     if (sdlRWops is null) {
         throw new SDLException;
@@ -259,7 +259,7 @@ do {
  + Returns: `dsdl2.Texture` of the loaded image
  + Throws: `dsdl2.SDLException` if failed to load the image
  +/
-Texture loadTextureTypedRaw(Renderer renderer, const void[] data, string type) @trusted
+Texture loadTextureRaw(Renderer renderer, const void[] data, string type) @trusted
 in {
     assert(renderer !is null);
 }
