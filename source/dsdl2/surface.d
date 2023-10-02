@@ -224,7 +224,7 @@ final class Surface {
     }
 
     /++
-     + Gets the internal pixel buffer of the `dsdl2.Surface
+     + Gets the internal pixel buffer of the `dsdl2.Surface`
      +
      + Returns: slice of the buffer
      +/

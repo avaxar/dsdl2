@@ -18,9 +18,11 @@ import std.format : format;
 /++
  + Wraps `SDL_GetKeyboardFocus` which gets the keyboard-focused window
  +
+ + This function is marked as `@system` due to the potential of referencing an invalid pointer.
+ +
  + Returns: `dsdl2.Window` proxy of the window with the keyboard focus; `null` if no window is focused
  +/
-Window getKeyboardFocusedWindow() @trusted {
+Window getKeyboardFocusedWindow() @system {
     SDL_Window* sdlWindow = SDL_GetKeyboardFocus();
     if (sdlWindow is null) {
         return null;
@@ -35,9 +37,9 @@ Window getKeyboardFocusedWindow() @trusted {
  + Returns: `bool` array of whether the keys are pressed or not as indexed by `dsdl2.Scancode`
  +/
 const(bool[]) getKeyboardState() @trusted {
-    int numkeys = void;
-    ubyte* ptr = SDL_GetKeyboardState(&numkeys);
-    return (cast(bool*) ptr)[0 .. numkeys];
+    int numKeys = void;
+    ubyte* ptr = SDL_GetKeyboardState(&numKeys);
+    return (cast(bool*) ptr)[0 .. numKeys];
 }
 
 /++

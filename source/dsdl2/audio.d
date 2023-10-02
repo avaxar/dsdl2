@@ -10,6 +10,7 @@ module dsdl2.audio;
 import bindbc.sdl;
 import dsdl2.sdl;
 
+import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
@@ -90,19 +91,21 @@ const(string[]) getAudioDrivers() @trusted {
 
     static string[] drivers;
     if (drivers !is null) {
+        size_t originalLength = drivers.length;
         drivers.length = numDrivers;
-        if (numDrivers > drivers.length) {
-            foreach (i; drivers.length .. numDrivers) {
+
+        if (numDrivers > originalLength) {
+            foreach (i; originalLength .. numDrivers) {
                 drivers[i] = SDL_GetAudioDriver(i.to!int).to!string.idup;
             }
         }
-
-        return drivers;
     }
-    drivers = new string[](numDrivers);
+    else {
+        drivers = new string[](numDrivers);
 
-    foreach (i; 0 .. numDrivers) {
-        drivers[i] = SDL_GetAudioDriver(i).to!string.idup;
+        foreach (i; 0 .. numDrivers) {
+            drivers[i] = SDL_GetAudioDriver(i).to!string.idup;
+        }
     }
 
     return drivers;
@@ -123,7 +126,7 @@ struct AudioSpec {
 }
 
 // TODO
-class AudioDevice {
+final class AudioDevice {
     const SDL_AudioDeviceID sdlAudioDeviceID; /// Internal `SDL_AudioDeviceID`
 }
 
@@ -135,19 +138,21 @@ private const(string[]) getAudioDeviceNamesRaw(int isCapture)() @trusted {
 
     static string[] drivers;
     if (drivers !is null) {
+        size_t originalLength = drivers.length;
         drivers.length = numDrivers;
-        if (numDrivers > drivers.length) {
-            foreach (i; drivers.length .. numDrivers) {
+
+        if (numDrivers > originalLength) {
+            foreach (i; originalLength .. numDrivers) {
                 drivers[i] = SDL_GetAudioDeviceName(i.to!int, isCapture).to!string.idup;
             }
         }
-
-        return drivers;
     }
-    drivers = new string[](numDrivers);
+    else {
+        drivers = new string[](numDrivers);
 
-    foreach (i; 0 .. numDrivers) {
-        drivers[i] = SDL_GetAudioDeviceName(i, isCapture).to!string.idup;
+        foreach (i; 0 .. numDrivers) {
+            drivers[i] = SDL_GetAudioDeviceName(i, isCapture).to!string.idup;
+        }
     }
 
     return drivers;

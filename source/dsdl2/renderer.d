@@ -282,9 +282,11 @@ const(RenderDriver[]) getRenderDrivers() @trusted {
 
     static RenderDriver[] drivers;
     if (drivers !is null) {
+        size_t originalLength = drivers.length;
         drivers.length = numDrivers;
-        if (numDrivers > drivers.length) {
-            foreach (i; drivers.length .. numDrivers) {
+
+        if (numDrivers > originalLength) {
+            foreach (i; originalLength .. numDrivers) {
                 drivers[i] = new RenderDriver(i.to!uint);
             }
         }
