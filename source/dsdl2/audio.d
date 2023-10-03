@@ -80,7 +80,7 @@ void quitAudio() @trusted {
 /++
  + Wraps `SDL_GetNumAudioDrivers` and `SDL_GetAudioDriver` which return a list of available audio drivers
  +
- + Returns: `string` names of the available audio drivers
+ + Returns: names of the available audio drivers
  + Throws: `dsdl2.SDLException` if failed to get the available audio drivers
  +/
 const(string[]) getAudioDrivers() @trusted {
@@ -114,7 +114,7 @@ const(string[]) getAudioDrivers() @trusted {
 /++
  + Wraps `SDL_GetCurrentAudioDriver` which returns the current audio driver
  +
- + Returns: `string` name of the current audio driver
+ + Returns: name of the current audio driver
  +/
 string getCurrentAudioDriver() @trusted {
     return SDL_GetCurrentAudioDriver().to!string.idup;
@@ -162,7 +162,7 @@ private const(string[]) getAudioDeviceNamesRaw(int isCapture)() @trusted {
  + Acts as `SDL_GetNumAudioDevices(0)` and `SDL_GetAudioDeviceName(..., 0)` which return a name list of available
  + non-capturing audio devices
  +
- + Returns: `string` names of the available non-capturing audio devices
+ + Returns: names of the available non-capturing audio devices
  + Throws: `dsdl2.SDLException` if failed to get the available non-capturing audio devices
  +/
 const(string[]) getAudioDeviceNames() @trusted {
@@ -173,7 +173,7 @@ const(string[]) getAudioDeviceNames() @trusted {
  + Acts as `SDL_GetNumAudioDevices(1)` and `SDL_GetAudioDeviceName(..., 1)` which return a name list of available
  + capturing audio devices
  +
- + Returns: `string` names of the available capturing audio devices
+ + Returns: names of the available capturing audio devices
  + Throws: `dsdl2.SDLException` if failed to get the available capturing audio devices
  +/
 const(string[]) getCapturingAudioDeviceNames() @trusted {

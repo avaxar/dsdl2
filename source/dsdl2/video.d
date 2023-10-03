@@ -36,7 +36,7 @@ void quitVideo() @trusted {
 /++
  + Wraps `SDL_GetNumVideoDrivers` and `SDL_GetVideoDriver` which return a list of available video drivers
  +
- + Returns: `string` names of the available video drivers
+ + Returns: names of the available video drivers
  + Throws: `dsdl2.SDLException` if failed to get the available video drivers
  +/
 const(string[]) getVideoDrivers() @trusted {
@@ -70,7 +70,7 @@ const(string[]) getVideoDrivers() @trusted {
 /++
  + Wraps `SDL_GetCurrentVideoDriver` which returns the current video driver
  +
- + Returns: `string` name of the current video driver
+ + Returns: name of the current video driver
  +/
 string getCurrentVideoDriver() @trusted {
     return SDL_GetCurrentVideoDriver().to!string.idup;
