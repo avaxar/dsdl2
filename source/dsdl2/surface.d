@@ -228,7 +228,7 @@ final class Surface {
      +
      + Returns: slice of the buffer
      +/
-    inout(ubyte[]) buffer() inout @property @system {
+    inout(ubyte[]) buffer() inout @property @trusted {
         return (cast(inout(ubyte*)) this.sdlSurface.pixels)[0 .. this.pitch * this.height];
     }
 
