@@ -226,10 +226,12 @@ final class Surface {
     /++
      + Gets the internal pixel buffer of the `dsdl2.Surface`
      +
+     + This function is marked as `@system` due to the potential of referencing invalid memory.
+     +
      + Returns: slice of the buffer
      +/
-    inout(ubyte[]) buffer() inout @property @trusted {
-        return (cast(inout(ubyte*)) this.sdlSurface.pixels)[0 .. this.pitch * this.height];
+    inout(void[]) buffer() inout @property @trusted {
+        return (cast(inout(void*)) this.sdlSurface.pixels)[0 .. this.pitch * this.height];
     }
 
     /++

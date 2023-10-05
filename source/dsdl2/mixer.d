@@ -515,7 +515,7 @@ final class Channel {
     /++
      + Wraps `Mix_GetChunk` which gets the currently-playing `dsdl2.mixer.Chunk` in the channel
      +
-     + This function is marked as `@system` due to the potential of referencing an invalid pointer.
+     + This function is marked as `@system` due to the potential of referencing invalid memory.
      +
      + Returns: `dsdl2.mixer.Chunk` proxy to the playing chunk
      + Throws: `dsdl2.SDLException` if failed to get the playing chunk
@@ -802,10 +802,12 @@ final class Chunk {
     /++
      + Gets the raw PCM audio data buffer for the `dsdl2.mixer.Chunk`
      +
+     + This function is marked as `@system` due to the potential of referencing invalid memory.
+     +
      + Returns: slice of the buffer
      +/
-    inout(ubyte[]) buffer() inout @property @trusted {
-        return (cast(inout(ubyte*)) this.mixChunk.abuf)[0 .. this.mixChunk.alen];
+    inout(void[]) buffer() inout @property @trusted {
+        return (cast(inout(void*)) this.mixChunk.abuf)[0 .. this.mixChunk.alen];
     }
 
     /++
