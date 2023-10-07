@@ -16,7 +16,7 @@ import std.array : uninitializedArray;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
-import std.typecons : Tuple, tuple;
+import std.typecons : Tuple;
 
 /++
  + D struct that wraps `SDL_DisplayMode` containing display mode information
@@ -168,7 +168,7 @@ final class Display {
      +/
     string name() const @property @trusted {
         if (const(char)* name = SDL_GetDisplayName(this.sdlDisplayIndex)) {
-            return name.to!string.idup;
+            return name.to!string;
         }
         else {
             throw new SDLException;

@@ -19,7 +19,7 @@ import core.memory : GC;
 import std.conv : to;
 import std.format : format;
 import std.string : toStringz;
-import std.typecons : Tuple, tuple;
+import std.typecons : Tuple;
 
 version (BindSDL_Static) {
 }
@@ -382,7 +382,8 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_SetPosition` which sets the simulated angle and distance for all channels as posteffect
+     + Acts as `Mix_SetPosition(MIX_CHANNEL_POST, newAngleDistance[0], newAngleDistance[1])` which sets the simulated
+     + angle and distance for all channels as posteffect
      +
      + Params:
      +   newAngleDistance = tuple of the simulated angle (in degrees clockwise, with `0` being the front) and distance
@@ -408,7 +409,8 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_SetDistance` which sets the simulated distance for all channels as posteffect
+     + Acts as `Mix_SetDistance(MIX_CHANNEL_POST, newDistance)` which sets the simulated distance for all channels as
+     + posteffect
      +
      + Params:
      +   newDistance = simulated distance from `0` to `255`
@@ -430,7 +432,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_Volume` which gets the volume of all channels
+     + Acts as `Mix_Volume(-1, -1)` which gets the volume of all channels
      +
      + Returns: volume ranging from `0` to `128`
      +/
@@ -449,7 +451,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_Volume` which sets the volume of all channels
+     + Acts as `Mix_Volume(-1, newVolume)` which sets the volume of all channels
      +
      + Params:
      +   newVolume = new volume ranging from `0` to `128`
@@ -472,8 +474,8 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_SetReverseStereo` which sets whether the left and right channels are flipped for all channels as
-     + posteffect
+     + Acts as `Mix_SetReverseStereo(MIX_CHANNEL_POST, newReverse)` which sets whether the left and right channels are
+     + flipped for all channels as posteffect
      +
      + Params:
      +   newReverse = `true` to enable reverse stereo; `false` to disable
@@ -572,7 +574,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_HaltChannel` to halt all channels
+     + Acts as `Mix_HaltChannel(-1)` which halts all channels
      +
      + Throws: `dsdl2.SDLException` if failed to halt the channels
      +/
@@ -593,7 +595,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_ExpireChannel` which halts all channels after a specified delay
+     + Acts as `Mix_ExpireChannel(-1, ms)` which halts all channels after a specified delay
      +
      + Params:
      +   ms = number of milliseconds before the channels halt
@@ -613,7 +615,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_FadeOutChannel` which performs fade-out for whatever chunks are playing in all channels
+     + Acts as `Mix_FadeOutChannel(-1, fadeMs)` which performs fade-out for whatever chunks are playing in all channels
      +
      + Params:
      +   fadeMs = number of milliseconds to fade-out before fully halting
@@ -630,7 +632,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_Pause` which pauses all channels
+     + Acts as `Mix_Pause(-1)` which pauses all channels
      +/
     static void pauseAll() @trusted {
         Mix_Pause(-1);
@@ -644,7 +646,7 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_Resume` which resumes all channels
+     + Acts as `Mix_Resume(-1)` which resumes all channels
      +/
     static void resumeAll() @trusted {
         Mix_Resume(-1);
@@ -768,14 +770,14 @@ final class Chunk {
 
             if (numDecoders > originalLength) {
                 foreach (i; originalLength .. numDecoders) {
-                    decoders[i] = Mix_GetChunkDecoder(i.to!int).to!string.idup;
+                    decoders[i] = Mix_GetChunkDecoder(i.to!int).to!string;
                 }
             }
         }
         else {
             decoders = new string[](numDecoders);
             foreach (i; 0 .. numDecoders) {
-                decoders[i] = Mix_GetChunkDecoder(i).to!string.idup;
+                decoders[i] = Mix_GetChunkDecoder(i).to!string;
             }
         }
 
@@ -1010,14 +1012,14 @@ final class Music {
 
             if (numDecoders > originalLength) {
                 foreach (i; originalLength .. numDecoders) {
-                    decoders[i] = Mix_GetMusicDecoder(i.to!int).to!string.idup;
+                    decoders[i] = Mix_GetMusicDecoder(i.to!int).to!string;
                 }
             }
         }
         else {
             decoders = new string[](numDecoders);
             foreach (i; 0 .. numDecoders) {
-                decoders[i] = Mix_GetMusicDecoder(i).to!string.idup;
+                decoders[i] = Mix_GetMusicDecoder(i).to!string;
             }
         }
 
@@ -1061,7 +1063,7 @@ final class Music {
             assert(dsdl2.mixer.getVersion() >= Version(2, 6));
         }
         do {
-            return Mix_GetMusicTitle(this.mixMusic).to!string.idup;
+            return Mix_GetMusicTitle(this.mixMusic).to!string;
         }
 
         /++
@@ -1074,7 +1076,7 @@ final class Music {
             assert(dsdl2.mixer.getVersion() >= Version(2, 6));
         }
         do {
-            return Mix_GetMusicTitleTag(this.mixMusic).to!string.idup;
+            return Mix_GetMusicTitleTag(this.mixMusic).to!string;
         }
 
         /++
@@ -1087,7 +1089,7 @@ final class Music {
             assert(dsdl2.mixer.getVersion() >= Version(2, 6));
         }
         do {
-            return Mix_GetMusicArtistTag(this.mixMusic).to!string.idup;
+            return Mix_GetMusicArtistTag(this.mixMusic).to!string;
         }
 
         /++
@@ -1100,7 +1102,7 @@ final class Music {
             assert(dsdl2.mixer.getVersion() >= Version(2, 6));
         }
         do {
-            return Mix_GetMusicAlbumTag(this.mixMusic).to!string.idup;
+            return Mix_GetMusicAlbumTag(this.mixMusic).to!string;
         }
 
         /++
@@ -1113,7 +1115,7 @@ final class Music {
             assert(dsdl2.mixer.getVersion() >= Version(2, 6));
         }
         do {
-            return Mix_GetMusicCopyrightTag(this.mixMusic).to!string.idup;
+            return Mix_GetMusicCopyrightTag(this.mixMusic).to!string;
         }
 
         /++

@@ -355,9 +355,9 @@ final class Texture {
      +   pitch = skips in bytes per line/row of the `pixels`
      + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
      +/
-    void update(void[] pixels, size_t pitch) @trusted
+    void update(const void[] pixels, size_t pitch) @trusted
     in {
-        assert(pitch * 8 >= this.width * this.pixelFormat.bitDepth);
+        assert(pitch * 8 >= this.width * this.pixelFormat.bitsPerPixel);
         assert(pixels.length == pitch * this.height);
     }
     do {
@@ -377,7 +377,7 @@ final class Texture {
      +/
     void update(Rect rect, void[] pixels, size_t pitch) @trusted
     in {
-        assert(pitch * 8 >= rect.width * this.pixelFormat.bitDepth);
+        assert(pitch * 8 >= rect.width * this.pixelFormat.bitsPerPixel);
         assert(pixels.length == pitch * rect.height);
     }
     do {

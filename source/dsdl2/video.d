@@ -52,7 +52,7 @@ const(string[]) getVideoDrivers() @trusted {
 
         if (numDrivers > originalLength) {
             foreach (i; originalLength .. numDrivers) {
-                drivers[i] = SDL_GetVideoDriver(i.to!int).to!string.idup;
+                drivers[i] = SDL_GetVideoDriver(i.to!int).to!string;
             }
         }
     }
@@ -60,7 +60,7 @@ const(string[]) getVideoDrivers() @trusted {
         drivers = new string[](numDrivers);
 
         foreach (i; 0 .. numDrivers) {
-            drivers[i] = SDL_GetVideoDriver(i).to!string.idup;
+            drivers[i] = SDL_GetVideoDriver(i).to!string;
         }
     }
 
@@ -73,5 +73,5 @@ const(string[]) getVideoDrivers() @trusted {
  + Returns: name of the current video driver
  +/
 string getCurrentVideoDriver() @trusted {
-    return SDL_GetCurrentVideoDriver().to!string.idup;
+    return SDL_GetCurrentVideoDriver().to!string;
 }

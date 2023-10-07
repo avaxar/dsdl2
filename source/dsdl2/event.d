@@ -13,7 +13,6 @@ import dsdl2.display;
 import dsdl2.keyboard;
 import dsdl2.mouse;
 
-import core.stdc.string : strlen;
 import std.conv : to;
 import std.format : format;
 
@@ -1970,18 +1969,16 @@ abstract class DropEvent : Event {
 
         case SDL_DROPFILE:
             static if (sdlSupport >= SDLSupport.v2_0_5) {
-                event = new DropFileEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup,
-                    sdlEvent.drop.windowID);
+                event = new DropFileEvent(sdlEvent.drop.file.to!string, sdlEvent.drop.windowID);
             }
             else {
-                event = new DropFileEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup);
+                event = new DropFileEvent(sdlEvent.drop.file.to!string);
             }
             break;
 
             static if (sdlSupport >= SDLSupport.v2_0_5) {
         case SDL_DROPTEXT:
-                event = new DropTextEvent(sdlEvent.drop.file[0 .. strlen(sdlEvent.drop.file)].idup,
-                    sdlEvent.drop.windowID);
+                event = new DropTextEvent(sdlEvent.drop.file.to!string, sdlEvent.drop.windowID);
                 break;
 
         case SDL_DROPBEGIN:
@@ -2035,7 +2032,7 @@ class DropFileEvent : DropEvent {
     }
 
     string file() const @property @trusted {
-        return this.sdlEvent.drop.file[0 .. strlen(this.sdlEvent.drop.file)].idup;
+        return this.sdlEvent.drop.file.to!string;
     }
 
     void file(string newFile) @property @trusted {
@@ -2068,7 +2065,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         string file() const @property @trusted {
-            return this.sdlEvent.drop.file[0 .. strlen(this.sdlEvent.drop.file)].idup;
+            return this.sdlEvent.drop.file.to!string;
         }
 
         void file(string newFile) @property @trusted {

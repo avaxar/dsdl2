@@ -24,7 +24,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
         subtract = SDL_BLENDOPERATION_SUBTRACT, /// ditto
         revSubtract = SDL_BLENDOPERATION_REV_SUBTRACT, /// ditto
         minimum = SDL_BLENDOPERATION_MINIMUM, /// ditto
-        maximum = SDL_BLENDOPERATION_MAXIMUM, /// ditto
+        maximum = SDL_BLENDOPERATION_MAXIMUM /// ditto
     }
 
     /++
@@ -53,7 +53,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
  +/
 struct BlendMode {
     /++
-     + Preexisting builtin `dsdl2.BlendMode`s from `SDL_BLENDMODE_*` enumeration constants
+     + Preexisting built-in `dsdl2.BlendMode`s from `SDL_BLENDMODE_*` enumeration constants
      +/
     static immutable none = BlendMode(SDL_BLENDMODE_NONE);
     static immutable blend = BlendMode(SDL_BLENDMODE_BLEND); /// ditto

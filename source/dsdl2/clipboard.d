@@ -10,7 +10,6 @@ module dsdl2.clipboard;
 import bindbc.sdl;
 import dsdl2.sdl;
 
-import core.stdc.string : strlen;
 import std.conv : to;
 import std.string : toStringz;
 
@@ -25,8 +24,8 @@ string getClipboard() @trusted {
     scope (exit)
         SDL_free(clipboard);
 
-    if (clipboard !is null && strlen(clipboard) > 0) {
-        return clipboard.to!string.idup;
+    if (clipboard !is null) {
+        return clipboard.to!string;
     }
     else {
         throw new SDLException;
@@ -71,8 +70,8 @@ static if (sdlSupport >= SDLSupport.v2_26) {
         scope (exit)
             SDL_free(primarySelection);
 
-        if (primarySelection !is null && strlen(primarySelection) > 0) {
-            return primarySelection.to!string.idup;
+        if (primarySelection !is null) {
+            return primarySelection.to!string;
         }
         else {
             throw new SDLException;
