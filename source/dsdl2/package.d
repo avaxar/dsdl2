@@ -37,3 +37,4 @@ import dsdl2.window;
 
 import image = dsdl2.image;
 import mixer = dsdl2.mixer;
+import ttf = dsdl2.ttf;

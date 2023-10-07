@@ -22,7 +22,7 @@ final class SDLException : Exception {
     }
 
     this(string file = __FILE__, size_t line = __LINE__) @trusted {
-        super(SDL_GetError().to!string.idup, file, line);
+        super(SDL_GetError().to!string, file, line);
     }
 }
 
@@ -346,7 +346,7 @@ Version getVersion() @trusted {
  + Returns: `string` of the revision code
  +/
 string getRevision() @trusted {
-    return SDL_GetRevision().to!string.idup;
+    return SDL_GetRevision().to!string;
 }
 
 /++
@@ -397,7 +397,7 @@ static if (sdlSupport >= SDLSupport.v2_26) {
  +/
 string getHint(string name) @trusted {
     if (const(char)* hint = SDL_GetHint(name.toStringz())) {
-        return hint.to!string.idup;
+        return hint.to!string;
     }
     else {
         return "";

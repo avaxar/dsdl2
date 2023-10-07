@@ -96,7 +96,7 @@ const(string[]) getAudioDrivers() @trusted {
 
         if (numDrivers > originalLength) {
             foreach (i; originalLength .. numDrivers) {
-                drivers[i] = SDL_GetAudioDriver(i.to!int).to!string.idup;
+                drivers[i] = SDL_GetAudioDriver(i.to!int).to!string;
             }
         }
     }
@@ -104,7 +104,7 @@ const(string[]) getAudioDrivers() @trusted {
         drivers = new string[](numDrivers);
 
         foreach (i; 0 .. numDrivers) {
-            drivers[i] = SDL_GetAudioDriver(i).to!string.idup;
+            drivers[i] = SDL_GetAudioDriver(i).to!string;
         }
     }
 
@@ -117,7 +117,7 @@ const(string[]) getAudioDrivers() @trusted {
  + Returns: name of the current audio driver
  +/
 string getCurrentAudioDriver() @trusted {
-    return SDL_GetCurrentAudioDriver().to!string.idup;
+    return SDL_GetCurrentAudioDriver().to!string;
 }
 
 // TODO
@@ -143,7 +143,7 @@ private const(string[]) getAudioDeviceNamesRaw(int isCapture)() @trusted {
 
         if (numDrivers > originalLength) {
             foreach (i; originalLength .. numDrivers) {
-                drivers[i] = SDL_GetAudioDeviceName(i.to!int, isCapture).to!string.idup;
+                drivers[i] = SDL_GetAudioDeviceName(i.to!int, isCapture).to!string;
             }
         }
     }
@@ -151,7 +151,7 @@ private const(string[]) getAudioDeviceNamesRaw(int isCapture)() @trusted {
         drivers = new string[](numDrivers);
 
         foreach (i; 0 .. numDrivers) {
-            drivers[i] = SDL_GetAudioDeviceName(i, isCapture).to!string.idup;
+            drivers[i] = SDL_GetAudioDeviceName(i, isCapture).to!string;
         }
     }
 

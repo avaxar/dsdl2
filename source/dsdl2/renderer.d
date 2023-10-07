@@ -35,35 +35,6 @@ private uint toSDLRendererFlags(bool software, bool accelerated, bool presentVSy
     return flags;
 }
 
-struct RendererFlagsTuple {
-    mixin(bitfields!(
-            bool, "software", 1,
-            bool, "accelerated", 1,
-            bool, "presentVSync", 1,
-            bool, "targetTexture", 1,
-            ubyte, "", 4
-    ));
-
-    this() @disable;
-
-    private this(typeof(null) _) @trusted {
-        import core.stdc.string : memset;
-
-        memset(cast(void*)&this, 0, this.sizeof);
-    }
-}
-
-private RendererFlagsTuple fromSDLRendererFlags(uint flags) {
-    RendererFlagsTuple tuple = RendererFlagsTuple(null);
-
-    tuple.software = (flags & SDL_RENDERER_SOFTWARE) != 0;
-    tuple.accelerated = (flags & SDL_RENDERER_ACCELERATED) != 0;
-    tuple.presentVSync = (flags & SDL_RENDERER_PRESENTVSYNC) != 0;
-    tuple.targetTexture = (flags & SDL_RENDERER_TARGETTEXTURE) != 0;
-
-    return tuple;
-}
-
 /++
  + D struct that wraps `SDL_RendererInfo` containing renderer information
  +/
@@ -82,7 +53,7 @@ struct RendererInfo {
      +   sdlRendererInfo = the `SDL_RendererInfo` struct
      +/
     this(SDL_RendererInfo sdlRendererInfo) @trusted {
-        this.name = sdlRendererInfo.name.to!string.idup;
+        this.name = sdlRendererInfo.name.to!string;
         this.sdlFlags = sdlRendererInfo.flags;
         this.textureFormats.length = sdlRendererInfo.num_texture_formats;
         foreach (i; 0 .. sdlRendererInfo.num_texture_formats) {

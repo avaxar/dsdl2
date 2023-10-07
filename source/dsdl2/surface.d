@@ -66,7 +66,7 @@ final class Surface {
     do {
         uint[4] masks = rgbPixelFormat.toMasks();
 
-        this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitDepth,
+        this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitsPerPixel,
             masks[0], masks[1], masks[2], masks[3]);
         if (this.sdlSurface is null) {
             throw new SDLException;
@@ -83,18 +83,18 @@ final class Surface {
      +   rgbPixelFormat = an RGB(A) `dsdl2.PixelFormat`
      + Throws: `dsdl2.SDLException` if allocation failed
      +/
-    this(void[] pixels, uint[2] size, size_t pitch, const PixelFormat rgbPixelFormat) @trusted
+    this(const void[] pixels, uint[2] size, size_t pitch, const PixelFormat rgbPixelFormat) @trusted
     in {
         assert(pixels !is null);
         assert(rgbPixelFormat !is null);
         assert(!rgbPixelFormat.indexed);
-        assert(pitch * 8 >= size[0] * rgbPixelFormat.bitDepth);
+        assert(pitch * 8 >= size[0] * rgbPixelFormat.bitsPerPixel);
         assert(pixels.length == pitch * size[1]);
     }
     do {
         this(size, rgbPixelFormat);
 
-        size_t lineBitSize = cast(size_t) size[0] * rgbPixelFormat.bitDepth;
+        size_t lineBitSize = cast(size_t) size[0] * rgbPixelFormat.bitsPerPixel;
         size_t lineSize = lineBitSize / 8 + (lineBitSize % 8 != 0);
 
         foreach (line; 0 .. size[1]) {
@@ -139,7 +139,7 @@ final class Surface {
      +   palette = `dsdl2.Palette` to use
      + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
      +/
-    this(void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette palette) @trusted
+    this(const void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette palette) @trusted
     in {
         assert(pixels !is null);
         assert(size[0] > 0 && size[1] > 0);
@@ -316,7 +316,7 @@ final class Surface {
     do {
         const ubyte* row = cast(ubyte*) this.sdlSurface.pixels + xy[1] * this.pitch;
 
-        if (this.pixelFormat.bitDepth >= 8) {
+        if (this.pixelFormat.bitsPerPixel >= 8) {
             const ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
             align(4) ubyte[4] pixel;
             pixel[0 .. this.pixelFormat.bytesPerPixel] =
@@ -325,8 +325,8 @@ final class Surface {
             return *cast(uint*) pixel.ptr;
         }
         else {
-            ubyte pixelByte = *(row + (xy[0] * this.pixelFormat.bitDepth) / 8);
-            ubyte bitOffset = (xy[0] * this.pixelFormat.bitDepth) % 8;
+            ubyte pixelByte = *(row + (xy[0] * this.pixelFormat.bitsPerPixel) / 8);
+            ubyte bitOffset = (xy[0] * this.pixelFormat.bitsPerPixel) % 8;
 
             switch (this.pixelFormat.sdlPixelFormatEnum) {
             case SDL_PIXELFORMAT_INDEX1LSB:
@@ -358,21 +358,21 @@ final class Surface {
     in {
         assert(xy[0] < this.width);
         assert(xy[1] < this.height);
-        if (this.pixelFormat.bitDepth != 32) { // Overflow protection
-            assert(value < 1 << this.pixelFormat.bitDepth);
+        if (this.pixelFormat.bitsPerPixel != 32) { // Overflow protection
+            assert(value < 1 << this.pixelFormat.bitsPerPixel);
         }
     }
     do {
         ubyte* row = cast(ubyte*) this.sdlSurface.pixels + xy[1] * this.pitch;
 
-        if (this.pixelFormat.bitDepth >= 8) {
+        if (this.pixelFormat.bitsPerPixel >= 8) {
             ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
             pixelPtr[0 .. this.pixelFormat.bytesPerPixel] =
                 (*cast(ubyte[4]*)&value)[0 .. this.pixelFormat.bytesPerPixel];
         }
         else {
-            ubyte* pixelPtr = row + (xy[0] * this.pixelFormat.bitDepth) / 8;
-            ubyte bitOffset = (xy[0] * this.pixelFormat.bitDepth) % 8;
+            ubyte* pixelPtr = row + (xy[0] * this.pixelFormat.bitsPerPixel) / 8;
+            ubyte bitOffset = (xy[0] * this.pixelFormat.bitsPerPixel) % 8;
 
             switch (this.pixelFormat.sdlPixelFormatEnum) {
             case SDL_PIXELFORMAT_INDEX1LSB:

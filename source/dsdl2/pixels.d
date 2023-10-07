@@ -217,7 +217,7 @@ final class Palette {
     }
 
     /++
-     +  Equality operator overload
+     + Equality operator overload
      +/
     bool opEquals(const Palette rhs) const @trusted {
         if (rhs is null) {
@@ -239,6 +239,20 @@ final class Palette {
         }
 
         return true;
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.Palette`
+     +
+     + Returns: unique hash for the `dsdl2.Palette`
+     +/
+    override hash_t toHash() const @trusted {
+        try {
+            return this.colors.hashOf;
+        }
+        catch (Exception) {
+            assert(false);
+        }
     }
 
     /++
@@ -290,9 +304,11 @@ final class Palette {
     /++
      + Proxy to the `dsdl2.Color` array of the `dsdl2.Palette`
      +
+     + This function is marked as `@system` due to the potential of referencing invalid memory.
+     +
      + Returns: `dsdl2.Color` array of the `dsdl2.Palette`
      +/
-    inout(Color[]) colors() inout @property @trusted {
+    inout(Color[]) colors() inout @property @system {
         return (cast(inout(Color*))&this.sdlPalette.colors)[0 .. this.length];
     }
 }
@@ -476,16 +492,16 @@ final class PixelFormat {
      + using `SDL_MasksToPixelFormatEnum` to retrieve the `SDL_PixelFormatEnum`
      +
      + Params:
-     +   bitDepth = bit depth of a pixel (size of one pixel in bits)
+     +   bitsPerPixel = size of one pixel in bits
      +   rgbaMasks = bit masks for the red, green, blue, and alpha channels
      + Throws: `dsdl2.SDLException` if pixel format conversion not possible
      +/
-    this(ubyte bitDepth, uint[4] rgbaMasks) @trusted
+    this(ubyte bitsPerPixel, uint[4] rgbaMasks) @trusted
     in {
-        assert(bitDepth > 0);
+        assert(bitsPerPixel > 0);
     }
     do {
-        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitDepth, rgbaMasks[0], rgbaMasks[1], rgbaMasks[2],
+        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitsPerPixel, rgbaMasks[0], rgbaMasks[1], rgbaMasks[2],
             rgbaMasks[3]);
         if (sdlPixelFormatEnum == SDL_PIXELFORMAT_UNKNOWN) {
             throw new SDLException("Pixel format conversion is not possible", __FILE__, __LINE__);
@@ -541,6 +557,20 @@ final class PixelFormat {
         }
         else {
             return true;
+        }
+    }
+
+    /++
+     + Gets the hash of the `dsdl2.PixelFormat`
+     +
+     + Returns: unique hash for the `dsdl2.PixelFormat`
+     +/
+    override hash_t toHash() const @trusted {
+        try {
+            return [cast(hash_t) this.sdlPixelFormatEnum, cast(hash_t)&this.paletteRef].hashOf;
+        }
+        catch (Exception) {
+            assert(false);
         }
     }
 
@@ -662,7 +692,7 @@ final class PixelFormat {
      +
      + Returns: the bit depth of the `dsdl2.PixelFormat`
      +/
-    ubyte bitDepth() const @property @trusted {
+    ubyte bitsPerPixel() const @property @trusted {
         return this.sdlPixelFormat.BitsPerPixel;
     }
 
@@ -682,9 +712,9 @@ final class PixelFormat {
      +/
     uint[4] toMasks() const @trusted {
         uint[4] rgbaMasks = void;
-        int bitDepth = void;
+        int bitsPerPixel = void;
 
-        if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitDepth, &rgbaMasks[0], &rgbaMasks[1],
+        if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitsPerPixel, &rgbaMasks[0], &rgbaMasks[1],
                 &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
             throw new SDLException;
         }

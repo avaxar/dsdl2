@@ -384,7 +384,7 @@ final class Window {
      + Returns: title `string` of the window
      +/
     string title() const @property @trusted {
-        return SDL_GetWindowTitle(cast(SDL_Window*) this.sdlWindow).to!string.idup;
+        return SDL_GetWindowTitle(cast(SDL_Window*) this.sdlWindow).to!string;
     }
 
     /++
@@ -803,7 +803,7 @@ final class Window {
          +
          + Returns: `true` if window allows high DPI, otherwise `false`
          +/
-        bool allowHighDPI() const @property @trusted
+        bool allowsHighDPI() const @property @trusted
         in {
             assert(getVersion() >= Version(2, 0, 1));
         }
@@ -833,7 +833,7 @@ final class Window {
          +
          + Returns: `true` if window is not on the taskbar, otherwise `false`
          +/
-        bool skipTaskbar() const @property @trusted
+        bool skipsTaskbar() const @property @trusted
         in {
             assert(getVersion() >= Version(2, 0, 5));
         }
