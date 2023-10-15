@@ -170,8 +170,6 @@ unittest {
 struct FRect {
     SDL_FRect sdlFRect; /// Internal `SDL_FRect` struct
 
-    alias sdlFRect this;
-
     this() @disable;
 
     /++

@@ -212,8 +212,7 @@ struct RendererInfo {
  +/
 final class RenderDriver {
     const uint sdlRenderDriverIndex; /// Render driver index from SDL
-    const RendererInfo rendererInfo = void; /// `dsdl2.RendererInfo` instance fetched from the driver
-    alias rendererInfo this;
+    const RendererInfo info = void; /// `dsdl2.RendererInfo` instance fetched from the driver
 
     this() @disable;
 
@@ -225,7 +224,7 @@ final class RenderDriver {
             throw new SDLException;
         }
 
-        this.rendererInfo = RendererInfo(sdlRendererInfo);
+        this.info = RendererInfo(sdlRendererInfo);
     }
 
     /++
@@ -473,7 +472,7 @@ final class Renderer {
         }
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         // Instance might be in an invalid state due to holding a non-owned externally-freed object when
         // destructed in an unpredictable order.
         if (!this.isOwner && GC.inFinalizer) {

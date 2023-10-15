@@ -1009,7 +1009,7 @@ final class SysWMEvent : Event {
         this.sdlEvent.syswm.msg = msg;
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         assert(this.sdlEvent.syswm.msg !is null);
     }
 
@@ -2017,7 +2017,7 @@ class DropFileEvent : DropEvent {
         }
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         assert(this.sdlEvent.type == SDL_DROPFILE);
         assert(this.sdlEvent.drop.file !is null);
     }
@@ -2055,7 +2055,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
             this.sdlEvent.drop.windowID = windowID;
         }
 
-        @trusted invariant {
+        @trusted invariant { // @suppress(dscanner.trust_too_much)
             assert(this.sdlEvent.type == SDL_DROPTEXT);
             assert(this.sdlEvent.drop.file !is null);
         }
