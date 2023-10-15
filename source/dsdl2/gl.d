@@ -263,7 +263,7 @@ class GLContext {
         }
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         // Instance might be in an invalid state due to holding a non-owned externally-freed object when
         // destructed in an unpredictable order.
         if (!this.isOwner && GC.inFinalizer) {

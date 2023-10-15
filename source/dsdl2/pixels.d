@@ -206,7 +206,7 @@ final class Palette {
         }
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         // Instance might be in an invalid state due to holding a non-owned externally-freed object when
         // destructed in an unpredictable order.
         if (!this.isOwner && GC.inFinalizer) {
@@ -516,7 +516,7 @@ final class PixelFormat {
         }
     }
 
-    @trusted invariant {
+    @trusted invariant { // @suppress(dscanner.trust_too_much)
         // Instance might be in an invalid state due to holding a non-owned externally-freed object when
         // destructed in an unpredictable order.
         if (!this.isOwner && GC.inFinalizer) {
@@ -567,7 +567,7 @@ final class PixelFormat {
      +/
     override hash_t toHash() const @trusted {
         try {
-            return [cast(hash_t) this.sdlPixelFormatEnum, cast(hash_t)&this.paletteRef].hashOf;
+            return this.sdlPixelFormatEnum.hashOf(this.paletteRef.hashOf);
         }
         catch (Exception) {
             assert(false);
