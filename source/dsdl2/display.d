@@ -163,7 +163,7 @@ final class Display {
     /++
      + Wraps `SDL_GetDisplayName` which gets the display's name
      +
-     + Returns: `string` of the display's name
+     + Returns: the display's name
      + Throws: `dsdl2.SDLException` if failed to get the display name
      +/
     string name() const @property @trusted {
