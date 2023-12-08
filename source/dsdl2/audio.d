@@ -189,7 +189,7 @@ const(string[]) getCapturingAudioDeviceNames() @trusted {
  +/
 AudioSpec openAudio(AudioSpec desired) @trusted {
     // TODO: implement handling for `AudioSpec`
-    assert(false, "not implemented");
+    assert(false, "Not implemented");
 }
 
 /++

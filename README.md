@@ -10,4 +10,4 @@
 
 ## Documentation
 
- ddox-generated documentation can be accessed online through this repository's [site](https://dsdl2.nekkl.org), or locally by cloning the repository and running `dub -b ddox`.
+ ddox-generated documentation can be accessed online through ~~this repository's [site](https://dsdl2.nekkl.org)~~, or locally by cloning the repository and running `dub -b ddox`.

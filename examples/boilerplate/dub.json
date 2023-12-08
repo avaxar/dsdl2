@@ -5,13 +5,15 @@
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
 		"dsdl2": {
-			"path": "./../.."
+			"path": "../.."
 		}
 	},
 	"description": "A boilerplate dsdl2 application.",
 	"buildTypes": {
 		"debug": {
-			"buildOptions-windows": ["debugInfoC"]
+			"buildOptions-windows": [
+				"debugInfoC"
+			]
 		}
 	},
 	"license": "none",
