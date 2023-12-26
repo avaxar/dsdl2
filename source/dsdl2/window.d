@@ -206,6 +206,7 @@ final class Window {
      +   position = top-left position of the window in the desktop environment (pair of two `uint`s or flags from
      +              `dsdl2.WindowPos`)
      +   size = size of the window in pixels
+     +   shaped = `true` to use `SDL_CreateShapedWindow`; `false` to use `SDL_CreateWindow` instead
      +   fullscreen = adds `SDL_WINDOW_FULLSCREEN` flag
      +   fullscreenDesktop = adds `SDL_WINDOW_FULLSCREEN_DESKTOP` flag
      +   openGL = adds `SDL_WINDOW_OPENGL` flag
@@ -232,13 +233,13 @@ final class Window {
      +   keyboardGrabbed = adds `SDL_WINDOW_KEYBOARD_GRABBED` flag (from SDL 2.0.16)
      + Throws: `dsdl2.SDLException` if window creation failed
      +/
-    this(string title, uint[2] position, uint[2] size, bool fullscreen = false, bool fullscreenDesktop = false,
-        bool openGL = false, bool shown = false, bool hidden = false, bool borderless = false, bool resizable = false,
-        bool minimized = false, bool maximized = false, bool inputGrabbed = false, bool inputFocus = false,
-        bool mouseFocus = false, bool foreign = false, bool allowHighDPI = false, bool mouseCapture = false,
-        bool alwaysOnTop = false, bool skipTaskbar = false, bool utility = false, bool tooltip = false,
-        bool popupMenu = false, bool vulkan = false, bool metal = false, bool mouseGrabbed = false,
-        bool keyboardGrabbed = false) @trusted
+    this(string title, uint[2] position, uint[2] size, bool shaped = false, bool fullscreen = false,
+        bool fullscreenDesktop = false, bool openGL = false, bool shown = false, bool hidden = false,
+        bool borderless = false, bool resizable = false, bool minimized = false, bool maximized = false,
+        bool inputGrabbed = false, bool inputFocus = false, bool mouseFocus = false, bool foreign = false,
+        bool allowHighDPI = false, bool mouseCapture = false, bool alwaysOnTop = false, bool skipTaskbar = false,
+        bool utility = false, bool tooltip = false, bool popupMenu = false, bool vulkan = false, bool metal = false,
+        bool mouseGrabbed = false, bool keyboardGrabbed = false) @trusted
     in {
         assert(title !is null);
     }
@@ -247,8 +248,15 @@ final class Window {
             minimized, maximized, inputGrabbed, inputFocus, mouseFocus, foreign, allowHighDPI, mouseCapture,
             alwaysOnTop, skipTaskbar, utility, tooltip, popupMenu, vulkan, metal, mouseGrabbed, keyboardGrabbed);
 
-        this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int, position[1].to!int,
-            size[0].to!int, size[1].to!int, flags);
+        if (shaped) {
+            this.sdlWindow = SDL_CreateShapedWindow(title.toStringz(), position[0].to!int, position[1].to!int,
+                size[0].to!int, size[1].to!int, flags);
+        }
+        else {
+            this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int, position[1].to!int,
+                size[0].to!int, size[1].to!int, flags);
+        }
+
         if (this.sdlWindow is null) {
             throw new SDLException;
         }
