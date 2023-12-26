@@ -1,4 +1,4 @@
-![](https://code.dlang.org/packages/dsdl2/logo)
+![dsdl2 logo](https://code.dlang.org/packages/dsdl2/logo)
 
 # dsdl2
 
