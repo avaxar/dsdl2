@@ -442,3 +442,21 @@ do {
         return SDL_GetTicks();
     }
 }
+
+/++ 
+ + Wraps `SDL_GetPerformanceCounter` which gets the current value of the platform-specific high resolution counter
+ +
+ + Returns: counter value in the scale of the counter frequency
+ +/
+ulong getPerformanceCounter() @trusted {
+    return SDL_GetPerformanceCounter();
+}
+
+/++ 
+ + Wraps `SDL_GetPerformanceFrequency` which gets the frequency of the platform-specific high resolution counter
+ +
+ + Returns: counts per second of the counter
+ +/
+ulong getPerformanceFrequency() @trusted {
+    return SDL_GetPerformanceFrequency();
+}
