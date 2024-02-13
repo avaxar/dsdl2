@@ -849,7 +849,7 @@ final class Surface {
      +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blitScaled(const Surface source, Rect destRect, Rect srcRect) @trusted {
-        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
+        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
                 &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
