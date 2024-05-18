@@ -102,8 +102,8 @@ final class Texture {
         assert(pixelFormat !is null);
     }
     do {
-        this.sdlTexture = SDL_CreateTexture(renderer.sdlRenderer, pixelFormat.sdlPixelFormatEnum, access,
-            size[0].to!int, size[1].to!int);
+        this.sdlTexture = SDL_CreateTexture(renderer.sdlRenderer, pixelFormat.sdlPixelFormatEnum,
+                access, size[0].to!int, size[1].to!int);
         if (this.sdlTexture is null) {
             throw new SDLException;
         }
@@ -243,8 +243,7 @@ final class Texture {
      +/
     uint[2] size() const @property @trusted {
         uint[2] wh = void;
-        if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, null, cast(int*)&wh[0],
-                cast(int*)&wh[1]) != 0) {
+        if (SDL_QueryTexture(cast(SDL_Texture*) this.sdlTexture, null, null, cast(int*)&wh[0], cast(int*)&wh[1]) != 0) {
             throw new SDLException;
         }
 
@@ -260,7 +259,7 @@ final class Texture {
     Color mod() const @property @trusted {
         Color multipliers = void;
         SDL_GetTextureColorMod(cast(SDL_Texture*) this.sdlTexture, &multipliers.sdlColor.r,
-            &multipliers.sdlColor.g, &multipliers.sdlColor.b);
+                &multipliers.sdlColor.g, &multipliers.sdlColor.b);
         SDL_GetTextureAlphaMod(cast(SDL_Texture*) this.sdlTexture, &multipliers.sdlColor.a);
         return multipliers;
     }

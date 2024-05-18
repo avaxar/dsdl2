@@ -1,3 +1,5 @@
+// dfmt off
+
 module glad.gl.enums;
 
 private import glad.gl.types;

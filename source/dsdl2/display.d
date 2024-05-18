@@ -75,7 +75,7 @@ struct DisplayMode {
      +/
     string toString() const {
         return "dsdl2.DisplayMode(%s, %s, %d, %p)".format(this.pixelFormat, this.size,
-            this.refreshRate, this.driverData);
+                this.refreshRate, this.driverData);
     }
 
     /++
@@ -84,8 +84,8 @@ struct DisplayMode {
      + Returns: `SDL_DisplayMode` with all of the attributes
      +/
     inout(SDL_DisplayMode) sdlDisplayMode() inout @property {
-        return inout SDL_DisplayMode(this.pixelFormat.sdlPixelFormatEnum, this.width.to!int, this.height.to!int,
-            this.refreshRate.to!int, this.driverData);
+        return inout SDL_DisplayMode(this.pixelFormat.sdlPixelFormatEnum, this.width.to!int,
+                this.height.to!int, this.refreshRate.to!int, this.driverData);
     }
 
     /++

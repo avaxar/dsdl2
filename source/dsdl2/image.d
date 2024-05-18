@@ -49,7 +49,7 @@ else {
         }
         else if (current == SDLImageSupport.noLibrary) {
             throw new SDLException("No SDL2_image library found, especially of version " ~ wanted.format(),
-                __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         }
     }
 }
@@ -71,8 +71,8 @@ else {
  + dsdl2.image.init(everything : true);
  + ---
  +/
-void init(bool jpg = false, bool png = false, bool tif = false, bool webp = false, bool jxl = false, bool avif = false,
-    bool everything = false) @trusted
+void init(bool jpg = false, bool png = false, bool tif = false, bool webp = false, bool jxl = false,
+        bool avif = false, bool everything = false) @trusted
 in {
     static if (sdlImageSupport < SDLImageSupport.v2_6) {
         assert(jxl == false);
@@ -589,8 +589,8 @@ static if (sdlImageSupport >= SDLImageSupport.v2_6) {
             if (this.framesProxy is null) {
                 (cast(Animation) this).framesProxy = new Surface[this.count];
                 foreach (i; 0 .. this.count) {
-                    (cast(Animation) this).framesProxy[i] = new Surface(
-                        cast(SDL_Surface*) this.imgAnimation.frames[i], false, cast(void*) this);
+                    (cast(Animation) this).framesProxy[i] = new Surface(cast(SDL_Surface*) this.imgAnimation.frames[i],
+                            false, cast(void*) this);
                 }
             }
 

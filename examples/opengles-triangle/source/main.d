@@ -32,10 +32,12 @@ void main() {
     int glMajor, glMinor;
     glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
     glGetIntegerv(GL_MINOR_VERSION, &glMinor);
-    writeln("OpenGL version: ", glMajor, ".", glMinor,
-        " / ", (cast(const(char)*) glGetString(GL_VERSION)).to!string, // OpenGL-provided string of its version
-        " / ", (cast(const(char)*) glGetString(GL_VENDOR)).to!string, // Vendor of the OpenGL library
-        " / ", (cast(const(char)*) glGetString(GL_RENDERER)).to!string); // OpenGL renderer
+    // dfmt off
+    writeln("OpenGL version: ", glMajor, ".", glMinor, // Version of the OpenGL library
+            " / ", (cast(const(char)*) glGetString(GL_VERSION)).to!string, // OpenGL-provided string of its version
+            " / ", (cast(const(char)*) glGetString(GL_VENDOR)).to!string, // Vendor of the OpenGL library
+            " / ", (cast(const(char)*) glGetString(GL_RENDERER)).to!string); // OpenGL renderer
+    // dfmt on
 
     // Set OpenGL rendering rendering up
     glViewport(0, 0, 800, 600);

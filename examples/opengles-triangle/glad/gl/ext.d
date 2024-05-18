@@ -1,3 +1,5 @@
+// dfmt off
+
 module glad.gl.ext;
 
 

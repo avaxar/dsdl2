@@ -66,8 +66,8 @@ final class Surface {
     do {
         uint[4] masks = rgbPixelFormat.toMasks();
 
-        this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int, rgbPixelFormat.bitsPerPixel,
-            masks[0], masks[1], masks[2], masks[3]);
+        this.sdlSurface = SDL_CreateRGBSurface(0, size[0].to!int, size[1].to!int,
+                rgbPixelFormat.bitsPerPixel, masks[0], masks[1], masks[2], masks[3]);
         if (this.sdlSurface is null) {
             throw new SDLException;
         }
@@ -199,8 +199,7 @@ final class Surface {
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Surface(%s, %s, %d, %s)".format(this.buffer, this.size, this.pitch,
-            this.pixelFormat);
+        return "dsdl2.Surface(%s, %s, %d, %s)".format(this.buffer, this.size, this.pitch, this.pixelFormat);
     }
 
     /++
@@ -210,14 +209,13 @@ final class Surface {
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         if (this.pixelFormatProxy is null) {
-            (cast(Surface) this).pixelFormatProxy =
-                new PixelFormat(cast(SDL_PixelFormat*) this.sdlSurface.format, false, cast(void*) this);
+            (cast(Surface) this).pixelFormatProxy = new PixelFormat(cast(SDL_PixelFormat*) this.sdlSurface.format,
+                    false, cast(void*) this);
         }
 
         // If the internal pixel format pointer happens to change, rewire the proxy.
         if (this.pixelFormatProxy.sdlPixelFormat !is this.sdlSurface.format) {
-            (cast(Surface) this).pixelFormatProxy.sdlPixelFormat =
-                cast(SDL_PixelFormat*) this.sdlSurface.format;
+            (cast(Surface) this).pixelFormatProxy.sdlPixelFormat = cast(SDL_PixelFormat*) this.sdlSurface.format;
         }
 
         return this.pixelFormatProxy;
@@ -319,8 +317,7 @@ final class Surface {
         if (this.pixelFormat.bitsPerPixel >= 8) {
             const ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
             align(4) ubyte[4] pixel;
-            pixel[0 .. this.pixelFormat.bytesPerPixel] =
-                pixelPtr[0 .. this.pixelFormat.bytesPerPixel];
+            pixel[0 .. this.pixelFormat.bytesPerPixel] = pixelPtr[0 .. this.pixelFormat.bytesPerPixel];
 
             return *cast(uint*) pixel.ptr;
         }
@@ -367,7 +364,7 @@ final class Surface {
 
         if (this.pixelFormat.bitsPerPixel >= 8) {
             ubyte* pixelPtr = row + xy[0] * this.pixelFormat.bytesPerPixel;
-            pixelPtr[0 .. this.pixelFormat.bytesPerPixel] =
+            pixelPtr[0 .. this.pixelFormat.bytesPerPixel] = //
                 (*cast(ubyte[4]*)&value)[0 .. this.pixelFormat.bytesPerPixel];
         }
         else {
@@ -452,7 +449,7 @@ final class Surface {
     Color mod() const @property @trusted {
         Color multipliers = void;
         SDL_GetSurfaceColorMod(cast(SDL_Surface*) this.sdlSurface, &multipliers.sdlColor.r,
-            &multipliers.sdlColor.g, &multipliers.sdlColor.b);
+                &multipliers.sdlColor.g, &multipliers.sdlColor.b);
         SDL_GetSurfaceAlphaMod(cast(SDL_Surface*) this.sdlSurface, &multipliers.sdlColor.a);
         return multipliers;
     }
@@ -818,8 +815,7 @@ final class Surface {
      +/
     void blit(const Surface source, Point destPoint, Rect srcRect) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
-        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
-                &dstrect) != 0) {
+        if (SDL_BlitSurface(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface, &dstrect) != 0) {
             throw new SDLException;
         }
     }
@@ -833,8 +829,7 @@ final class Surface {
      +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +/
     void blitScaled(const Surface source, Rect destRect) @trusted {
-        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface,
-                &destRect.sdlRect) != 0) {
+        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface, &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
     }
@@ -849,8 +844,8 @@ final class Surface {
      +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blitScaled(const Surface source, Rect destRect, Rect srcRect) @trusted {
-        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect, this.sdlSurface,
-                &destRect.sdlRect) != 0) {
+        if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, &srcRect.sdlRect,
+                this.sdlSurface, &destRect.sdlRect) != 0) {
             throw new SDLException;
         }
     }

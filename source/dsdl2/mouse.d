@@ -199,6 +199,7 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
  + D struct that encapsulates mouse button state flags
  +/
 struct MouseState {
+    // dfmt off
     mixin(bitfields!(
             bool, "left", 1,
             bool, "middle", 1,
@@ -206,6 +207,7 @@ struct MouseState {
             bool, "x1", 1,
             bool, "x2", 1,
             bool, "", 3));
+    // dfmt on
 
     this() @disable;
 
@@ -250,8 +252,8 @@ struct MouseState {
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.MouseState(%d, %s, %s, %s, %s, %s)".format(this.sdlMouseState, this.left, this.middle,
-            this.right, this.x1, this.x2);
+        return "dsdl2.MouseState(%d, %s, %s, %s, %s, %s)".format(this.sdlMouseState, this.left,
+                this.middle, this.right, this.x1, this.x2);
     }
 
     /++
@@ -260,12 +262,13 @@ struct MouseState {
      + Returns: `uint` with the appropriate bitflags toggled
      +/
     uint sdlMouseState() const @property {
+        // dfmt off
         return (this.left ? SDL_BUTTON_LMASK : 0)
-            | (this.middle ? SDL_BUTTON_MMASK : 0)
-            | (this.right ? SDL_BUTTON_RMASK
-                    : 0)
-            | (this.x1 ? SDL_BUTTON_X1MASK : 0)
-            | (this.x2 ? SDL_BUTTON_X2MASK : 0);
+         | (this.middle ? SDL_BUTTON_MMASK : 0)
+         | (this.right ? SDL_BUTTON_RMASK : 0)
+         | (this.x1 ? SDL_BUTTON_X1MASK : 0)
+         | (this.x2 ? SDL_BUTTON_X2MASK : 0);
+        // dfmt on
     }
 }
 

@@ -151,6 +151,7 @@ static if (sdlSupport >= SDLSupport.v2_24) {
  + D struct that wraps `SDL_Keymod` containing modifier key states
  +/
 struct Keymod {
+    // dfmt off
     mixin(bitfields!(
             bool, "lShift", 1,
             bool, "rShift", 1,
@@ -165,6 +166,7 @@ struct Keymod {
             bool, "mode", 1,
             bool, "scroll", 1,
             ubyte, "", 4));
+    // dfmt on
 
     this() @disable;
 
@@ -208,8 +210,8 @@ struct Keymod {
      +   scroll = whether scroll lock is toggled
      +/
     this(SDL_Keymod base, bool lShift = false, bool rShift = false, bool lCtrl = false, bool rCtrl = false,
-        bool lAlt = false, bool rAlt = false, bool lGUI = false, bool rGUI = false, bool num = false,
-        bool caps = false, bool mode = false, bool scroll = false) {
+            bool lAlt = false, bool rAlt = false, bool lGUI = false, bool rGUI = false, bool num = false,
+            bool caps = false, bool mode = false, bool scroll = false) {
         this(base);
         this.lShift = lShift;
         this.rShift = rShift;
@@ -233,8 +235,8 @@ struct Keymod {
      +/
     string toString() const {
         return "dsdl2.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,
-            this.lShift, this.rShift, this.lCtrl, this.rCtrl, this.lAlt, this.rAlt, this.lGUI, this.rGUI,
-            this.num, this.caps, this.mode, this.scroll);
+                this.lShift, this.rShift, this.lCtrl, this.rCtrl, this.lAlt, this.rAlt,
+                this.lGUI, this.rGUI, this.num, this.caps, this.mode, this.scroll);
     }
 
     /++
@@ -243,18 +245,20 @@ struct Keymod {
      + Returns: `SDL_Keymod` with the appropriate bitflags toggled
      +/
     SDL_Keymod sdlKeymod() const @property {
+        // dfmt off
         return (this.lShift ? KMOD_LSHIFT : 0)
-            | (this.rShift ? KMOD_RSHIFT : 0)
-            | (this.lCtrl ? KMOD_LCTRL : 0)
-            | (this.rCtrl ? KMOD_RCTRL : 0)
-            | (this.lAlt ? KMOD_LALT : 0)
-            | (this.rAlt ? KMOD_RALT : 0)
-            | (this.lGUI ? KMOD_LGUI : 0)
-            | (this.rGUI ? KMOD_RGUI : 0)
-            | (this.num ? KMOD_NUM : 0)
-            | (this.caps ? KMOD_CAPS : 0)
-            | (this.mode ? KMOD_MODE : 0)
-            | (this.scroll ? KMOD_SCROLL : 0);
+         | (this.rShift ? KMOD_RSHIFT : 0)
+         | (this.lCtrl ? KMOD_LCTRL : 0)
+         | (this.rCtrl ? KMOD_RCTRL : 0)
+         | (this.lAlt ? KMOD_LALT : 0)
+         | (this.rAlt ? KMOD_RALT : 0)
+         | (this.lGUI ? KMOD_LGUI : 0)
+         | (this.rGUI ? KMOD_RGUI : 0)
+         | (this.num ? KMOD_NUM : 0)
+         | (this.caps ? KMOD_CAPS : 0)
+         | (this.mode ? KMOD_MODE : 0)
+         | (this.scroll ? KMOD_SCROLL : 0);
+        // dfmt on
     }
 
     /++

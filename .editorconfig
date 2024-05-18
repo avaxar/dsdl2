@@ -1,0 +1,17 @@
+[*]
+trim_trailing_whitespace = true
+end_of_line = lf
+insert_final_newline = true
+
+[*.d]
+max_line_length = 120
+indent_size = 4
+indent_style = space
+dfmt_align_switch_statements = true
+dfmt_brace_style = stroustrup
+dfmt_outdent_attributes = true
+dfmt_outdent_labels = true
+dfmt_soft_max_line_length = 100
+dfmt_space_after_cast = true
+dfmt_space_after_keywords = true
+dfmt_split_operator_at_line_end = false

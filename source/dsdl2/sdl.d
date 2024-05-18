@@ -53,13 +53,13 @@ else {
         }
         else if (current == SDLSupport.noLibrary) {
             throw new SDLException("No SDL2 library found, especially of version " ~ wanted.format(),
-                __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         }
     }
 }
 
-private uint toSDLInitFlags(bool timer, bool audio, bool video, bool joystick, bool haptic, bool gameController,
-    bool events, bool everything, bool noParachute, bool sensor)
+private uint toSDLInitFlags(bool timer, bool audio, bool video, bool joystick, bool haptic,
+        bool gameController, bool events, bool everything, bool noParachute, bool sensor)
 in {
     static if (sdlSupport < SDLSupport.v2_0_9) {
         assert(sensor == false);
@@ -110,11 +110,11 @@ do {
  + dsdl2.init(everything : true);
  + ---
  +/
-void init(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
-    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
-    bool sensor = false) @trusted {
-    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
-        noParachute, sensor);
+void init(bool timer = false, bool audio = false, bool video = false, bool joystick = false,
+        bool haptic = false, bool gameController = false, bool events = false, bool everything = false,
+        bool noParachute = false, bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events,
+            everything, noParachute, sensor);
 
     if (SDL_Init(flags) != 0) {
         throw new SDLException;
@@ -159,11 +159,11 @@ version (unittest) {
  +   noParachute = selects the `SDL_INIT_NOPARACHUTE` subsystem
  +   sensor = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
  +/
-void quit(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
-    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
-    bool sensor = false) @trusted {
-    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
-        noParachute, sensor);
+void quit(bool timer = false, bool audio = false, bool video = false, bool joystick = false,
+        bool haptic = false, bool gameController = false, bool events = false, bool everything = false,
+        bool noParachute = false, bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events,
+            everything, noParachute, sensor);
 
     SDL_QuitSubSystem(flags);
 }
@@ -190,11 +190,11 @@ void quit(bool timer = false, bool audio = false, bool video = false, bool joyst
  + assert(dsdl2.wasInit(video : true) == true);
  + ---
  +/
-bool wasInit(bool timer = false, bool audio = false, bool video = false, bool joystick = false, bool haptic = false,
-    bool gameController = false, bool events = false, bool everything = false, bool noParachute = false,
-    bool sensor = false) @trusted {
-    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events, everything,
-        noParachute, sensor);
+bool wasInit(bool timer = false, bool audio = false, bool video = false, bool joystick = false,
+        bool haptic = false, bool gameController = false, bool events = false, bool everything = false,
+        bool noParachute = false, bool sensor = false) @trusted {
+    uint flags = toSDLInitFlags(timer, audio, video, joystick, haptic, gameController, events,
+            everything, noParachute, sensor);
 
     return SDL_WasInit(flags) != 0;
 }
@@ -302,9 +302,7 @@ struct Version {
      + Returns: `major`, `minor`, `patch` as an array
      +/
     ubyte[3] array() const @property {
-        return [
-            this.sdlVersion.major, this.sdlVersion.minor, this.sdlVersion.patch
-        ];
+        return [this.sdlVersion.major, this.sdlVersion.minor, this.sdlVersion.patch];
     }
 
     /++
@@ -443,7 +441,7 @@ do {
     }
 }
 
-/++ 
+/++
  + Wraps `SDL_GetPerformanceCounter` which gets the current value of the platform-specific high resolution counter
  +
  + Returns: counter value in the scale of the counter frequency
@@ -452,7 +450,7 @@ ulong getPerformanceCounter() @trusted {
     return SDL_GetPerformanceCounter();
 }
 
-/++ 
+/++
  + Wraps `SDL_GetPerformanceFrequency` which gets the frequency of the platform-specific high resolution counter
  +
  + Returns: counts per second of the counter
