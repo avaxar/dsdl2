@@ -1,3 +1,5 @@
+// dfmt off
+
 module glad.gl.gles2;
 
 public import glad.gl.types;

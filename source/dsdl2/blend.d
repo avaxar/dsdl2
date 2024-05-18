@@ -92,14 +92,14 @@ struct BlendMode {
          + Throws: `dsdl2.SDLException` if impossible to compose the `dsdl2.BlendMode`
          +/
         this(BlendFactor srcColorFactor, BlendFactor dstColorFactor, BlendOperation colorOperation,
-            BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation) @trusted
+                BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation) @trusted
         in {
             assert(getVersion() >= Version(2, 0, 6));
         }
         do {
 
-            this.sdlBlendMode = SDL_ComposeCustomBlendMode(srcColorFactor, dstColorFactor, colorOperation,
-                srcAlphaFactor, dstAlphaFactor, alphaOperation);
+            this.sdlBlendMode = SDL_ComposeCustomBlendMode(srcColorFactor, dstColorFactor,
+                    colorOperation, srcAlphaFactor, dstAlphaFactor, alphaOperation);
             if (this.sdlBlendMode != SDL_BLENDMODE_INVALID) {
                 throw new SDLException("Invalid BlendMode composition", __FILE__, __LINE__);
             }

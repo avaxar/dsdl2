@@ -143,7 +143,7 @@ abstract class Event {
 
         case SDL_TEXTEDITING:
             event = new TextEditingEvent(sdlEvent.edit.windowID, sdlEvent.edit.text.ptr.to!string,
-                sdlEvent.edit.start.to!uint, sdlEvent.edit.length.to!uint);
+                    sdlEvent.edit.start.to!uint, sdlEvent.edit.length.to!uint);
             break;
 
         case SDL_TEXTINPUT:
@@ -158,9 +158,8 @@ abstract class Event {
 
         case SDL_MOUSEMOTION:
             event = new MouseMotionEvent(sdlEvent.motion.windowID, sdlEvent.motion.which,
-                MouseState(sdlEvent.motion.state),
-                [sdlEvent.motion.x, sdlEvent.motion.y],
-                [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
+                    MouseState(sdlEvent.motion.state), [sdlEvent.motion.x, sdlEvent.motion.y],
+                    [sdlEvent.motion.xrel, sdlEvent.motion.yrel]);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -171,18 +170,18 @@ abstract class Event {
         case SDL_MOUSEWHEEL:
             static if (sdlSupport >= SDLSupport.v2_0_18) {
                 event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
-                    [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction,
-                    [sdlEvent.wheel.preciseX, sdlEvent.wheel.preciseY]);
+                        [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction,
+                        [sdlEvent.wheel.preciseX, sdlEvent.wheel.preciseY]);
                 break;
             }
             else static if (sdlSupport >= SDLSupport.v2_0_4) {
                 event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
-                    [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction);
+                        [sdlEvent.wheel.x, sdlEvent.wheel.y], cast(MouseWheel) sdlEvent.wheel.direction);
                 break;
             }
             else {
                 event = new MouseWheelEvent(sdlEvent.wheel.windowID, sdlEvent.wheel.which,
-                    [sdlEvent.wheel.x, sdlEvent.wheel.y]);
+                        [sdlEvent.wheel.x, sdlEvent.wheel.y]);
                 break;
             }
 
@@ -194,7 +193,7 @@ abstract class Event {
 
         case SDL_MULTIGESTURE:
             event = new MultiGestureEvent(sdlEvent.mgesture.touchId, sdlEvent.mgesture.dTheta,
-                sdlEvent.mgesture.dDist, sdlEvent.mgesture.x, sdlEvent.mgesture.y, sdlEvent.mgesture.numFingers);
+                    sdlEvent.mgesture.dDist, sdlEvent.mgesture.x, sdlEvent.mgesture.y, sdlEvent.mgesture.numFingers);
             break;
 
         case SDL_DOLLARGESTURE:
@@ -398,7 +397,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
 
             case SDL_DISPLAYEVENT_ORIENTATION:
                 event = new DisplayOrientationEvent(sdlEvent.display.display,
-                    cast(DisplayOrientation) sdlEvent.display.data1);
+                        cast(DisplayOrientation) sdlEvent.display.data1);
                 break;
 
                 static if (sdlSupport >= SDLSupport.v2_0_14) {
@@ -549,13 +548,15 @@ abstract class WindowEvent : Event {
             break;
 
         case SDL_WINDOWEVENT_MOVED:
-            event = new WindowMovedEvent(sdlEvent.window.windowID,
-                [sdlEvent.window.data1, sdlEvent.window.data2]);
+            event = new WindowMovedEvent(sdlEvent.window.windowID, [
+                sdlEvent.window.data1, sdlEvent.window.data2
+            ]);
             break;
 
         case SDL_WINDOWEVENT_RESIZED:
-            event = new WindowResizedEvent(sdlEvent.window.windowID,
-                [sdlEvent.window.data1, sdlEvent.window.data2]);
+            event = new WindowResizedEvent(sdlEvent.window.windowID, [
+                sdlEvent.window.data1, sdlEvent.window.data2
+            ]);
             break;
 
         case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -610,8 +611,7 @@ abstract class WindowEvent : Event {
                 break;
 
         case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-                event = new WindowDisplayChangedEvent(sdlEvent.window.windowID,
-                    sdlEvent.window.data1);
+                event = new WindowDisplayChangedEvent(sdlEvent.window.windowID, sdlEvent.window.data1);
                 break;
             }
         }
@@ -1066,14 +1066,14 @@ abstract class KeyboardEvent : Event {
 
         case SDL_KEYDOWN:
             event = new KeyDownKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
-                cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
-                Keymod(sdlEvent.key.keysym.mod));
+                    cast(Scancode) sdlEvent.key.keysym.scancode,
+                    cast(Keycode) sdlEvent.key.keysym.sym, Keymod(sdlEvent.key.keysym.mod));
             break;
 
         case SDL_KEYUP:
             event = new KeyUpKeyboardEvent(sdlEvent.key.windowID, sdlEvent.key.repeat,
-                cast(Scancode) sdlEvent.key.keysym.scancode, cast(Keycode) sdlEvent.key.keysym.sym,
-                Keymod(sdlEvent.key.keysym.mod));
+                    cast(Scancode) sdlEvent.key.keysym.scancode,
+                    cast(Keycode) sdlEvent.key.keysym.sym, Keymod(sdlEvent.key.keysym.mod));
             break;
         }
 
@@ -1100,8 +1100,8 @@ final class KeyDownKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const {
-        return "dsdl2.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
-            this.sym, this.mod);
+        return "dsdl2.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
+                this.scancode, this.sym, this.mod);
     }
 }
 
@@ -1123,8 +1123,8 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const {
-        return "dsdl2.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat, this.scancode,
-            this.sym, this.mod);
+        return "dsdl2.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
+                this.scancode, this.sym, this.mod);
     }
 }
 
@@ -1150,7 +1150,7 @@ final class TextEditingEvent : Event {
 
     override string toString() const @trusted {
         return "dsdl2.TextEditingEvent(%d, %s, %d, %d)".format(this.windowID,
-            [this.text].to!string[1 .. $ - 1], this.start, this.length);
+                [this.text].to!string[1 .. $ - 1], this.start, this.length);
     }
 
     ref inout(uint) windowID() return inout @property {
@@ -1197,8 +1197,7 @@ final class TextInputEvent : Event {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.TextInputEvent(%d, %s)".format(this.windowID,
-            [this.text].to!string[1 .. $ - 1]);
+        return "dsdl2.TextInputEvent(%d, %s)".format(this.windowID, [this.text].to!string[1 .. $ - 1]);
     }
 
     ref inout(uint) windowID() return inout @property {
@@ -1258,7 +1257,7 @@ final class MouseMotionEvent : Event {
 
     override string toString() const {
         return "dsdl2.MouseMotionEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
-            this.state, this.xy, this.xyRel);
+                this.state, this.xy, this.xyRel);
     }
 
     ref inout(uint) windowID() return inout @property {
@@ -1356,26 +1355,28 @@ abstract class MouseButtonEvent : Event {
         case SDL_MOUSEBUTTONDOWN:
             static if (sdlSupport >= SDLSupport.v2_0_2) {
                 event = new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
-                    cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
-                    [sdlEvent.button.x, sdlEvent.button.y]);
+                        cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
+                        [sdlEvent.button.x, sdlEvent.button.y]);
             }
             else {
                 event = new MouseButtonDownEvent(sdlEvent.button.windowID, sdlEvent.button.which,
-                    cast(MouseButton) sdlEvent.button.button, 1,
-                    [sdlEvent.button.x, sdlEvent.button.y]);
+                        cast(MouseButton) sdlEvent.button.button, 1, [
+                            sdlEvent.button.x, sdlEvent.button.y
+                ]);
             }
             break;
 
         case SDL_MOUSEBUTTONUP:
             static if (sdlSupport >= SDLSupport.v2_0_2) {
                 event = new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
-                    cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
-                    [sdlEvent.button.x, sdlEvent.button.y]);
+                        cast(MouseButton) sdlEvent.button.button, sdlEvent.button.clicks,
+                        [sdlEvent.button.x, sdlEvent.button.y]);
             }
             else {
                 event = new MouseButtonUpEvent(sdlEvent.button.windowID, sdlEvent.button.which,
-                    cast(MouseButton) sdlEvent.button.button, 1,
-                    [sdlEvent.button.x, sdlEvent.button.y]);
+                        cast(MouseButton) sdlEvent.button.button, 1, [
+                            sdlEvent.button.x, sdlEvent.button.y
+                ]);
             }
             break;
         }
@@ -1411,8 +1412,8 @@ final class MouseButtonDownEvent : MouseButtonEvent {
     }
 
     override string toString() const {
-        return "dsdl2.MouseButtonDownEvent(%d, %d, %s, %d, %s)".format(this.windowID,
-            this.which, this.button, this.clicks, this.xy);
+        return "dsdl2.MouseButtonDownEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
+                this.button, this.clicks, this.xy);
     }
 }
 
@@ -1442,8 +1443,8 @@ final class MouseButtonUpEvent : MouseButtonEvent {
     }
 
     override string toString() const {
-        return "dsdl2.MouseButtonUpEvent(%d, %d, %s, %d, %s)".format(this.windowID,
-            this.which, this.button, this.clicks, this.xy);
+        return "dsdl2.MouseButtonUpEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
+                this.button, this.clicks, this.xy);
     }
 }
 
@@ -1453,7 +1454,7 @@ final class MouseButtonUpEvent : MouseButtonEvent {
 final class MouseWheelEvent : Event {
     static if (sdlSupport >= SDLSupport.v2_0_18) {
         this(uint windowID, uint which, int[2] xy, MouseWheel direction = MouseWheel.normal,
-            float[2] preciseXY = [0.0, 0.0]) {
+                float[2] preciseXY = [0.0, 0.0]) {
             this.sdlEvent.type = SDL_MOUSEWHEEL;
             this.sdlEvent.wheel.windowID = windowID;
             this.sdlEvent.wheel.which = which;
@@ -1495,11 +1496,10 @@ final class MouseWheelEvent : Event {
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_18) {
             return "dsdl2.MouseWheelEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
-                this.xy, this.direction, this.preciseXY);
+                    this.xy, this.direction, this.preciseXY);
         }
         else static if (sdlSupport >= SDLSupport.v2_0_4) {
-            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s)".format(this.windowID, this.which, this.xy,
-                this.direction);
+            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s)".format(this.windowID, this.which, this.xy, this.direction);
         }
         else {
             return "dsdl2.MouseWheelEvent(%d, %d, %s)".format(this.windowID, this.which, this.xy);
@@ -1599,37 +1599,40 @@ abstract class FingerEvent : Event {
 
         case SDL_FINGERMOTION:
             static if (sdlSupport >= SDLSupport.v2_0_12) {
-                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
-                    sdlEvent.tfinger.windowID);
+                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure, sdlEvent.tfinger.windowID);
             }
             else {
-                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+                event = new FingerMotionEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
             }
             break;
 
         case SDL_FINGERDOWN:
             static if (sdlSupport >= SDLSupport.v2_0_12) {
-                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
-                    sdlEvent.tfinger.windowID);
+                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure, sdlEvent.tfinger.windowID);
             }
             else {
-                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+                event = new FingerDownEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
             }
             break;
 
         case SDL_FINGERUP:
             static if (sdlSupport >= SDLSupport.v2_0_12) {
-                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure,
-                    sdlEvent.tfinger.windowID);
+                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure, sdlEvent.tfinger.windowID);
             }
             else {
-                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId, sdlEvent.tfinger.x,
-                    sdlEvent.tfinger.y, sdlEvent.tfinger.dx, sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
+                event = new FingerUpEvent(sdlEvent.tfinger.touchId, sdlEvent.tfinger.fingerId,
+                        sdlEvent.tfinger.x, sdlEvent.tfinger.y, sdlEvent.tfinger.dx,
+                        sdlEvent.tfinger.dy, sdlEvent.tfinger.pressure);
             }
             break;
         }
@@ -1655,8 +1658,7 @@ class FingerMotionEvent : FingerEvent {
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_12) {
-        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
-            uint windowID) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure, uint windowID) {
             this.sdlEvent.type = SDL_FINGERMOTION;
             this.sdlEvent.tfinger.touchId = touchID.to!long;
             this.sdlEvent.tfinger.fingerId = fingerID.to!long;
@@ -1675,12 +1677,12 @@ class FingerMotionEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure);
+            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
 }
@@ -1701,8 +1703,7 @@ class FingerDownEvent : FingerEvent {
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_12) {
-        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
-            uint windowID) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure, uint windowID) {
             this.sdlEvent.type = SDL_FINGERDOWN;
             this.sdlEvent.tfinger.touchId = touchID.to!long;
             this.sdlEvent.tfinger.fingerId = fingerID.to!long;
@@ -1721,12 +1722,12 @@ class FingerDownEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure);
+            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
 }
@@ -1747,8 +1748,7 @@ class FingerUpEvent : FingerEvent {
     }
 
     static if (sdlSupport >= SDLSupport.v2_0_12) {
-        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure,
-            uint windowID) {
+        this(ulong touchID, ulong fingerID, float x, float y, float dx, float dy, float pressure, uint windowID) {
             this.sdlEvent.type = SDL_FINGERUP;
             this.sdlEvent.tfinger.touchId = touchID.to!long;
             this.sdlEvent.tfinger.fingerId = fingerID.to!long;
@@ -1767,12 +1767,12 @@ class FingerUpEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
+            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID, this.fingerID,
-                this.x, this.y, this.dx, this.dy, this.pressure);
+            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+                    this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
 }
@@ -1796,8 +1796,8 @@ class MultiGestureEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.MultiGestureEvent(%d, %f, %f, %f, %f, %d)".format(this.touchID,
-            this.dTheta, this.dDist, this.x, this.y, this.numFingers);
+        return "dsdl2.MultiGestureEvent(%d, %f, %f, %f, %f, %d)".format(this.touchID, this.dTheta,
+                this.dDist, this.x, this.y, this.numFingers);
     }
 
     ref inout(ulong) touchID() return inout @property {
@@ -1853,7 +1853,7 @@ abstract class DollarEvent : Event {
 
         case SDL_DOLLARGESTURE:
             event = new DollarGestureEvent(sdlEvent.dgesture.touchId, sdlEvent.dgesture.gestureId,
-                sdlEvent.dgesture.numFingers, sdlEvent.dgesture.error, sdlEvent.dgesture.x, sdlEvent.dgesture.y);
+                    sdlEvent.dgesture.numFingers, sdlEvent.dgesture.error, sdlEvent.dgesture.x, sdlEvent.dgesture.y);
             break;
 
         case SDL_DOLLARRECORD:
@@ -1885,8 +1885,8 @@ class DollarGestureEvent : DollarEvent {
     }
 
     override string toString() const {
-        return "dsdl2.DollarGestureEvent(%d, %d, %d, %f, %f, %f)".format(this.touchID, this.gestureID, this.numFingers,
-            this.error, this.x, this.y);
+        return "dsdl2.DollarGestureEvent(%d, %d, %d, %f, %f, %f)".format(this.touchID,
+                this.gestureID, this.numFingers, this.error, this.x, this.y);
     }
 
     ref inout(uint) numFingers() return inout @property {

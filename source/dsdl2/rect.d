@@ -105,8 +105,7 @@ struct Point {
     /++
      + Operator assignment overload with scalars
      +/
-    ref inout(Point) opOpAssign(string op)(const int scalar) return inout
-    if (op == "*" || op == "/") {
+    ref inout(Point) opOpAssign(string op)(const int scalar) return inout if (op == "*" || op == "/") {
         mixin("this.x" ~ op ~ "=scalar");
         mixin("this.y" ~ op ~ "=scalar");
         return this;
@@ -231,15 +230,13 @@ struct Rect {
      + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.Point`
      +/
     Rect opBinary(string op)(const Point offset) const if (op == "+" || op == "-") {
-        return Rect(Point(mixin("this.x" ~ op ~ "offset.x"), mixin("this.y" ~ op ~ "offset.y")),
-            this.w, this.h);
+        return Rect(Point(mixin("this.x" ~ op ~ "offset.x"), mixin("this.y" ~ op ~ "offset.y")), this.w, this.h);
     }
 
     /++
      + Operator assignment overload template to move rectangle's position in-place by an `offset` as a `dsdl2.Point`
      +/
-    ref inout(Point) opOpAssign(string op)(const Point offset) return inout
-    if (op == "+" || op == "-") {
+    ref inout(Point) opOpAssign(string op)(const Point offset) return inout if (op == "+" || op == "-") {
         mixin("this.x" ~ op ~ "=offset.x");
         mixin("this.y" ~ op ~ "=offset.y");
         return this;
@@ -349,7 +346,7 @@ struct Rect {
      +/
     bool hasLineIntersection(Point[2] line) const @trusted {
         return SDL_IntersectRectAndLine(&this.sdlRect, &line[0].sdlPoint.x, &line[0].sdlPoint.y,
-            &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
+                &line[1].sdlPoint.x, &line[1].sdlPoint.y) == SDL_TRUE;
     }
 
     /++

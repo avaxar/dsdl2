@@ -106,8 +106,7 @@ struct FPoint {
     /++
      + Operator assignment overload with scalars
      +/
-    ref inout(FPoint) opOpAssign(string op)(const float scalar) return inout
-    if (op == "*" || op == "/") {
+    ref inout(FPoint) opOpAssign(string op)(const float scalar) return inout if (op == "*" || op == "/") {
         mixin("this.x" ~ op ~ "=scalar");
         mixin("this.y" ~ op ~ "=scalar");
         return this;
@@ -230,18 +229,16 @@ struct FRect {
     /++
      + Binary operation overload template to move rectangle's position by an `offset` as a `dsdl2.FPoint`
      +/
-    FRect opBinary(string op)(const FPoint offset) const
-    if (op == "+" || op == "-") {
+    FRect opBinary(string op)(const FPoint offset) const if (op == "+" || op == "-") {
         return FRect(Foint(mixin("this.x" ~ op ~ "offset.x"), mixin("this.y" ~ op ~ "offset.y")),
-            this.width, this.height);
+                this.width, this.height);
     }
 
     /++
      + Operator assignment overload template to move rectangle's position in-place by an `offset` as a
      + `dsdl2.FPoint`
      +/
-    ref inout(FPoint) opOpAssign(string op)(const FPoint offset) return inout
-    if (op == "+" || op == "-") {
+    ref inout(FPoint) opOpAssign(string op)(const FPoint offset) return inout if (op == "+" || op == "-") {
         mixin("this.x" ~ op ~ "=offset.x");
         mixin("this.y" ~ op ~ "=offset.y");
         return this;
@@ -370,8 +367,8 @@ struct FRect {
             assert(getVersion() >= Version(2, 0, 22));
         }
         do {
-            return SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
-                &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
+            return SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x,
+                    &line[0].sdlFPoint.y, &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE;
         }
 
         /++
@@ -410,8 +407,8 @@ struct FRect {
             assert(getVersion() >= Version(2, 0, 22));
         }
         do {
-            if (SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x, &line[0].sdlFPoint.y,
-                    &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE) {
+            if (SDL_IntersectFRectAndLine(&this.sdlFRect, &line[0].sdlFPoint.x,
+                    &line[0].sdlFPoint.y, &line[1].sdlFPoint.x, &line[1].sdlFPoint.y) == SDL_TRUE) {
                 FPoint[2] intersection = [line[0], line[1]];
                 return intersection.nullable;
             }

@@ -49,7 +49,7 @@ else {
         }
         else if (current == SDLTTFSupport.noLibrary) {
             throw new SDLException("No SDL2_ttf library found, especially of version " ~ wanted.format(),
-                __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         }
     }
 }
@@ -894,8 +894,8 @@ final class Font {
      +/
     GlyphMetrics glyphMetrics(wchar glyph) const @trusted {
         GlyphMetrics metrics = void;
-        if (TTF_GlyphMetrics(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, &metrics.min[0], &metrics.max[0],
-                &metrics.min[1], &metrics.max[1], &metrics.advance) != 0) {
+        if (TTF_GlyphMetrics(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, &metrics.min[0],
+                &metrics.max[0], &metrics.min[1], &metrics.max[1], &metrics.advance) != 0) {
             throw new SDLException;
         }
 
@@ -917,8 +917,8 @@ final class Font {
         }
         do {
             GlyphMetrics metrics = void;
-            if (TTF_GlyphMetrics32(cast(TTF_Font*) this.ttfFont, cast(uint) glyph, &metrics.min[0], &metrics.max[0],
-                    &metrics.min[1], &metrics.max[1], &metrics.advance) != 0) {
+            if (TTF_GlyphMetrics32(cast(TTF_Font*) this.ttfFont, cast(uint) glyph, &metrics.min[0],
+                    &metrics.max[0], &metrics.min[1], &metrics.max[1], &metrics.advance) != 0) {
                 throw new SDLException;
             }
 
@@ -941,8 +941,8 @@ final class Font {
             assert(dsdl2.ttf.getVersion() >= Version(2, 0, 14));
         }
         do {
-            return TTF_GetFontKerningSizeGlyphs(cast(TTF_Font*) this.ttfFont, cast(ushort) prevGlyph,
-                cast(ushort) glyph);
+            return TTF_GetFontKerningSizeGlyphs(cast(TTF_Font*) this.ttfFont, //
+                    cast(ushort) prevGlyph, cast(ushort) glyph);
         }
     }
 
@@ -961,8 +961,7 @@ final class Font {
             assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
-            return TTF_GetFontKerningSizeGlyphs32(cast(TTF_Font*) this.ttfFont, cast(uint) prevGlyph,
-                cast(uint) glyph);
+            return TTF_GetFontKerningSizeGlyphs32(cast(TTF_Font*) this.ttfFont, cast(uint) prevGlyph, cast(uint) glyph);
         }
     }
 
@@ -999,8 +998,8 @@ final class Font {
         ctext[text.length] = '\0';
 
         uint[2] wh = void;
-        if (TTF_SizeUNICODE(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr, cast(int*)&wh[0],
-                cast(int*)&wh[1]) != 0) {
+        if (TTF_SizeUNICODE(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
+                cast(int*)&wh[0], cast(int*)&wh[1]) != 0) {
             throw new SDLException;
         }
 
@@ -1026,8 +1025,8 @@ final class Font {
         }
         do {
             TextMeasurement measurement = void;
-            if (TTF_MeasureUTF8(cast(TTF_Font*) this.ttfFont, text.toStringz(), measureWidth.to!int,
-                    cast(int*)&measurement.extent, cast(int*)&measurement.count) != 0) {
+            if (TTF_MeasureUTF8(cast(TTF_Font*) this.ttfFont, text.toStringz(),
+                    measureWidth.to!int, cast(int*)&measurement.extent, cast(int*)&measurement.count) != 0) {
                 throw new SDLException;
             }
 
@@ -1056,8 +1055,8 @@ final class Font {
             ctext[text.length] = '\0';
 
             TextMeasurement measurement = void;
-            if (TTF_MeasureUNICODE(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr, measureWidth.to!int,
-                    cast(int*)&measurement[0], cast(int*)&measurement[1]) != 0) {
+            if (TTF_MeasureUNICODE(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
+                    measureWidth.to!int, cast(int*)&measurement[0], cast(int*)&measurement[1]) != 0) {
                 throw new SDLException;
             }
 
@@ -1079,37 +1078,39 @@ final class Font {
      + Throws: `dsdl.SDLException` if failed to render glyph
      +/
     Surface render(wchar glyph, Color foreground, Color background = Color(0, 0, 0, 0),
-        RenderQuality quality = RenderQuality.shaded) const @trusted
+            RenderQuality quality = RenderQuality.shaded) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
             assert(dsdl2.ttf.getVersion() >= Version(2, 20));
         }
 
         if (background != Color(0, 0, 0, 0)) {
-            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd, "Only shaded and LCD render quality"
-                    ~ " can have a background color.");
+            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd,
+                    "Only shaded and LCD render quality" ~ " can have a background color.");
         }
     }
     do {
         SDL_Surface* sdlSurface;
         switch (quality) {
         case RenderQuality.solid:
-            sdlSurface = TTF_RenderGlyph_Solid(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, foreground.sdlColor);
+            sdlSurface = TTF_RenderGlyph_Solid(cast(TTF_Font*) this.ttfFont,
+                    cast(ushort) glyph, foreground.sdlColor);
             break;
 
         case RenderQuality.shaded:
-            sdlSurface = TTF_RenderGlyph_Shaded(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, foreground.sdlColor,
-                background.sdlColor);
+            sdlSurface = TTF_RenderGlyph_Shaded(cast(TTF_Font*) this.ttfFont,
+                    cast(ushort) glyph, foreground.sdlColor, background.sdlColor);
             break;
 
         case RenderQuality.blended:
-            sdlSurface = TTF_RenderGlyph_Blended(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, foreground.sdlColor);
+            sdlSurface = TTF_RenderGlyph_Blended(cast(TTF_Font*) this.ttfFont,
+                    cast(ushort) glyph, foreground.sdlColor);
             break;
 
         case RenderQuality.lcd:
             static if (sdlTTFSupport >= SDLTTFSupport.v2_20) {
-                sdlSurface = TTF_RenderGlyph_LCD(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph, foreground.sdlColor,
-                    background.sdlColor);
+                sdlSurface = TTF_RenderGlyph_LCD(cast(TTF_Font*) this.ttfFont, cast(ushort) glyph,
+                        foreground.sdlColor, background.sdlColor);
                 break;
             }
             assert(0);
@@ -1141,7 +1142,7 @@ final class Font {
          + Throws: `dsdl.SDLException` if failed to render glyph
          +/
         Surface render(dchar glyph, Color foreground, Color background = Color(0, 0, 0, 0),
-            RenderQuality quality = RenderQuality.shaded) const @trusted
+                RenderQuality quality = RenderQuality.shaded) const @trusted
         in {
             assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
 
@@ -1150,32 +1151,32 @@ final class Font {
             }
 
             if (background != Color(0, 0, 0, 0)) {
-                assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd, "Only shaded and LCD render "
-                        ~ "quality can have a background color.");
+                assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd,
+                        "Only shaded and LCD render " ~ "quality can have a background color.");
             }
         }
         do {
             SDL_Surface* sdlSurface;
             switch (quality) {
             case RenderQuality.solid:
-                sdlSurface = TTF_RenderGlyph32_Solid(cast(TTF_Font*) this.ttfFont, cast(uint) glyph,
-                    foreground.sdlColor);
+                sdlSurface = TTF_RenderGlyph32_Solid(cast(TTF_Font*) this.ttfFont,
+                        cast(uint) glyph, foreground.sdlColor);
                 break;
 
             case RenderQuality.shaded:
-                sdlSurface = TTF_RenderGlyph32_Shaded(cast(TTF_Font*) this.ttfFont, cast(uint) glyph,
-                    foreground.sdlColor, background.sdlColor);
+                sdlSurface = TTF_RenderGlyph32_Shaded(cast(TTF_Font*) this.ttfFont,
+                        cast(uint) glyph, foreground.sdlColor, background.sdlColor);
                 break;
 
             case RenderQuality.blended:
-                sdlSurface = TTF_RenderGlyph32_Blended(cast(TTF_Font*) this.ttfFont, cast(uint) glyph,
-                    foreground.sdlColor);
+                sdlSurface = TTF_RenderGlyph32_Blended(cast(TTF_Font*) this.ttfFont,
+                        cast(uint) glyph, foreground.sdlColor);
                 break;
 
             case RenderQuality.lcd:
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_20) {
-                    sdlSurface = TTF_RenderGlyph32_LCD(cast(TTF_Font*) this.ttfFont, cast(uint) glyph,
-                        foreground.sdlColor, background.sdlColor);
+                    sdlSurface = TTF_RenderGlyph32_LCD(cast(TTF_Font*) this.ttfFont,
+                            cast(uint) glyph, foreground.sdlColor, background.sdlColor);
                     break;
                 }
                 assert(0);
@@ -1210,7 +1211,7 @@ final class Font {
      + Throws: `dsdl.SDLException` if failed to render text
      +/
     Surface render(string text, Color foreground, Color background = Color(0, 0, 0, 0),
-        RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
+            RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
             assert(dsdl2.ttf.getVersion() >= Version(2, 20));
@@ -1221,8 +1222,8 @@ final class Font {
         }
 
         if (background != Color(0, 0, 0, 0)) {
-            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd, "Only shaded and LCD render quality"
-                    ~ " can have a background color.");
+            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd,
+                    "Only shaded and LCD render quality" ~ " can have a background color.");
         }
     }
     do {
@@ -1233,8 +1234,8 @@ final class Font {
         case RenderQuality.solid:
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
-                    sdlSurface = TTF_RenderUTF8_Solid_Wrapped(cast(TTF_Font*) this.ttfFont, ctext, foreground.sdlColor,
-                        wrapLength);
+                    sdlSurface = TTF_RenderUTF8_Solid_Wrapped(cast(TTF_Font*) this.ttfFont, ctext,
+                            foreground.sdlColor, wrapLength);
                 }
             }
             else {
@@ -1246,20 +1247,20 @@ final class Font {
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
                     sdlSurface = TTF_RenderUTF8_Shaded_Wrapped(cast(TTF_Font*) this.ttfFont, ctext,
-                        foreground.sdlColor, background.sdlColor, wrapLength);
+                            foreground.sdlColor, background.sdlColor, wrapLength);
                 }
             }
             else {
-                sdlSurface = TTF_RenderUTF8_Shaded(cast(TTF_Font*) this.ttfFont, ctext, foreground.sdlColor,
-                    background.sdlColor);
+                sdlSurface = TTF_RenderUTF8_Shaded(cast(TTF_Font*) this.ttfFont, ctext,
+                        foreground.sdlColor, background.sdlColor);
             }
             break;
 
         case RenderQuality.blended:
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
-                    sdlSurface = TTF_RenderUTF8_Blended_Wrapped(cast(TTF_Font*) this.ttfFont, ctext,
-                        foreground.sdlColor, wrapLength);
+                    sdlSurface = TTF_RenderUTF8_Blended_Wrapped(cast(TTF_Font*) this.ttfFont,
+                            ctext, foreground.sdlColor, wrapLength);
                 }
             }
             else {
@@ -1270,12 +1271,12 @@ final class Font {
         case RenderQuality.lcd:
             static if (sdlTTFSupport >= SDLTTFSupport.v2_20) {
                 if (wrapLength != cast(uint)-1) {
-                    sdlSurface = TTF_RenderUTF8_LCD_Wrapped(cast(TTF_Font*) this.ttfFont, ctext, foreground.sdlColor,
-                        background.sdlColor, wrapLength);
+                    sdlSurface = TTF_RenderUTF8_LCD_Wrapped(cast(TTF_Font*) this.ttfFont, ctext,
+                            foreground.sdlColor, background.sdlColor, wrapLength);
                 }
                 else {
-                    sdlSurface = TTF_RenderUTF8_LCD(cast(TTF_Font*) this.ttfFont, ctext, foreground.sdlColor,
-                        background.sdlColor);
+                    sdlSurface = TTF_RenderUTF8_LCD(cast(TTF_Font*) this.ttfFont, ctext,
+                            foreground.sdlColor, background.sdlColor);
                 }
                 break;
             }
@@ -1310,7 +1311,7 @@ final class Font {
      + Throws: `dsdl.SDLException` if failed to render text
      +/
     Surface render(wstring text, Color foreground, Color background = Color(0, 0, 0, 0),
-        RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
+            RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
             assert(dsdl2.ttf.getVersion() >= Version(2, 20));
@@ -1321,8 +1322,8 @@ final class Font {
         }
 
         if (background != Color(0, 0, 0, 0)) {
-            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd, "Only shaded and LCD render quality"
-                    ~ " can have a background color.");
+            assert(quality == RenderQuality.shaded || quality == RenderQuality.lcd,
+                    "Only shaded and LCD render quality" ~ " can have a background color.");
         }
     }
     do {
@@ -1337,27 +1338,26 @@ final class Font {
         case RenderQuality.solid:
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
-                    sdlSurface = TTF_RenderUNICODE_Solid_Wrapped(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                        foreground.sdlColor, wrapLength);
+                    sdlSurface = TTF_RenderUNICODE_Solid_Wrapped(cast(TTF_Font*) this.ttfFont,
+                            cast(ushort*) ctext.ptr, foreground.sdlColor, wrapLength);
                 }
             }
             else {
-                sdlSurface = TTF_RenderUNICODE_Solid(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                    foreground.sdlColor);
+                sdlSurface = TTF_RenderUNICODE_Solid(cast(TTF_Font*) this.ttfFont,
+                        cast(ushort*) ctext.ptr, foreground.sdlColor);
             }
             break;
 
         case RenderQuality.shaded:
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
-                    sdlSurface = TTF_RenderUNICODE_Shaded_Wrapped(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext
-                            .ptr,
-                        foreground.sdlColor, background.sdlColor, wrapLength);
+                    sdlSurface = TTF_RenderUNICODE_Shaded_Wrapped(cast(TTF_Font*) this.ttfFont,
+                            cast(ushort*) ctext.ptr, foreground.sdlColor, background.sdlColor, wrapLength);
                 }
             }
             else {
-                sdlSurface = TTF_RenderUNICODE_Shaded(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                    foreground.sdlColor, background.sdlColor);
+                sdlSurface = TTF_RenderUNICODE_Shaded(cast(TTF_Font*) this.ttfFont,
+                        cast(ushort*) ctext.ptr, foreground.sdlColor, background.sdlColor);
             }
             break;
 
@@ -1365,24 +1365,24 @@ final class Font {
             if (wrapLength != cast(uint)-1) {
                 static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
                     sdlSurface = TTF_RenderUNICODE_Blended_Wrapped(cast(TTF_Font*) this.ttfFont,
-                        cast(ushort*) ctext.ptr, foreground.sdlColor, wrapLength);
+                            cast(ushort*) ctext.ptr, foreground.sdlColor, wrapLength);
                 }
             }
             else {
-                sdlSurface = TTF_RenderUNICODE_Blended(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                    foreground.sdlColor);
+                sdlSurface = TTF_RenderUNICODE_Blended(cast(TTF_Font*) this.ttfFont,
+                        cast(ushort*) ctext.ptr, foreground.sdlColor);
             }
             break;
 
         case RenderQuality.lcd:
             static if (sdlTTFSupport >= SDLTTFSupport.v2_20) {
                 if (wrapLength != cast(uint)-1) {
-                    sdlSurface = TTF_RenderUNICODE_LCD_Wrapped(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                        foreground.sdlColor, background.sdlColor, wrapLength);
+                    sdlSurface = TTF_RenderUNICODE_LCD_Wrapped(cast(TTF_Font*) this.ttfFont,
+                            cast(ushort*) ctext.ptr, foreground.sdlColor, background.sdlColor, wrapLength);
                 }
                 else {
-                    sdlSurface = TTF_RenderUNICODE_LCD(cast(TTF_Font*) this.ttfFont, cast(ushort*) ctext.ptr,
-                        foreground.sdlColor, background.sdlColor);
+                    sdlSurface = TTF_RenderUNICODE_LCD(cast(TTF_Font*) this.ttfFont,
+                            cast(ushort*) ctext.ptr, foreground.sdlColor, background.sdlColor);
                 }
                 break;
             }

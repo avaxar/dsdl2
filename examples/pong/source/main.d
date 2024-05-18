@@ -10,9 +10,10 @@ void main() {
     dsdl2.loadSO();
     dsdl2.init(everything : true);
 
-    auto window = new dsdl2.Window("Pong", [
-        dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
-    ], [800, 600]);
+    // dfmt off
+    auto window = new dsdl2.Window("Pong",
+        [dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined], [800, 600]);
+    // dfmt on
 
     auto rand = Random(unpredictableSeed());
 
@@ -95,8 +96,7 @@ void main() {
 
         // If the ball hits the left or right side of the screen, reset the game
         if (ball.x < 0 || ball.x + ball.width > window.width) {
-            ball.point = dsdl2.FPoint((window.width - ball.width) / 2,
-                (window.size[1] - ball.height) / 2);
+            ball.point = dsdl2.FPoint((window.width - ball.width) / 2, (window.size[1] - ball.height) / 2);
             ballDirection = uniform(0.0, 2.0 * PI, rand);
         }
 

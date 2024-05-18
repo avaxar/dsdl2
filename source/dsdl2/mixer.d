@@ -48,7 +48,7 @@ else {
         }
         else if (current == SDLMixerSupport.noLibrary) {
             throw new SDLException("No SDL2_mixer library found, especially of version " ~ wanted.format(),
-                __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         }
     }
 }
@@ -71,7 +71,7 @@ else {
  + ---
  +/
 void init(bool flac = false, bool mod = false, bool mp3 = false, bool ogg = false, bool mid = false,
-    bool opus = false, bool everything = false) @trusted
+        bool opus = false, bool everything = false) @trusted
 in {
     static if (sdlMixerSupport < SDLMixerSupport.v2_0_4) {
         assert(opus == false);
@@ -214,8 +214,8 @@ static if (sdlMixerSupport >= SDLMixerSupport.v2_0_2) {
      + Throws: `dsdl2.SDLException` if failed to open the selected audio device
      +/
     void openAudioDevice(uint frequency, AudioFormat format, uint channels, uint chunkSize, string deviceName,
-        bool allowFrequencyChange = false, bool allowFormatChange = false, bool allowChannelsChange = false,
-        bool allowSamplesChange = false, bool allowAnyChange = false) @trusted
+            bool allowFrequencyChange = false, bool allowFormatChange = false,
+            bool allowChannelsChange = false, bool allowSamplesChange = false, bool allowAnyChange = false) @trusted
     in {
         assert(dsdl2.mixer.getVersion() >= Version(2, 0, 2));
 
@@ -239,8 +239,8 @@ static if (sdlMixerSupport >= SDLMixerSupport.v2_0_2) {
             changeFlags |= allowSamplesChange ? SDL_AUDIO_ALLOW_SAMPLES_CHANGE : 0;
         }
 
-        if (Mix_OpenAudioDevice(frequency.to!int, cast(ushort) format, channels.to!int, chunkSize.to!int,
-                deviceName.toStringz(), changeFlags) != 0) {
+        if (Mix_OpenAudioDevice(frequency.to!int, cast(ushort) format, channels.to!int,
+                chunkSize.to!int, deviceName.toStringz(), changeFlags) != 0) {
             throw new SDLException;
         }
     }

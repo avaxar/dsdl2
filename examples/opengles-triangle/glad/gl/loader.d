@@ -1,3 +1,5 @@
+// dfmt off
+
 module glad.gl.loader;
 
 
@@ -357,5 +359,4 @@ void load_GL_ES_VERSION_3_0(Loader load) {
 }
 
 
-} /* private */
-
+}

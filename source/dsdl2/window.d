@@ -29,10 +29,11 @@ enum WindowPos : uint {
     undefined = SDL_WINDOWPOS_UNDEFINED /// Wraps `SDL_WINDOWPOS_UNDEFINED` which leaves the window's position undefined
 }
 
-private uint toSDLWindowFlags(bool fullscreen, bool fullscreenDesktop, bool openGL, bool shown, bool hidden,
-    bool borderless, bool resizable, bool minimized, bool maximized, bool inputGrabbed, bool inputFocus,
-    bool mouseFocus, bool foreign, bool allowHighDPI, bool mouseCapture, bool alwaysOnTop, bool skipTaskbar,
-    bool utility, bool tooltip, bool popupMenu, bool vulkan, bool metal, bool mouseGrabbed, bool keyboardGrabbed)
+private uint toSDLWindowFlags(bool fullscreen, bool fullscreenDesktop, bool openGL, bool shown,
+        bool hidden, bool borderless, bool resizable, bool minimized, bool maximized, bool inputGrabbed,
+        bool inputFocus, bool mouseFocus, bool foreign, bool allowHighDPI, bool mouseCapture,
+        bool alwaysOnTop, bool skipTaskbar, bool utility, bool tooltip, bool popupMenu, bool vulkan,
+        bool metal, bool mouseGrabbed, bool keyboardGrabbed)
 in {
     static if (sdlSupport < SDLSupport.v2_0_1) {
         assert(allowHighDPI == false);
@@ -234,27 +235,28 @@ final class Window {
      + Throws: `dsdl2.SDLException` if window creation failed
      +/
     this(string title, uint[2] position, uint[2] size, bool shaped = false, bool fullscreen = false,
-        bool fullscreenDesktop = false, bool openGL = false, bool shown = false, bool hidden = false,
-        bool borderless = false, bool resizable = false, bool minimized = false, bool maximized = false,
-        bool inputGrabbed = false, bool inputFocus = false, bool mouseFocus = false, bool foreign = false,
-        bool allowHighDPI = false, bool mouseCapture = false, bool alwaysOnTop = false, bool skipTaskbar = false,
-        bool utility = false, bool tooltip = false, bool popupMenu = false, bool vulkan = false, bool metal = false,
-        bool mouseGrabbed = false, bool keyboardGrabbed = false) @trusted
+            bool fullscreenDesktop = false, bool openGL = false, bool shown = false, bool hidden = false,
+            bool borderless = false, bool resizable = false, bool minimized = false, bool maximized = false,
+            bool inputGrabbed = false, bool inputFocus = false, bool mouseFocus = false, bool foreign = false,
+            bool allowHighDPI = false, bool mouseCapture = false, bool alwaysOnTop = false,
+            bool skipTaskbar = false, bool utility = false, bool tooltip = false, bool popupMenu = false,
+            bool vulkan = false, bool metal = false, bool mouseGrabbed = false, bool keyboardGrabbed = false) @trusted
     in {
         assert(title !is null);
     }
     do {
-        uint flags = toSDLWindowFlags(fullscreen, fullscreenDesktop, openGL, shown, hidden, borderless, resizable,
-            minimized, maximized, inputGrabbed, inputFocus, mouseFocus, foreign, allowHighDPI, mouseCapture,
-            alwaysOnTop, skipTaskbar, utility, tooltip, popupMenu, vulkan, metal, mouseGrabbed, keyboardGrabbed);
+        uint flags = toSDLWindowFlags(fullscreen, fullscreenDesktop, openGL, shown, hidden,
+                borderless, resizable, minimized,
+                maximized, inputGrabbed, inputFocus, mouseFocus, foreign, allowHighDPI, mouseCapture, alwaysOnTop,
+                skipTaskbar, utility, tooltip, popupMenu, vulkan, metal, mouseGrabbed, keyboardGrabbed);
 
         if (shaped) {
-            this.sdlWindow = SDL_CreateShapedWindow(title.toStringz(), position[0].to!int, position[1].to!int,
-                size[0].to!int, size[1].to!int, flags);
+            this.sdlWindow = SDL_CreateShapedWindow(title.toStringz(), position[0].to!int,
+                    position[1].to!int, size[0].to!int, size[1].to!int, flags);
         }
         else {
-            this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int, position[1].to!int,
-                size[0].to!int, size[1].to!int, flags);
+            this.sdlWindow = SDL_CreateWindow(title.toStringz(), position[0].to!int,
+                    position[1].to!int, size[0].to!int, size[1].to!int, flags);
         }
 
         if (this.sdlWindow is null) {
@@ -363,10 +365,11 @@ final class Window {
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         // If the internal pixel format pointer happens to change, rewire the proxy.
-        if (this.pixelFormatProxy is null ||
-            this.pixelFormatProxy.sdlPixelFormatEnum !is SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow)) {
-            (cast(Window) this).pixelFormatProxy =
-                new PixelFormat(SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow));
+        if (this.pixelFormatProxy is null
+                || this.pixelFormatProxy.sdlPixelFormatEnum !is SDL_GetWindowPixelFormat(
+                    cast(SDL_Window*) this.sdlWindow)) {
+            (cast(Window) this).pixelFormatProxy = new PixelFormat(
+                    SDL_GetWindowPixelFormat(cast(SDL_Window*) this.sdlWindow));
         }
 
         return this.pixelFormatProxy;
@@ -568,8 +571,7 @@ final class Window {
      +   newMinimumSize = new minimum set size of the window in pixels (width and height)
      +/
     void minimumSize(uint[2] newMinimumSize) @property @trusted {
-        SDL_SetWindowMinimumSize(this.sdlWindow, newMinimumSize[0].to!int,
-            newMinimumSize[1].to!int);
+        SDL_SetWindowMinimumSize(this.sdlWindow, newMinimumSize[0].to!int, newMinimumSize[1].to!int);
     }
 
     /++
@@ -592,8 +594,7 @@ final class Window {
      +   newMaximumSize = new maximum set size of the window in pixels (width and height)
      +/
     void maximumSize(uint[2] newMaximumSize) @property @trusted {
-        SDL_SetWindowMaximumSize(this.sdlWindow, newMaximumSize[0].to!int,
-            newMaximumSize[1].to!int);
+        SDL_SetWindowMaximumSize(this.sdlWindow, newMaximumSize[0].to!int, newMaximumSize[1].to!int);
     }
 
     /++
@@ -666,8 +667,7 @@ final class Window {
      + Returns: `true` if the the window is in desktop fullscreen, otherwise `false`
      +/
     bool fullscreenDesktop() const @property @trusted {
-        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP) ==
-            SDL_WINDOW_FULLSCREEN_DESKTOP;
+        return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP) == SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
     /++
@@ -816,8 +816,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 1));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALLOW_HIGHDPI) ==
-                SDL_WINDOW_ALLOW_HIGHDPI;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALLOW_HIGHDPI) == SDL_WINDOW_ALLOW_HIGHDPI;
         }
     }
 
@@ -832,8 +831,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 5));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALWAYS_ON_TOP) ==
-                SDL_WINDOW_ALWAYS_ON_TOP;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_ALWAYS_ON_TOP) == SDL_WINDOW_ALWAYS_ON_TOP;
         }
 
         /++
@@ -846,8 +844,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 5));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_SKIP_TASKBAR) ==
-                SDL_WINDOW_SKIP_TASKBAR;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_SKIP_TASKBAR) == SDL_WINDOW_SKIP_TASKBAR;
         }
 
         /++
@@ -860,8 +857,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 5));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_UTILITY) ==
-                SDL_WINDOW_UTILITY;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_UTILITY) == SDL_WINDOW_UTILITY;
         }
 
         /++
@@ -874,8 +870,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 5));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_TOOLTIP) ==
-                SDL_WINDOW_TOOLTIP;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_TOOLTIP) == SDL_WINDOW_TOOLTIP;
         }
 
         /++
@@ -888,8 +883,7 @@ final class Window {
             assert(getVersion() >= Version(2, 0, 5));
         }
         do {
-            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_POPUP_MENU) ==
-                SDL_WINDOW_POPUP_MENU;
+            return (SDL_GetWindowFlags(cast(SDL_Window*) this.sdlWindow) & SDL_WINDOW_POPUP_MENU) == SDL_WINDOW_POPUP_MENU;
         }
     }
 
@@ -1063,8 +1057,7 @@ final class Window {
      + Throws: `dsdl2.SDLException` if failed to update the window's changes
      +/
     void update(Rect[] rects) @trusted {
-        if (SDL_UpdateWindowSurfaceRects(this.sdlWindow, cast(SDL_Rect*) rects.ptr,
-                rects.length.to!int) != 0) {
+        if (SDL_UpdateWindowSurfaceRects(this.sdlWindow, cast(SDL_Rect*) rects.ptr, rects.length.to!int) != 0) {
             throw new SDLException;
         }
     }
@@ -1406,8 +1399,7 @@ final class Window {
         }
         do {
             uint[2] size = void;
-            SDL_GetWindowSizeInPixels(cast(SDL_Window*) this.sdlWindow, cast(int*)&size[0],
-                cast(int*)&size[1]);
+            SDL_GetWindowSizeInPixels(cast(SDL_Window*) this.sdlWindow, cast(int*)&size[0], cast(int*)&size[1]);
             return size;
         }
     }

@@ -324,8 +324,7 @@ unittest {
  + representation of a pixel
  +/
 final class PixelFormat {
-    static PixelFormat _multiton(SDL_PixelFormatEnum sdlPixelFormatEnum, ubyte minMinorVer = 0,
-        ubyte minPatchVer = 0)()
+    static PixelFormat _multiton(SDL_PixelFormatEnum sdlPixelFormatEnum, ubyte minMinorVer = 0, ubyte minPatchVer = 0)()
     in {
         assert(getVersion() >= Version(2, minMinorVer, minPatchVer));
     }
@@ -338,8 +337,8 @@ final class PixelFormat {
         return pixelFormat;
     }
 
-    static PixelFormat _instantiateIndexed(SDL_PixelFormatEnum sdlPixelFormatEnum, ubyte minMinorVer = 0,
-        ubyte minPatchVer = 0)(Palette palette)
+    static PixelFormat _instantiateIndexed(SDL_PixelFormatEnum sdlPixelFormatEnum,
+            ubyte minMinorVer = 0, ubyte minPatchVer = 0)(Palette palette)
     in {
         assert(getVersion() >= Version(2, minMinorVer, minPatchVer));
         assert(palette !is null);
@@ -501,8 +500,8 @@ final class PixelFormat {
         assert(bitsPerPixel > 0);
     }
     do {
-        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitsPerPixel, rgbaMasks[0], rgbaMasks[1], rgbaMasks[2],
-            rgbaMasks[3]);
+        uint sdlPixelFormatEnum = SDL_MasksToPixelFormatEnum(bitsPerPixel, rgbaMasks[0],
+                rgbaMasks[1], rgbaMasks[2], rgbaMasks[3]);
         if (sdlPixelFormatEnum == SDL_PIXELFORMAT_UNKNOWN) {
             throw new SDLException("Pixel format conversion is not possible", __FILE__, __LINE__);
         }
@@ -609,8 +608,7 @@ final class PixelFormat {
      +/
     Color getRGB(uint pixel) const @trusted {
         Color color = Color(0, 0, 0, 255);
-        SDL_GetRGB(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g,
-            &color.sdlColor.b);
+        SDL_GetRGB(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g, &color.sdlColor.b);
         return color;
     }
 
@@ -624,8 +622,8 @@ final class PixelFormat {
      +/
     Color getRGBA(uint pixel) const @trusted {
         Color color = void;
-        SDL_GetRGBA(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g, &color.sdlColor.b,
-            &color.sdlColor.a);
+        SDL_GetRGBA(pixel, this.sdlPixelFormat, &color.sdlColor.r, &color.sdlColor.g,
+                &color.sdlColor.b, &color.sdlColor.a);
         return color;
     }
 
@@ -638,8 +636,7 @@ final class PixelFormat {
      + Returns: the converted pixel value
      +/
     uint mapRGB(Color color) const @trusted {
-        return SDL_MapRGB(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g,
-            color.sdlColor.b);
+        return SDL_MapRGB(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g, color.sdlColor.b);
     }
 
     /++
@@ -651,8 +648,8 @@ final class PixelFormat {
      + Returns: the converted pixel value
      +/
     uint mapRGBA(Color color) const @trusted {
-        return SDL_MapRGBA(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g, color.sdlColor.b,
-            color.sdlColor.a);
+        return SDL_MapRGBA(this.sdlPixelFormat, color.sdlColor.r, color.sdlColor.g,
+                color.sdlColor.b, color.sdlColor.a);
     }
 
     /++
@@ -714,8 +711,8 @@ final class PixelFormat {
         uint[4] rgbaMasks = void;
         int bitsPerPixel = void;
 
-        if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitsPerPixel, &rgbaMasks[0], &rgbaMasks[1],
-                &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
+        if (SDL_PixelFormatEnumToMasks(this.sdlPixelFormatEnum, &bitsPerPixel, &rgbaMasks[0],
+                &rgbaMasks[1], &rgbaMasks[2], &rgbaMasks[3]) == SDL_FALSE) {
             throw new SDLException;
         }
 
