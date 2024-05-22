@@ -10,4 +10,4 @@
 
 ## Documentation
 
- ddox-generated documentation can be accessed online through this repository's [site](http://avaxar.github.io/dsdl2), or locally by cloning the repository and running `dub -b ddox`.
+ ddox-generated documentation can be accessed online through this repository's [site](http://dsdl2.avaxar.dev), or locally by cloning the repository and running `dub -b ddox`.
