@@ -27,11 +27,13 @@ import dsdl2.event;
 import dsdl2.frect;
 import dsdl2.gl;
 import dsdl2.keyboard;
+import dsdl2.mouse;
 import dsdl2.pixels;
 import dsdl2.rect;
 import dsdl2.renderer;
 import dsdl2.sdl;
 import dsdl2.surface;
+import dsdl2.texture;
 import dsdl2.video;
 import dsdl2.window;
 
