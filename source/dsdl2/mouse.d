@@ -296,7 +296,7 @@ Cursor getDefaultCursor() @trusted {
  + Returns: `true` if cursor is visible, otherwise `false`
  +/
 bool getCursorVisibility() @trusted {
-    return SDL_ShowCursor(SDL_QUERY) != SDL_ENABLE;
+    return SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE;
 }
 
 /++
@@ -307,7 +307,7 @@ bool getCursorVisibility() @trusted {
  + Throws: `dsdl2.SDLException` if failed to set cursor visibility
  +/
 void setCursorVisibility(bool visible) @trusted {
-    if (SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE) != 0) {
+    if (SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE) < 0) {
         throw new SDLException;
     }
 }
