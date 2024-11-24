@@ -4,11 +4,11 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.blend;
+module dsdl.blend;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
+import dsdl.sdl;
 
 import std.format : format;
 
@@ -53,7 +53,7 @@ static if (sdlSupport >= SDLSupport.v2_0_6) {
  +/
 struct BlendMode {
     /++
-     + Preexisting built-in `dsdl2.BlendMode`s from `SDL_BLENDMODE_*` enumeration constants
+     + Preexisting built-in `dsdl.BlendMode`s from `SDL_BLENDMODE_*` enumeration constants
      +/
     static immutable none = BlendMode(SDL_BLENDMODE_NONE);
     static immutable blend = BlendMode(SDL_BLENDMODE_BLEND); /// ditto
@@ -68,7 +68,7 @@ struct BlendMode {
     this() @disable;
 
     /++
-     + Constructs a `dsdl2.BlendMode` from a vanilla `SDL_BlendMode` from bindbc-sdl
+     + Constructs a `dsdl.BlendMode` from a vanilla `SDL_BlendMode` from bindbc-sdl
      +
      + Params:
      +   sdlBlendMode = the `SDL_BlendMode` enumeration
@@ -79,7 +79,7 @@ struct BlendMode {
 
     static if (sdlSupport >= SDLSupport.v2_0_6) {
         /++
-         + Composes a custom `dsdl2.BlendMode` based on certain attributes for blending which wraps
+         + Composes a custom `dsdl.BlendMode` based on certain attributes for blending which wraps
          + `SDL_ComposeCustomBlendMode` (from SDL 2.0.6)
          +
          + Params:
@@ -89,7 +89,7 @@ struct BlendMode {
          +   srcAlphaFactor = multiplier to the alpha component of the source
          +   dstAlphaFactor = multiplier to the color component of the destination
          +   alphaOperation = operation to perform on the multiplied alpha components of the source and destination
-         + Throws: `dsdl2.SDLException` if impossible to compose the `dsdl2.BlendMode`
+         + Throws: `dsdl.SDLException` if impossible to compose the `dsdl.BlendMode`
          +/
         this(BlendFactor srcColorFactor, BlendFactor dstColorFactor, BlendOperation colorOperation,
                 BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation) @trusted
@@ -113,11 +113,11 @@ struct BlendMode {
     }
 
     /++
-     + Formats the `dsdl2.BlendMode` into its construction representation: `"dsdl2.Color(<sdlBlendMode>)"`
+     + Formats the `dsdl.BlendMode` into its construction representation: `"dsdl.Color(<sdlBlendMode>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.BlendMode(%d)".format(this.sdlBlendMode);
+        return "dsdl.BlendMode(%d)".format(this.sdlBlendMode);
     }
 }

@@ -4,11 +4,11 @@
 	],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
-		"dsdl2": {
+		"dsdl": {
 			"path": "../.."
 		}
 	},
-	"description": "The game of pong written in D with dsdl2.",
+	"description": "The game of pong written in D with dsdl.",
 	"buildTypes": {
 		"debug": {
 			"buildOptions-windows": [

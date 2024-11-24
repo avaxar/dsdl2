@@ -4,16 +4,16 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.window;
+module dsdl.window;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.display;
-import dsdl2.pixels;
-import dsdl2.rect;
-import dsdl2.renderer;
-import dsdl2.surface;
+import dsdl.sdl;
+import dsdl.display;
+import dsdl.pixels;
+import dsdl.rect;
+import dsdl.renderer;
+import dsdl.surface;
 
 import core.memory : GC;
 import std.conv : to;
@@ -22,7 +22,7 @@ import std.string : toStringz;
 import std.typecons : Nullable, nullable;
 
 /++
- + D enum that wraps `SDL_WINDOWPOS_*` to specify certain state of position in `dsdl2.Window` construction
+ + D enum that wraps `SDL_WINDOWPOS_*` to specify certain state of position in `dsdl.Window` construction
  +/
 enum WindowPos : uint {
     centered = SDL_WINDOWPOS_CENTERED, /// Wraps `SDL_WINDOWPOS_CENTERED` which sets the window to be in the center
@@ -145,13 +145,13 @@ static if (sdlSupport >= SDLSupport.v2_0_16) {
 /++
  + D class that wraps `SDL_Window` managing a window instance specific to the OS
  +
- + `dsdl2.Window` provides access to creating windows and managing them for rendering. Internally, SDL uses
+ + `dsdl.Window` provides access to creating windows and managing them for rendering. Internally, SDL uses
  + OS functions to summon the window.
  +
  + Example:
  + ---
- + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
- + window.surface.fill(dsdl2.Color(255, 0, 0));
+ + auto window = new dsdl.Window("My Window", [dsdl.WindowPos.centered, dsdl.WindowPos.centered], [800, 600]);
+ + window.surface.fill(dsdl.Color(255, 0, 0));
  + window.update();
  + ---
  +/
@@ -164,7 +164,7 @@ final class Window {
     @system SDL_Window* sdlWindow = null; /// Internal `SDL_Window` pointer
 
     /++
-     + Constructs a `dsdl2.Window` from a vanilla `SDL_Window*` from bindbc-sdl
+     + Constructs a `dsdl.Window` from a vanilla `SDL_Window*` from bindbc-sdl
      +
      + Params:
      +   sdlWindow = the `SDL_Window` pointer to manage
@@ -186,7 +186,7 @@ final class Window {
      +
      + Params:
      +   nativeHandle = pointer to the native OS window
-     + Throws: `dsdl2.SDLException` if window creation failed
+     + Throws: `dsdl.SDLException` if window creation failed
      +/
     this(void* nativeHandle) @system
     in {
@@ -205,7 +205,7 @@ final class Window {
      + Params:
      +   title = title given to the shown window
      +   position = top-left position of the window in the desktop environment (pair of two `uint`s or flags from
-     +              `dsdl2.WindowPos`)
+     +              `dsdl.WindowPos`)
      +   size = size of the window in pixels
      +   shaped = `true` to use `SDL_CreateShapedWindow`; `false` to use `SDL_CreateWindow` instead
      +   fullscreen = adds `SDL_WINDOW_FULLSCREEN` flag
@@ -232,7 +232,7 @@ final class Window {
      +   metal = adds `SDL_WINDOW_METAL` flag (from SDL 2.0.6)
      +   mouseGrabbed = adds `SDL_WINDOW_MOUSE_GRABBED` flag (from SDL 2.0.16)
      +   keyboardGrabbed = adds `SDL_WINDOW_KEYBOARD_GRABBED` flag (from SDL 2.0.16)
-     + Throws: `dsdl2.SDLException` if window creation failed
+     + Throws: `dsdl.SDLException` if window creation failed
      +/
     this(string title, uint[2] position, uint[2] size, bool shaped = false, bool fullscreen = false,
             bool fullscreenDesktop = false, bool openGL = false, bool shown = false, bool hidden = false,
@@ -288,7 +288,7 @@ final class Window {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Window`
+     + Gets the hash of the `dsdl.Window`
      +
      + Returns: unique hash for the instance being the pointer of the internal `SDL_Window` pointer
      +/
@@ -297,16 +297,16 @@ final class Window {
     }
 
     /++
-     + Formats the `dsdl2.Window` into its construction representation: `"dsdl2.Window(<sdlWindow>)"`
+     + Formats the `dsdl.Window` into its construction representation: `"dsdl.Window(<sdlWindow>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Window(0x%x)".format(this.sdlWindow);
+        return "dsdl.Window(0x%x)".format(this.sdlWindow);
     }
 
     /++
-     + Wraps `SDL_GetWindowID` which gets the internal window ID of the `dsdl2.Window`
+     + Wraps `SDL_GetWindowID` which gets the internal window ID of the `dsdl.Window`
      +
      + Returns: `uint` of the internal window ID
      +/
@@ -317,8 +317,8 @@ final class Window {
     /++
      + Wraps `SDL_GetWindowDisplayIndex` which gets the display where the center of the window is located
      +
-     + Returns: `dsdl2.Display` of the display the window is located
-     + Throws: `dsdl2.SDLException` if failed to get the display
+     + Returns: `dsdl.Display` of the display the window is located
+     + Throws: `dsdl.SDLException` if failed to get the display
      +/
     const(Display) display() const @property @trusted {
         int index = SDL_GetWindowDisplayIndex(cast(SDL_Window*) this.sdlWindow);
@@ -332,8 +332,8 @@ final class Window {
     /++
      + Wraps `SDL_GetWindowDisplayMode` which gets the window's display mode attributes
      +
-     + Returns: `dsdl2.DisplayMode` storing the attributes
-     + Throws: `dsdl2.SDLException` if failed to get the display mode
+     + Returns: `dsdl.DisplayMode` storing the attributes
+     + Throws: `dsdl.SDLException` if failed to get the display mode
      +/
     DisplayMode displayMode() const @property @trusted {
         SDL_DisplayMode sdlMode = void;
@@ -348,8 +348,8 @@ final class Window {
      + Wraps `SDL_SetWindowDisplayMode` which sets new display mode attributes to the window
      +
      + Params:
-     +   newDisplayMode = `dsdl2.DisplayMode` containing the desired attributes
-     + Throws: `dsdl2.SDLException` if failed to set the display mode
+     +   newDisplayMode = `dsdl.DisplayMode` containing the desired attributes
+     + Throws: `dsdl.SDLException` if failed to set the display mode
      +/
     void displayMode(DisplayMode newDisplayMode) @property @trusted {
         SDL_DisplayMode sdlMode = newDisplayMode.sdlDisplayMode;
@@ -359,9 +359,9 @@ final class Window {
     }
 
     /++
-     + Gets the `dsdl2.PixelFormat` used for pixel data of the window
+     + Gets the `dsdl.PixelFormat` used for pixel data of the window
      +
-     + Returns: read-only `dsdl2.PixelFormat` instance
+     + Returns: read-only `dsdl.PixelFormat` instance
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         // If the internal pixel format pointer happens to change, rewire the proxy.
@@ -378,7 +378,7 @@ final class Window {
     /++
      + Wraps `SDL_GetRenderer` which gets the renderer of the window
      +
-     + Returns: `dsdl2.Renderer` proxy
+     + Returns: `dsdl.Renderer` proxy
      +/
     inout(Renderer) renderer() inout @property @trusted {
         if (SDL_Renderer* sdlRenderer = SDL_GetRenderer(cast(SDL_Window*) this.sdlWindow)) {
@@ -412,7 +412,7 @@ final class Window {
      + Wraps `SDL_SetWindowIcon` which sets a new icon to the window
      +
      + Params:
-     +   newIcon = `dsdl2.Surface` of the new icon
+     +   newIcon = `dsdl.Surface` of the new icon
      +/
     void icon(Surface newIcon) @property @trusted
     in {
@@ -653,7 +653,7 @@ final class Window {
      +
      + Params:
      +   newFullscreen = `true` to make the window fullscreen, otherwise `false`
-     + Throws: `dsdl2.SDLException` if failed to set the window's fullscreen mode
+     + Throws: `dsdl.SDLException` if failed to set the window's fullscreen mode
      +/
     void fullscreen(bool newFullscreen) @property @trusted {
         if (SDL_SetWindowFullscreen(this.sdlWindow, newFullscreen ? SDL_WINDOW_FULLSCREEN : 0) != 0) {
@@ -920,7 +920,7 @@ final class Window {
      +
      + Params:
      +   newBrightness = `float` value specifying the window's brightness from `0.0` (darkest) to `1.0` (brightest)
-     + Throws: `dsdl2.SDLException` if failed to set the window's brightness value
+     + Throws: `dsdl.SDLException` if failed to set the window's brightness value
      +/
     void brightness(float newBrightness) @property @trusted {
         if (SDL_SetWindowBrightness(this.sdlWindow, newBrightness) != 0) {
@@ -984,8 +984,8 @@ final class Window {
     /++
      + Wraps `SDL_GetWindowSurface` which gets the window's surface for software rendering
      +
-     + Returns: `dsdl2.Surface` proxy to the window's surface
-     + Throws: `dsdl2.SDLException` if failed to get the window's surface
+     + Returns: `dsdl.Surface` proxy to the window's surface
+     + Throws: `dsdl.SDLException` if failed to get the window's surface
      +/
     inout(Surface) surface() inout @property @trusted {
         SDL_Surface* surfacePtr = SDL_GetWindowSurface(cast(SDL_Window*) this.sdlWindow);
@@ -1010,7 +1010,7 @@ final class Window {
          + Wraps `SDL_DestroyWindowSurface` (from SDL 2.28) which destructs the underlying associated surface
          + of the window
          +
-         + Throws: `dsdl2.SDLException` if failed to destruct the surface
+         + Throws: `dsdl.SDLException` if failed to destruct the surface
          +/
         void surface(typeof(null) _) @property @trusted
         in {
@@ -1040,7 +1040,7 @@ final class Window {
     /++
      + Wraps `SDL_UpdateWindowSurface` which makes the changes to the window's surface current
      +
-     + Throws: `dsdl2.SDLException` if failed to update the window's changes
+     + Throws: `dsdl.SDLException` if failed to update the window's changes
      +/
     void update() @trusted {
         if (SDL_UpdateWindowSurface(this.sdlWindow) != 0) {
@@ -1050,11 +1050,11 @@ final class Window {
 
     /++
      + Wraps `SDL_UpdateWindowSurfaceRects` which makes the changes of certain parts of the window surface
-     + as defined by a list of `dsdl2.Rect`s current
+     + as defined by a list of `dsdl.Rect`s current
      +
      + Params:
-     +   rects = array of `dsdl2.Rect`s defining parts of the window surface to update
-     + Throws: `dsdl2.SDLException` if failed to update the window's changes
+     +   rects = array of `dsdl.Rect`s defining parts of the window surface to update
+     + Throws: `dsdl.SDLException` if failed to update the window's changes
      +/
     void update(Rect[] rects) @trusted {
         if (SDL_UpdateWindowSurfaceRects(this.sdlWindow, cast(SDL_Rect*) rects.ptr, rects.length.to!int) != 0) {
@@ -1123,7 +1123,7 @@ final class Window {
         /++
          + Wraps `SDL_SetWindowInputFocus` (from SDL 2.0.5) which focuses the window to be in reach to the user
          +
-         + Throws: `dsdl2.SDLException` if failed to focus the window
+         + Throws: `dsdl.SDLException` if failed to focus the window
          +/
         void focus() @trusted
         in {
@@ -1141,7 +1141,7 @@ final class Window {
          +
          + Params:
          +   parent = the parent window which owns the window as a modal
-         + Throws: `dsdl2.SDLException` if failed to set the window as modal
+         + Throws: `dsdl.SDLException` if failed to set the window as modal
          +/
         void modalFor(Window parent) @trusted
         in {
@@ -1158,7 +1158,7 @@ final class Window {
          + Wraps `SDL_GetWindowOpacity` (from SDL 2.0.5) which gets the opacity of the window
          +
          + Returns: `float` indicating the opacity of the window from `0.0` (transparent) to `1.0` (opaque)
-         + Throws: `dsdl2.SDLException` if failed to get the window's opacity
+         + Throws: `dsdl.SDLException` if failed to get the window's opacity
          +/
         float opacity() const @property @trusted
         in {
@@ -1178,7 +1178,7 @@ final class Window {
          +
          + Params:
          +   newOpacity = `float` indicating the opacity of the window from `0.0` (transparent) to `1.0` (opaque)
-         + Throws: `dsdl2.SDLException` if failed to set the window's opacity
+         + Throws: `dsdl.SDLException` if failed to set the window's opacity
          +/
         void opacity(float newOpacity) @property @trusted
         in {
@@ -1197,7 +1197,7 @@ final class Window {
          +
          + Params:
          +   operation = flashing operation to do
-         + Throws: `dsdl2.SDLException` if failed to flash the window
+         + Throws: `dsdl.SDLException` if failed to flash the window
          +/
         void flash(FlashOperation operation) @trusted
         in {
@@ -1289,7 +1289,7 @@ final class Window {
          + screen the window is currently on
          +
          + Returns: untyped array buffer of the raw ICC profile data
-         + Throws `dsdl2.SDLException` if failed to obtain the ICC profile data
+         + Throws `dsdl.SDLException` if failed to obtain the ICC profile data
          +/
         void[] iccProfile() const @property @trusted
         in {
@@ -1313,7 +1313,7 @@ final class Window {
         /++
          + Wraps `SDL_GetWindowMouseRect` (from SDL 2.0.18) which gets the window's mouse confinement rectangle
          +
-         + Returns: `dsdl2.Rect` of the mouse's confinement rectangle in the window
+         + Returns: `dsdl.Rect` of the mouse's confinement rectangle in the window
          +/
         Nullable!Rect mouseRect() const @property @trusted
         in {
@@ -1333,9 +1333,9 @@ final class Window {
          + Wraps `SDL_SetWindowMouseRect` (from SDL 2.0.18) which sets the window's mouse confinement rectangle
          +
          + Params:
-         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the mouse
+         +   newMouseRect = `dsdl.Rect` specifying the rectangle in window coordinate space to confine the mouse
          +                  pointer in
-         + Throws: `dsdl2.SDLException` if failed to set the confinement
+         + Throws: `dsdl.SDLException` if failed to set the confinement
          +/
         void mouseRect(Rect newMouseRect) @property @trusted
         in {
@@ -1351,7 +1351,7 @@ final class Window {
          + Acts as `SDL_SetWindowMouseRect(window, NULL)` (from SDL 2.0.18) which resets the window's mouse
          + confinement rectangle
          +
-         + Throws: `dsdl2.SDLException` if failed to reset the confinement
+         + Throws: `dsdl.SDLException` if failed to reset the confinement
          +/
         void mouseRect(typeof(null) _) @property @trusted
         in {
@@ -1368,9 +1368,9 @@ final class Window {
          + confinement rectangle
          +
          + Params:
-         +   newMouseRect = `dsdl2.Rect` specifying the rectangle in window coordinate space to confine the mouse
+         +   newMouseRect = `dsdl.Rect` specifying the rectangle in window coordinate space to confine the mouse
          +                  pointer in; `null` to reset the confinement
-         + Throws: `dsdl2.SDLException` if failed to set or reset the confinement
+         + Throws: `dsdl.SDLException` if failed to set or reset the confinement
          +/
         void mouseRect(Nullable!Rect newMouseRect) @property @trusted
         in {

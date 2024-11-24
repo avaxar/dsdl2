@@ -4,11 +4,11 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.video;
+module dsdl.video;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
+import dsdl.sdl;
 
 import std.conv : to;
 import std.string : toStringz;
@@ -18,7 +18,7 @@ import std.string : toStringz;
  +
  + Params:
  +   driverName = the name of the video driver
- + Throws: `dsdl2.SDLException` if the video driver could not be initialized
+ + Throws: `dsdl.SDLException` if the video driver could not be initialized
  +/
 void initVideo(string driverName) @trusted {
     if (SDL_VideoInit(driverName.toStringz()) != 0) {
@@ -37,7 +37,7 @@ void quitVideo() @trusted {
  + Wraps `SDL_GetNumVideoDrivers` and `SDL_GetVideoDriver` which return a list of available video drivers
  +
  + Returns: names of the available video drivers
- + Throws: `dsdl2.SDLException` if failed to get the available video drivers
+ + Throws: `dsdl.SDLException` if failed to get the available video drivers
  +/
 const(string[]) getVideoDrivers() @trusted {
     int numDrivers = SDL_GetNumVideoDrivers();

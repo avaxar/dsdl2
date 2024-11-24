@@ -4,7 +4,7 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.sdl;
+module dsdl.sdl;
 @safe:
 
 import bindbc.sdl;
@@ -14,7 +14,7 @@ import std.format : format;
 import std.string : toStringz;
 
 /++
- + SDL exception generated from `SDL_GetError()` or dsdl2-specific exceptions
+ + SDL exception generated from `SDL_GetError()` or dsdl-specific exceptions
  +/
 final class SDLException : Exception {
     this(string msg, string file = __FILE__, size_t line = __LINE__) {
@@ -37,7 +37,7 @@ else {
      +
      + Params:
      +   libName = name or path to look the SDL2 SO/DLL for, otherwise `null` for default searching path
-     + Throws: `dsdl2.SDLException` if failed to find the library
+     + Throws: `dsdl.SDLException` if failed to find the library
      +/
     void loadSO(string libName = null) @trusted {
         SDLSupport current = libName is null ? loadSDL() : loadSDL(libName.toStringz());
@@ -49,7 +49,7 @@ else {
         if (current == SDLSupport.badLibrary) {
             import std.stdio : writeln;
 
-            writeln("WARNING: dsdl2 expects SDL ", wanted.format(), ", but got ", getVersion().format(), ".");
+            writeln("WARNING: dsdl expects SDL ", wanted.format(), ", but got ", getVersion().format(), ".");
         }
         else if (current == SDLSupport.noLibrary) {
             throw new SDLException("No SDL2 library found, especially of version " ~ wanted.format(),
@@ -104,10 +104,10 @@ do {
  +   everything = selects the `SDL_INIT_EVERYTHING` subsystem
  +   noParachute = selects the `SDL_INIT_NOPARACHUTE` subsystem
  +   sensor = selects the `SDL_INIT_SENSOR` subsystem (from SDL 2.0.9)
- + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
+ + Throws: `dsdl.SDLException` if any selected subsystem failed to initialize
  + Example:
  + ---
- + dsdl2.init(everything : true);
+ + dsdl.init(everything : true);
  + ---
  +/
 void init(bool timer = false, bool audio = false, bool video = false, bool joystick = false,
@@ -186,8 +186,8 @@ void quit(bool timer = false, bool audio = false, bool video = false, bool joyst
  + Returns: `true` if the selected subsystem(s) is initialized, otherwise `false`
  + Example:
  + ---
- + dsdl2.init();
- + assert(dsdl2.wasInit(video : true) == true);
+ + dsdl.init();
+ + assert(dsdl.wasInit(video : true) == true);
  + ---
  +/
 bool wasInit(bool timer = false, bool audio = false, bool video = false, bool joystick = false,
@@ -205,7 +205,7 @@ bool wasInit(bool timer = false, bool audio = false, bool video = false, bool jo
  + Example:
  + ---
  + import std.stdio;
- + writeln("We're currently using SDL version ", dsdl2.getVersion().format());
+ + writeln("We're currently using SDL version ", dsdl.getVersion().format());
  + ---
  +/
 struct Version {
@@ -214,7 +214,7 @@ struct Version {
     this() @disable;
 
     /++
-     + Constructs a `dsdl2.Version` from a vanilla `SDL_version` from bindbc-sdl
+     + Constructs a `dsdl.Version` from a vanilla `SDL_version` from bindbc-sdl
      +
      + Params:
      +   sdlVersion = the `SDL_version` struct
@@ -224,7 +224,7 @@ struct Version {
     }
 
     /++
-     + Constructs a `dsdl2.Version` by feeding in `major`, `minor`, and `patch` version numbers
+     + Constructs a `dsdl.Version` by feeding in `major`, `minor`, and `patch` version numbers
      +
      + Params:
      +   major = major version number
@@ -238,7 +238,7 @@ struct Version {
     }
 
     /++
-     + Compares two `dsdl2.Version`s from chronology
+     + Compares two `dsdl.Version`s from chronology
      +/
     int opCmp(Version other) const {
         if (this.major != other.major) {
@@ -253,51 +253,51 @@ struct Version {
     }
     ///
     unittest {
-        assert(dsdl2.Version(2, 0, 0) == dsdl2.Version(2, 0, 0));
-        assert(dsdl2.Version(2, 0, 1) > dsdl2.Version(2, 0, 0));
-        assert(dsdl2.Version(2, 0, 1) < dsdl2.Version(2, 0, 2));
-        assert(dsdl2.Version(2, 0, 2) >= dsdl2.Version(2, 0, 1));
-        assert(dsdl2.Version(2, 0, 2) <= dsdl2.Version(2, 0, 2));
+        assert(dsdl.Version(2, 0, 0) == dsdl.Version(2, 0, 0));
+        assert(dsdl.Version(2, 0, 1) > dsdl.Version(2, 0, 0));
+        assert(dsdl.Version(2, 0, 1) < dsdl.Version(2, 0, 2));
+        assert(dsdl.Version(2, 0, 2) >= dsdl.Version(2, 0, 1));
+        assert(dsdl.Version(2, 0, 2) <= dsdl.Version(2, 0, 2));
     }
 
     /++
-     + Formats the `dsdl2.Version` into its construction representation: `"dsdl2.Version(<major>, <minor>, <patch>)"`
+     + Formats the `dsdl.Version` into its construction representation: `"dsdl.Version(<major>, <minor>, <patch>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.Version(%d, %d, %d)".format(this.major, this.minor, this.patch);
+        return "dsdl.Version(%d, %d, %d)".format(this.major, this.minor, this.patch);
     }
 
     /++
-     + Proxy to the major version value of the `dsdl2.Version`
+     + Proxy to the major version value of the `dsdl.Version`
      +
-     + Returns: major version value value of the `dsdl2.Version`
+     + Returns: major version value value of the `dsdl.Version`
      +/
     ref inout(ubyte) major() return inout @property {
         return this.sdlVersion.major;
     }
 
     /++
-     + Proxy to the minor version value of the `dsdl2.Version`
+     + Proxy to the minor version value of the `dsdl.Version`
      +
-     + Returns: minor version value value of the `dsdl2.Version`
+     + Returns: minor version value value of the `dsdl.Version`
      +/
     ref inout(ubyte) minor() return inout @property {
         return this.sdlVersion.minor;
     }
 
     /++
-     + Proxy to the patch version value of the `dsdl2.Version`
+     + Proxy to the patch version value of the `dsdl.Version`
      +
-     + Returns: patch version value value of the `dsdl2.Version`
+     + Returns: patch version value value of the `dsdl.Version`
      +/
     ref inout(ubyte) patch() return inout @property {
         return this.sdlVersion.patch;
     }
 
     /++
-     + Gets the static array representation of the `dsdl2.Version`
+     + Gets the static array representation of the `dsdl.Version`
      +
      + Returns: `major`, `minor`, `patch` as an array
      +/
@@ -306,7 +306,7 @@ struct Version {
     }
 
     /++
-     + Formats the `dsdl2.Version` into `string`: `"<major>.<minor>.<patch>"`
+     + Formats the `dsdl.Version` into `string`: `"<major>.<minor>.<patch>"`
      +
      + Returns: the formatted `string`
      +/
@@ -316,21 +316,21 @@ struct Version {
 }
 ///
 unittest {
-    auto minimumVersion = dsdl2.Version(2, 0, 0);
-    auto ourVersion = dsdl2.getVersion();
+    auto minimumVersion = dsdl.Version(2, 0, 0);
+    auto ourVersion = dsdl.getVersion();
     assert(ourVersion >= minimumVersion);
 }
 ///
 unittest {
-    assert(dsdl2.Version(2, 0, 2) > dsdl2.Version(2, 0, 0));
-    assert(dsdl2.Version(2, 2, 0) >= dsdl2.Version(2, 0, 2));
-    assert(dsdl2.Version(3, 0, 0) >= dsdl2.Version(2, 2, 0));
+    assert(dsdl.Version(2, 0, 2) > dsdl.Version(2, 0, 0));
+    assert(dsdl.Version(2, 2, 0) >= dsdl.Version(2, 0, 2));
+    assert(dsdl.Version(3, 0, 0) >= dsdl.Version(2, 2, 0));
 }
 
 /++
  + Wraps `SDL_GetVersion` which gets the version of the linked SDL2 library
  +
- + Returns: `dsdl2.Version` of the linked SDL2 library
+ + Returns: `dsdl.Version` of the linked SDL2 library
  +/
 Version getVersion() @trusted {
     Version ver = void;
@@ -365,7 +365,7 @@ enum HintPriority : SDL_HintPriority {
  + Params:
  +   name = name of the hint
  +   value = value to set the hint as
- +   priority = priority of the hint configuration (by default, `dsdl2.HintPriority.normal`)
+ +   priority = priority of the hint configuration (by default, `dsdl.HintPriority.normal`)
  +
  + Returns: `true` if the hint was set, `false` otherwise
  +/

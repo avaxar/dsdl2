@@ -1,12 +1,12 @@
-![dsdl2 logo](https://code.dlang.org/packages/dsdl2/logo)
+![dsdl logo](https://code.dlang.org/packages/dsdl/logo)
 
-# dsdl2
+# dsdl
 
  An object-oriented wrapper for SDL2 in the D programming language utilizing high level programming constructs compatible with `@safe` code, accompanied with the [bindbc-sdl](https://code.dlang.org/packages/bindbc-sdl) binding.
 
 ## Use
 
- The recommended way of using this library in your project is to add it to your dub project. dsdl2 has been published in the [dub package registry](https://code.dlang.org/packages/dsdl2). A simple `dub add dsdl2` would do.
+ The recommended way of using this library in your project is to add it to your dub project. dsdl has been published in the [dub package registry](https://code.dlang.org/packages/dsdl). A simple `dub add dsdl` would do.
 
 ## Missing Features
 
@@ -17,4 +17,4 @@
 
 ## Documentation
 
- ddox-generated documentation can be accessed online through this repository's [site](http://dsdl2.avaxar.dev), or locally by cloning the repository and running `dub -b ddox`.
+ ddox-generated documentation can be accessed online through this repository's [site](http://dsdl.avaxar.dev), or locally by cloning the repository and running `dub -b ddox`.

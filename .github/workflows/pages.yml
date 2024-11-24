@@ -39,7 +39,7 @@ jobs:
       - name: Generate ddox
         run: |
           dub build -b ddox
-          cp ./docs/dsdl2.html ./docs/index.html
+          cp ./docs/dsdl.html ./docs/index.html
           mv ./docs ./_site
 
       - name: Upload artifact

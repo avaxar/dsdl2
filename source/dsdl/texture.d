@@ -4,17 +4,17 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.texture;
+module dsdl.texture;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.blend;
-import dsdl2.rect;
-import dsdl2.frect;
-import dsdl2.pixels;
-import dsdl2.renderer;
-import dsdl2.surface;
+import dsdl.sdl;
+import dsdl.blend;
+import dsdl.rect;
+import dsdl.frect;
+import dsdl.pixels;
+import dsdl.renderer;
+import dsdl.surface;
 
 import core.memory : GC;
 import std.conv : to;
@@ -49,16 +49,16 @@ static if (sdlSupport >= SDLSupport.v2_0_12) {
 /++
  + D class that wraps `SDL_Texture` storing textures in the VRAM
  +
- + `dsdl2.Texture` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
- + GPU RAM (VRAM) according to its defined `dsdl2.PixelFormat`. A `dsdl2.Texture` is associated with its
- + `dsdl2.Renderer`, and can only be operated with/by it.
+ + `dsdl.Texture` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
+ + GPU RAM (VRAM) according to its defined `dsdl.PixelFormat`. A `dsdl.Texture` is associated with its
+ + `dsdl.Renderer`, and can only be operated with/by it.
  +
  + Example:
  + ---
- + auto renderer = new dsdl2.Renderer(...);
- + auto surface = new dsdl2.Surface(...);
+ + auto renderer = new dsdl.Renderer(...);
+ + auto surface = new dsdl.Surface(...);
  +
- + auto texture = new dsdl2.Texture(renderer, surface);
+ + auto texture = new dsdl.Texture(renderer, surface);
  + ---
  +/
 final class Texture {
@@ -69,7 +69,7 @@ final class Texture {
     @system SDL_Texture* sdlTexture; /// Internal `SDL_Texture` pointer
 
     /++
-     + Constructs a `dsdl2.Texture` from a vanilla `SDL_Texture*` from bindbc-sdl
+     + Constructs a `dsdl.Texture` from a vanilla `SDL_Texture*` from bindbc-sdl
      +
      + Params:
      +   sdlTexture = the `SDL_Texture` pointer to manage
@@ -87,14 +87,14 @@ final class Texture {
     }
 
     /++
-     + Creates a blank `dsdl2.Texture` in the VRAM, which wraps `SDL_CreateTexture`
+     + Creates a blank `dsdl.Texture` in the VRAM, which wraps `SDL_CreateTexture`
      +
      + Params:
-     +   renderer = `dsdl2.Renderer` the texture belongs to
-     +   pixelFormat = `dsdl2.PixelFormat` that the texture pixel data is stored as
-     +   access = `dsdl2.TextureAccess` enumeration which indicates its access rule
+     +   renderer = `dsdl.Renderer` the texture belongs to
+     +   pixelFormat = `dsdl.PixelFormat` that the texture pixel data is stored as
+     +   access = `dsdl.TextureAccess` enumeration which indicates its access rule
      +   size = the size of the texture (width and height)
-     + Throws: `dsdl2.SDLException` if creation failed
+     + Throws: `dsdl.SDLException` if creation failed
      +/
     this(Renderer renderer, PixelFormat pixelFormat, TextureAccess access, uint[2] size) @trusted
     in {
@@ -110,12 +110,12 @@ final class Texture {
     }
 
     /++
-     + Creates a `dsdl2.Texture` in the VRAM from a `dsdl2.Surface`, which wraps `SDL_CreateTextureFromSurface`
+     + Creates a `dsdl.Texture` in the VRAM from a `dsdl.Surface`, which wraps `SDL_CreateTextureFromSurface`
      +
      + Params:
-     +   renderer = `dsdl2.Renderer` the texture belongs to
-     +   surface = `dsdl2.Surface` for its pixel data to be copied over to the texture
-     + Throws: `dsdl2.SDLException` if creation failed
+     +   renderer = `dsdl.Renderer` the texture belongs to
+     +   surface = `dsdl.Surface` for its pixel data to be copied over to the texture
+     + Throws: `dsdl.SDLException` if creation failed
      +/
     this(Renderer renderer, Surface surface) @trusted
     in {
@@ -153,7 +153,7 @@ final class Texture {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Texture`
+     + Gets the hash of the `dsdl.Texture`
      +
      + Returns: unique hash for the instance being the pointer of the internal `SDL_Texture` pointer
      +/
@@ -162,19 +162,19 @@ final class Texture {
     }
 
     /++
-     + Formats the `dsdl2.Texture` into its construction representation: `"dsdl2.Texture(<sdlTexture>)"`
+     + Formats the `dsdl.Texture` into its construction representation: `"dsdl.Texture(<sdlTexture>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Texture(0x%x)".format(this.sdlTexture);
+        return "dsdl.Texture(0x%x)".format(this.sdlTexture);
     }
 
     /++
-     + Wraps `SDL_QueryTexture` which gets the `dsdl2.PixelFormat` of the `dsdl2.Texture`
+     + Wraps `SDL_QueryTexture` which gets the `dsdl.PixelFormat` of the `dsdl.Texture`
      +
-     + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Texture`
-     + Throws: `dsdl2.SDLException` if failed to query the information
+     + Returns: `const` proxy to the `dsdl.PixelFormat` of the `dsdl.Texture`
+     + Throws: `dsdl.SDLException` if failed to query the information
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         uint sdlPixelFormatEnum = void;
@@ -191,10 +191,10 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_QueryTexture` which gets the `dsdl2.TextureAccess` of the `dsdl2.Texture`
+     + Wraps `SDL_QueryTexture` which gets the `dsdl.TextureAccess` of the `dsdl.Texture`
      +
-     + Returns: `dsdl2.TextureAccess` of the `dsdl2.Texture`
-     + Throws: `dsdl2.SDLException` if failed to query the information
+     + Returns: `dsdl.TextureAccess` of the `dsdl.Texture`
+     + Throws: `dsdl.SDLException` if failed to query the information
      +/
     TextureAccess access() const @property @trusted {
         TextureAccess texAccess = void;
@@ -206,10 +206,10 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_QueryTexture` which gets the width of the `dsdl2.Texture` in pixels
+     + Wraps `SDL_QueryTexture` which gets the width of the `dsdl.Texture` in pixels
      +
-     + Returns: width of the `dsdl2.Texture` in pixels
-     + Throws: `dsdl2.SDLException` if failed to query the information
+     + Returns: width of the `dsdl.Texture` in pixels
+     + Throws: `dsdl.SDLException` if failed to query the information
      +/
     uint width() const @property @trusted {
         uint w = void;
@@ -221,10 +221,10 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_QueryTexture` which gets the height of the `dsdl2.Texture` in pixels
+     + Wraps `SDL_QueryTexture` which gets the height of the `dsdl.Texture` in pixels
      +
-     + Returns: height of the `dsdl2.Texture` in pixels
-     + Throws: `dsdl2.SDLException` if failed to query the information
+     + Returns: height of the `dsdl.Texture` in pixels
+     + Throws: `dsdl.SDLException` if failed to query the information
      +/
     uint height() const @property @trusted {
         uint h = void;
@@ -236,10 +236,10 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_QueryTexture` which gets the size of the `dsdl2.Texture` in pixels
+     + Wraps `SDL_QueryTexture` which gets the size of the `dsdl.Texture` in pixels
      +
-     + Returns: array of width and height of the `dsdl2.Texture` in pixels
-     + Throws: `dsdl2.SDLException` if failed to query the information
+     + Returns: array of width and height of the `dsdl.Texture` in pixels
+     + Throws: `dsdl.SDLException` if failed to query the information
      +/
     uint[2] size() const @property @trusted {
         uint[2] wh = void;
@@ -251,10 +251,10 @@ final class Texture {
     }
 
     /++
-     + Gets the color and alpha multipliers of the `dsdl2.Texture` that wraps `SDL_GetTextureColorMod` and
+     + Gets the color and alpha multipliers of the `dsdl.Texture` that wraps `SDL_GetTextureColorMod` and
      + `SDL_GetTextureAlphaMod`
      +
-     + Returns: color and alpha multipliers of the `dsdl2.Texture`
+     + Returns: color and alpha multipliers of the `dsdl.Texture`
      +/
     Color mod() const @property @trusted {
         Color multipliers = void;
@@ -265,11 +265,11 @@ final class Texture {
     }
 
     /++
-     + Sets the color and alpha multipliers of the `dsdl2.Texture` that wraps `SDL_SetTextureColorMod` and
+     + Sets the color and alpha multipliers of the `dsdl.Texture` that wraps `SDL_SetTextureColorMod` and
      + `SDL_SetTextureAlphaMod`
      +
      + Params:
-     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
+     +   newMod = `dsdl.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
      +/
     void mod(Color newMod) @property @trusted {
         SDL_SetTextureColorMod(this.sdlTexture, newMod.r, newMod.g, newMod.b);
@@ -277,9 +277,9 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_GetTextureColorMod` which gets the color multipliers of the `dsdl2.Texture`
+     + Wraps `SDL_GetTextureColorMod` which gets the color multipliers of the `dsdl.Texture`
      +
-     + Returns: color multipliers of the `dsdl2.Texture`
+     + Returns: color multipliers of the `dsdl.Texture`
      +/
     ubyte[3] colorMod() const @property @trusted {
         ubyte[3] rgbMod = void;
@@ -288,7 +288,7 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_SetTextureColorMod` which sets the color multipliers of the `dsdl2.Texture`
+     + Wraps `SDL_SetTextureColorMod` which sets the color multipliers of the `dsdl.Texture`
      +
      + Params:
      +   newColorMod = an array of `ubyte`s representing red, green, and blue multipliers (each 0-255)
@@ -298,9 +298,9 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_GetTextureAlphaMod` which gets the alpha multiplier of the `dsdl2.Texture`
+     + Wraps `SDL_GetTextureAlphaMod` which gets the alpha multiplier of the `dsdl.Texture`
      +
-     + Returns: alpha multiplier of the `dsdl2.Texture`
+     + Returns: alpha multiplier of the `dsdl.Texture`
      +/
     ubyte alphaMod() const @property @trusted {
         ubyte aMod = void;
@@ -309,7 +309,7 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_SetTextureAlphaMod` which sets the alpha multiplier of the `dsdl2.Texture`
+     + Wraps `SDL_SetTextureAlphaMod` which sets the alpha multiplier of the `dsdl.Texture`
      +
      + Params:
      +   newAlphaMod = alpha multiplier (0-255)
@@ -319,10 +319,10 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_GetTextureBlendMode` which gets the `dsdl2.Texture`'s `dsdl2.BlendMode` defining drawing
+     + Wraps `SDL_GetTextureBlendMode` which gets the `dsdl.Texture`'s `dsdl.BlendMode` defining drawing
      +
-     + Returns: `dsdl2.BlendMode` of the `dsdl2.Texture`
-     + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to get
+     + Returns: `dsdl.BlendMode` of the `dsdl.Texture`
+     + Throws: `dsdl.SDLException` if `dsdl.BlendMode` unable to get
      +/
     BlendMode blendMode() const @property @trusted {
         BlendMode mode = void;
@@ -334,11 +334,11 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_SetTextureBlendMode` which sets the `dsdl2.Texture`'s `dsdl2.BlendMode` defining drawing
+     + Wraps `SDL_SetTextureBlendMode` which sets the `dsdl.Texture`'s `dsdl.BlendMode` defining drawing
      +
      + Params:
-     +   newMode = `dsdl2.BlendMode` to set
-     + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to set
+     +   newMode = `dsdl.BlendMode` to set
+     + Throws: `dsdl.SDLException` if `dsdl.BlendMode` unable to set
      +/
     void blendMode(BlendMode newMode) @property @trusted {
         if (SDL_SetTextureBlendMode(this.sdlTexture, newMode.sdlBlendMode) != 0) {
@@ -347,12 +347,12 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_UpdateTexture` which updates the entire `dsdl2.Texture`'s pixel data
+     + Wraps `SDL_UpdateTexture` which updates the entire `dsdl.Texture`'s pixel data
      +
      + Params:
-     +   pixels = array of pixels for the entire `dsdl2.Texture`'s pixels to be replaced with
+     +   pixels = array of pixels for the entire `dsdl.Texture`'s pixels to be replaced with
      +   pitch = skips in bytes per line/row of the `pixels`
-     + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
+     + Throws: `dsdl.SDLException` if failed to update the texture pixel data
      +/
     void update(const void[] pixels, size_t pitch) @trusted
     in {
@@ -366,13 +366,13 @@ final class Texture {
     }
 
     /++
-     + Wraps `SDL_UpdateTexture` which updates the `dsdl2.Texture`'s pixel data at a certain `dsdl2.Rect` boundary
+     + Wraps `SDL_UpdateTexture` which updates the `dsdl.Texture`'s pixel data at a certain `dsdl.Rect` boundary
      +
      + Params:
-     +   rect = `dsdl2.Rect` boundary marking the part of the texture whose pixels are to be updated
-     +   pixels = array of pixels for the `dsdl2.Texture`'s `rect` pixels to be replaced with
+     +   rect = `dsdl.Rect` boundary marking the part of the texture whose pixels are to be updated
+     +   pixels = array of pixels for the `dsdl.Texture`'s `rect` pixels to be replaced with
      +   pitch = skips in bytes per line/row of the `pixels`
-     + Throws: `dsdl2.SDLException` if failed to update the texture pixel data
+     + Throws: `dsdl.SDLException` if failed to update the texture pixel data
      +/
     void update(Rect rect, void[] pixels, size_t pitch) @trusted
     in {
@@ -389,7 +389,7 @@ final class Texture {
      + Wraps `SDL_GL_BindTexture` which binds the texture in OpenGL
      +
      + Returns: texture width and height in OpenGL
-     + Throws: `dsdl2.SDLException` if failed to bind
+     + Throws: `dsdl.SDLException` if failed to bind
      +/
     float[2] bindGL() @trusted {
         float[2] size = void;
@@ -403,7 +403,7 @@ final class Texture {
     /++
      + Wraps `SDL_GL_UnbindTexture` which unbinds the texture in OpenGL
      +
-     + Throws: `dsdl2.SDLException` if failed to unbind
+     + Throws: `dsdl.SDLException` if failed to unbind
      +/
     void unbindGL() @trusted {
         if (SDL_GL_UnbindTexture(this.sdlTexture) != 0) {
@@ -415,7 +415,7 @@ final class Texture {
         /++
          + Wraps `SDL_GetTextureScaleMode` (from SDL 2.0.12) which gets the texture's scaling mode
          +
-         + Returns: `dsdl2.ScaleMode` of the texture
+         + Returns: `dsdl.ScaleMode` of the texture
          +/
         ScaleMode scaleMode() const @property @trusted
         in {
@@ -434,7 +434,7 @@ final class Texture {
          + Wraps `SDL_SetTextureScaleMode` (from SDL 2.0.12) which sets the texture's scaling mode
          +
          + Params:
-         +   newMode = new `dsdl2.ScaleMode` set
+         +   newMode = new `dsdl.ScaleMode` set
          +/
         void scaleMode(ScaleMode newMode) @property @trusted
         in {

@@ -4,7 +4,7 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.mixer;
+module dsdl.mixer;
 @safe:
 
 // dfmt off
@@ -12,8 +12,8 @@ import bindbc.sdl;
 static if (bindSDLMixer):
 // dfmt on
 
-import dsdl2.sdl;
-import dsdl2.audio;
+import dsdl.sdl;
+import dsdl.audio;
 
 import core.memory : GC;
 import std.conv : to;
@@ -32,7 +32,7 @@ else {
      +
      + Params:
      +   libName = name or path to look the SDL2_mixer SO/DLL for, otherwise `null` for default searching path
-     + Throws: `dsdl2.SDLException` if failed to find the library
+     + Throws: `dsdl.SDLException` if failed to find the library
      +/
     void loadSO(string libName = null) @trusted {
         SDLMixerSupport current = libName is null ? loadSDLMixer() : loadSDLMixer(libName.toStringz());
@@ -44,7 +44,7 @@ else {
         if (current == SDLMixerSupport.badLibrary) {
             import std.stdio : writeln;
 
-            writeln("WARNING: dsdl2 expects SDL_mixer ", wanted.format(), ", but got ", getVersion().format(), ".");
+            writeln("WARNING: dsdl expects SDL_mixer ", wanted.format(), ", but got ", getVersion().format(), ".");
         }
         else if (current == SDLMixerSupport.noLibrary) {
             throw new SDLException("No SDL2_mixer library found, especially of version " ~ wanted.format(),
@@ -64,10 +64,10 @@ else {
  +   mid = selects the `MIX_INIT_FLUIDSYNTH` (for SDL_mixer below 2.0.2) / `MIX_INIT_MID` subsystem
  +   opus = selects the `MIX_INIT_OPUS` subsystem (from SDL_mixer 2.0.4)
  +   everything = selects every available subsystem
- + Throws: `dsdl2.SDLException` if any selected subsystem failed to initialize
+ + Throws: `dsdl.SDLException` if any selected subsystem failed to initialize
  + Example:
  + ---
- + dsdl2.mixer.init(everything : true);
+ + dsdl.mixer.init(everything : true);
  + ---
  +/
 void init(bool flac = false, bool mod = false, bool mp3 = false, bool ogg = false, bool mid = false,
@@ -78,7 +78,7 @@ in {
     }
     else {
         if (opus) {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 0, 4));
+            assert(dsdl.mixer.getVersion() >= Version(2, 0, 4));
         }
     }
 }
@@ -115,10 +115,10 @@ version (unittest) {
         version (BindSDL_Static) {
         }
         else {
-            dsdl2.mixer.loadSO();
+            dsdl.mixer.loadSO();
         }
 
-        dsdl2.mixer.init(everything : true);
+        dsdl.mixer.init(everything : true);
     }
 }
 
@@ -131,14 +131,14 @@ void quit() @trusted {
 
 version (unittest) {
     static ~this() {
-        dsdl2.mixer.quit();
+        dsdl.mixer.quit();
     }
 }
 
 /++
  + Wraps `Mix_Linked_Version` which gets the version of the linked SDL2_mixer library
  +
- + Returns: `dsdl2.Version` of the linked SDL2_mixer library
+ + Returns: `dsdl.Version` of the linked SDL2_mixer library
  +/
 Version getVersion() @trusted {
     return Version(*Mix_Linked_Version());
@@ -185,10 +185,10 @@ enum MusicType {
  +
  + Params:
  +   frequency = audio playback frequency in Hz
- +   format = `dsdl2.AudioFormat` enumeration indicating the scalar type of each audio sample
- +   channels = channels for `dsdl2.mixer.Chunk` playback (1 for mono; 2 for stereo)
+ +   format = `dsdl.AudioFormat` enumeration indicating the scalar type of each audio sample
+ +   channels = channels for `dsdl.mixer.Chunk` playback (1 for mono; 2 for stereo)
  +   chunkSize = audio buffer size
- + Throws: `dsdl2.SDLException` if failed to open default audio device
+ + Throws: `dsdl.SDLException` if failed to open default audio device
  +/
 void openAudio(uint frequency, AudioFormat format, uint channels, uint chunkSize) @trusted {
     if (Mix_OpenAudio(frequency.to!int, cast(ushort) format, channels.to!int, chunkSize.to!int) != 0) {
@@ -202,8 +202,8 @@ static if (sdlMixerSupport >= SDLMixerSupport.v2_0_2) {
      +
      + Params:
      +   frequency = audio playback frequency in Hz
-     +   format = `dsdl2.AudioFormat` enumeration indicating the scalar type of each audio sample
-     +   channels = channels for `dsdl2.mixer.Chunk` playback (1 for mono; 2 for stereo)
+     +   format = `dsdl.AudioFormat` enumeration indicating the scalar type of each audio sample
+     +   channels = channels for `dsdl.mixer.Chunk` playback (1 for mono; 2 for stereo)
      +   chunkSize = audio buffer size
      +   deviceName = name of the selected device
      +   allowFrequencyChange = adds `SDL_AUDIO_ALLOW_FREQUENCY_CHANGE` flag
@@ -211,20 +211,20 @@ static if (sdlMixerSupport >= SDLMixerSupport.v2_0_2) {
      +   allowChannelsChange = adds `SDL_AUDIO_ALLOW_CHANNELS_CHANGE` flag
      +   allowSamplesChange = adds `SDL_AUDIO_ALLOW_SAMPLES_CHANGE` flag (from SDL_mixer 2.0.9)
      +   allowAnyChange = adds `SDL_AUDIO_ALLOW_ANY_CHANGE` flag
-     + Throws: `dsdl2.SDLException` if failed to open the selected audio device
+     + Throws: `dsdl.SDLException` if failed to open the selected audio device
      +/
     void openAudioDevice(uint frequency, AudioFormat format, uint channels, uint chunkSize, string deviceName,
             bool allowFrequencyChange = false, bool allowFormatChange = false,
             bool allowChannelsChange = false, bool allowSamplesChange = false, bool allowAnyChange = false) @trusted
     in {
-        assert(dsdl2.mixer.getVersion() >= Version(2, 0, 2));
+        assert(dsdl.mixer.getVersion() >= Version(2, 0, 2));
 
         static if (sdlSupport < SDLSupport.v2_0_9) {
             assert(allowSamplesChange == false);
         }
         else {
             if (allowSamplesChange) {
-                assert(dsdl2.mixer.getVersion() >= Version(2, 0, 9));
+                assert(dsdl.mixer.getVersion() >= Version(2, 0, 9));
             }
         }
     }
@@ -272,7 +272,7 @@ private alias MixerSpec = Tuple!(uint, "frequency", AudioFormat, "format", uint,
  + Wraps `Mix_QuerySpec` which queries the default audio device information
  +
  + Returns: a named tuple detailing the default audio device's `frequency`, audio `format`, and `channels`
- + Throws: `dsdl2.SDLException` if failed to query the information
+ + Throws: `dsdl.SDLException` if failed to query the information
  +/
 MixerSpec querySpec() @trusted {
     MixerSpec spec = void;
@@ -324,7 +324,7 @@ final class Channel {
     }
 
     /++
-     + Gets the hash of the `dsdl2.mixer.Channel`
+     + Gets the hash of the `dsdl.mixer.Channel`
      +
      + Returns: unique hash for the instance being the channel ID
      +/
@@ -333,12 +333,12 @@ final class Channel {
     }
 
     /++
-     + Formats the `dsdl2.mixer.Channel` showing its internal information: `"dsdl2.mixer.Channel(<mixChannel>)"`
+     + Formats the `dsdl.mixer.Channel` showing its internal information: `"dsdl.mixer.Channel(<mixChannel>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const {
-        return "dsdl2.mixer.Channel(%d)".format(this.mixChannel);
+        return "dsdl.mixer.Channel(%d)".format(this.mixChannel);
     }
 
     /++
@@ -346,7 +346,7 @@ final class Channel {
      +
      + Params:
      +   newLR = tuple of the volumes from `0` to `255` of the left and right channels in order
-     + Throws: `dsdl2.SDLException` if failed to set the panning
+     + Throws: `dsdl.SDLException` if failed to set the panning
      +/
     void panning(ubyte[2] newLR) const @property @trusted {
         if (Mix_SetPanning(this.mixChannel, newLR[0], newLR[1]) == 0) {
@@ -360,7 +360,7 @@ final class Channel {
      +
      + Params:
      +   newLR = tuple of the volumes from `0` to `255` of the left and right channels in order
-     + Throws: `dsdl2.SDLException` if failed to set the panning
+     + Throws: `dsdl.SDLException` if failed to set the panning
      +/
     static void allPanning(ubyte[2] newLR) @property @trusted {
         if (Mix_SetPanning(MIX_CHANNEL_POST, newLR[0], newLR[1]) == 0) {
@@ -373,7 +373,7 @@ final class Channel {
      +
      + Params:
      +   newAngleDistance = tuple of the simulated angle (in degrees clockwise, with `0` being the front) and distance
-     + Throws: `dsdl2.SDLException` if failed to set the position
+     + Throws: `dsdl.SDLException` if failed to set the position
      +/
     void position(Tuple!(short, ubyte) newAngleDistance) const @property @trusted {
         if (Mix_SetPosition(this.mixChannel, newAngleDistance[0], newAngleDistance[1]) == 0) {
@@ -387,7 +387,7 @@ final class Channel {
      +
      + Params:
      +   newAngleDistance = tuple of the simulated angle (in degrees clockwise, with `0` being the front) and distance
-     + Throws: `dsdl2.SDLException` if failed to set the position
+     + Throws: `dsdl.SDLException` if failed to set the position
      +/
     static void allPosition(Tuple!(short, ubyte) newAngleDistance) @property @trusted {
         if (Mix_SetPosition(MIX_CHANNEL_POST, newAngleDistance[0], newAngleDistance[1]) == 0) {
@@ -400,7 +400,7 @@ final class Channel {
      +
      + Params:
      +   newDistance = simulated distance from `0` to `255`
-     + Throws: `dsdl2.SDLException` if failed to set the distance
+     + Throws: `dsdl.SDLException` if failed to set the distance
      +/
     void distance(ubyte newDistance) const @property @trusted {
         if (Mix_SetDistance(this.mixChannel, newDistance) == 0) {
@@ -414,7 +414,7 @@ final class Channel {
      +
      + Params:
      +   newDistance = simulated distance from `0` to `255`
-     + Throws: `dsdl2.SDLException` if failed to set the distance
+     + Throws: `dsdl.SDLException` if failed to set the distance
      +/
     static void allDistance(ubyte newDistance) @property @trusted {
         if (Mix_SetDistance(MIX_CHANNEL_POST, newDistance) == 0) {
@@ -465,7 +465,7 @@ final class Channel {
      +
      + Params:
      +   newReverse = `true` to enable reverse stereo; `false` to disable
-     + Throws: `dsdl2.SDLException` if failed to set the reverse stereo mode
+     + Throws: `dsdl.SDLException` if failed to set the reverse stereo mode
      +/
     void reverseStereo(bool newReverse) const @property @trusted {
         if (Mix_SetReverseStereo(this.mixChannel, newReverse ? 1 : 0) == 0) {
@@ -479,7 +479,7 @@ final class Channel {
      +
      + Params:
      +   newReverse = `true` to enable reverse stereo; `false` to disable
-     + Throws: `dsdl2.SDLException` if failed to set the reverse stereo mode
+     + Throws: `dsdl.SDLException` if failed to set the reverse stereo mode
      +/
     static void allReverseStereo(bool newReverse) @property @trusted {
         if (Mix_SetReverseStereo(MIX_CHANNEL_POST, newReverse ? 1 : 0) == 0) {
@@ -508,19 +508,19 @@ final class Channel {
     /++
      + Wraps `Mix_FadingChannel` which gets the fading stage of the channel
      +
-     + Returns: `dsdl2.mixer.Fading` enumeration indicating the channel's fading stage
+     + Returns: `dsdl.mixer.Fading` enumeration indicating the channel's fading stage
      +/
     Fading fading() const @property @trusted {
         return cast(Fading) Mix_FadingChannel(this.mixChannel);
     }
 
     /++
-     + Wraps `Mix_GetChunk` which gets the currently-playing `dsdl2.mixer.Chunk` in the channel
+     + Wraps `Mix_GetChunk` which gets the currently-playing `dsdl.mixer.Chunk` in the channel
      +
      + This function is marked as `@system` due to the potential of referencing invalid memory.
      +
-     + Returns: `dsdl2.mixer.Chunk` proxy to the playing chunk
-     + Throws: `dsdl2.SDLException` if failed to get the playing chunk
+     + Returns: `dsdl.mixer.Chunk` proxy to the playing chunk
+     + Throws: `dsdl.SDLException` if failed to get the playing chunk
      +/
     Chunk chunk() const @property @system {
         if (Mix_Chunk* mixChunk = Mix_GetChunk(this.mixChannel)) {
@@ -532,13 +532,13 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_PlayChannelTimed` which plays a `dsdl2.mixer.Chunk` in the channel
+     + Wraps `Mix_PlayChannelTimed` which plays a `dsdl.mixer.Chunk` in the channel
      +
      + Params:
-     +   chunk = `dsdl2.mixer.Chunk` to be played
+     +   chunk = `dsdl.mixer.Chunk` to be played
      +   loops = how many times the chunk should be played (`cast(uint) -1` for infinity)
      +   ms = number of milliseconds the chunk should be played for
-     + Throws: `dsdl2.SDLException` if failed to play the chunk
+     + Throws: `dsdl.SDLException` if failed to play the chunk
      +/
     void play(const Chunk chunk, uint loops = 1, uint ms = cast(uint)-1) const @trusted {
         if (Mix_PlayChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, ms) == -1) {
@@ -547,14 +547,14 @@ final class Channel {
     }
 
     /++
-     + Wraps `Mix_FadeInChannelTimed` which plays a `dsdl2.mixer.Chunk` in the channel with a fade-in effect
+     + Wraps `Mix_FadeInChannelTimed` which plays a `dsdl.mixer.Chunk` in the channel with a fade-in effect
      +
      + Params:
-     +   chunk = `dsdl2.mixer.Chunk` to be played
+     +   chunk = `dsdl.mixer.Chunk` to be played
      +   loops = how many times the chunk should be played (`cast(uint) -1` for infinity)
      +   fadeMs = number of milliseconds the chunk fades in before fully playing at full volume
      +   ms = number of milliseconds the chunk should be played for
-     + Throws: `dsdl2.SDLException` if failed to play the chunk
+     + Throws: `dsdl.SDLException` if failed to play the chunk
      +/
     void fadeIn(const Chunk chunk, uint loops = 1, uint fadeMs = 0, uint ms = cast(uint)-1) const @trusted {
         if (Mix_FadeInChannelTimed(this.mixChannel, cast(Mix_Chunk*) chunk.mixChunk, loops, fadeMs, ms) == -1) {
@@ -565,7 +565,7 @@ final class Channel {
     /++
      + Wraps `Mix_HaltChannel` which halts the channel
      +
-     + Throws: `dsdl2.SDLException` if failed to halt the channel
+     + Throws: `dsdl.SDLException` if failed to halt the channel
      +/
     void halt() const @trusted {
         if (Mix_HaltChannel(this.mixChannel) != 0) {
@@ -576,7 +576,7 @@ final class Channel {
     /++
      + Acts as `Mix_HaltChannel(-1)` which halts all channels
      +
-     + Throws: `dsdl2.SDLException` if failed to halt the channels
+     + Throws: `dsdl.SDLException` if failed to halt the channels
      +/
     static void haltAll() @trusted {
         if (Mix_HaltChannel(-1) != 0) {
@@ -654,10 +654,10 @@ final class Channel {
 }
 
 /++
- + Gets `dsdl2.mixer.Channel` proxy instances of the available audio channels provided by SDL_mixer
+ + Gets `dsdl.mixer.Channel` proxy instances of the available audio channels provided by SDL_mixer
  +
- + Returns: array of proxies to the available `dsdl2.mixer.Channel`s
- + Throws: `dsdl2.SDLException` if failed to get the available audio channels
+ + Returns: array of proxies to the available `dsdl.mixer.Channel`s
+ + Throws: `dsdl.SDLException` if failed to get the available audio channels
  +/
 const(Channel[]) getChannels() @trusted {
     int numChannels = Mix_AllocateChannels(-1);
@@ -693,7 +693,7 @@ final class Chunk {
     @system Mix_Chunk* mixChunk = null; /// Internal `Mix_Chunk` pointer
 
     /++
-     + Constructs a `dsdl2.mixer.Chunk` from a vanilla `Mix_Chunk*` from bindbc-sdl
+     + Constructs a `dsdl.mixer.Chunk` from a vanilla `Mix_Chunk*` from bindbc-sdl
      +
      + Params:
      +   mixChunk = the `Mix_Chunk` pointer to manage
@@ -734,7 +734,7 @@ final class Chunk {
     }
 
     /++
-     + Gets the hash of the `dsdl2.mixer.Chunk`
+     + Gets the hash of the `dsdl.mixer.Chunk`
      +
      + Returns: unique hash for the instance being the pointer of the internal `Mix_Chunk` pointer
      +/
@@ -743,13 +743,13 @@ final class Chunk {
     }
 
     /++
-     + Formats the `dsdl2.mixer.Chunk` into its construction representation:
-     + `"dsdl2.mixer.Chunk(<mixChunk>)"`
+     + Formats the `dsdl.mixer.Chunk` into its construction representation:
+     + `"dsdl.mixer.Chunk(<mixChunk>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.mixer.Chunk(0x%x)".format(this.mixChunk);
+        return "dsdl.mixer.Chunk(0x%x)".format(this.mixChunk);
     }
 
     /++
@@ -794,7 +794,7 @@ final class Chunk {
          +/
         static bool hasDecoder(string decoder) @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 0, 2));
+            assert(dsdl.mixer.getVersion() >= Version(2, 0, 2));
         }
         do {
             return Mix_HasChunkDecoder(decoder.toStringz()) == SDL_TRUE;
@@ -802,7 +802,7 @@ final class Chunk {
     }
 
     /++
-     + Gets the raw PCM audio data buffer for the `dsdl2.mixer.Chunk`
+     + Gets the raw PCM audio data buffer for the `dsdl.mixer.Chunk`
      +
      + This function is marked as `@system` due to the potential of referencing invalid memory.
      +
@@ -837,7 +837,7 @@ final class Chunk {
      + Params:
      +   loops = how many times the chunk should be played (`cast(uint) -1` for infinite)
      +   ms = number of milliseconds the chunk should be played for
-     + Returns: `dsdl2.mixer.Channel` the chunk is played on; `null` if no free channel
+     + Returns: `dsdl.mixer.Channel` the chunk is played on; `null` if no free channel
      +/
     const(Channel) play(uint loops = 1, uint ms = cast(uint)-1) const @trusted {
         int channel = Mix_PlayChannelTimed(-1, cast(Mix_Chunk*) this.mixChunk, loops, ms);
@@ -855,7 +855,7 @@ final class Chunk {
      +   loops = how many times the chunk should be played (`cast(uint) -1` for infinite)
      +   fadeMs = number of milliseconds the chunk fades in before fully playing at full volume
      +   ms = number of milliseconds the chunk should be played for
-     + Returns: `dsdl2.mixer.Channel` the chunk is played on; `null` if no free channel
+     + Returns: `dsdl.mixer.Channel` the chunk is played on; `null` if no free channel
      +/
     const(Channel) fadeIn(uint loops = 1, uint fadeMs = 0, uint ms = cast(uint)-1) const @trusted {
         int channel = Mix_FadeInChannelTimed(-1, cast(Mix_Chunk*) this.mixChunk, loops, fadeMs, ms);
@@ -868,12 +868,12 @@ final class Chunk {
 }
 
 /++
- + Wraps `Mix_LoadWAV` which loads an audio file from the filesystem to a `dsdl2.mixer.Chunk`
+ + Wraps `Mix_LoadWAV` which loads an audio file from the filesystem to a `dsdl.mixer.Chunk`
  +
  + Params:
  +   file = path to the audio file
- + Returns: loaded `dsdl2.mixer.Chunk`
- + Throws: `dsdl2.SDLException` if unable to load
+ + Returns: loaded `dsdl.mixer.Chunk`
+ + Throws: `dsdl.SDLException` if unable to load
  +/
 Chunk load(string file) @trusted {
     Mix_Chunk* mixChunk = Mix_LoadWAV(file.toStringz());
@@ -886,12 +886,12 @@ Chunk load(string file) @trusted {
 }
 
 /++
- + Wraps `Mix_LoadWAV_RW` which loads an audio file from a buffer to a `dsdl2.mixer.Chunk`
+ + Wraps `Mix_LoadWAV_RW` which loads an audio file from a buffer to a `dsdl.mixer.Chunk`
  +
  + Params:
  +   data = buffer of the audio file
- + Returns: loaded `dsdl2.mixer.Chunk`
- + Throws: `dsdl2.SDLException` if unable to load
+ + Returns: loaded `dsdl.mixer.Chunk`
+ + Throws: `dsdl.SDLException` if unable to load
  +/
 Chunk loadRaw(const void[] data) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -909,11 +909,11 @@ Chunk loadRaw(const void[] data) @trusted {
 }
 
 /++
- + Wraps `Mix_QuickLoad_RAW` which loads raw PCM audio data to a `dsdl2.mixer.Chunk`
+ + Wraps `Mix_QuickLoad_RAW` which loads raw PCM audio data to a `dsdl.mixer.Chunk`
  +
  + Params:
  +   pcm = buffer of the raw PCM audio data
- + Returns: loaded `dsdl2.mixer.Chunk`
+ + Returns: loaded `dsdl.mixer.Chunk`
  +/
 Chunk loadPCM(const void[] pcm) @trusted {
     Mix_Chunk* mixChunk = Mix_QuickLoad_RAW(cast(ubyte*) pcm.ptr, pcm.length.to!int);
@@ -935,7 +935,7 @@ final class Music {
     @system Mix_Music* mixMusic = null; /// Internal `Mix_Music` pointer
 
     /++
-     + Constructs a `dsdl2.mixer.Music` from a vanilla `Mix_Music*` from bindbc-sdl
+     + Constructs a `dsdl.mixer.Music` from a vanilla `Mix_Music*` from bindbc-sdl
      +
      + Params:
      +   mixMusic = the `Mix_Music` pointer to manage
@@ -976,7 +976,7 @@ final class Music {
     }
 
     /++
-     + Gets the hash of the `dsdl2.mixer.Music`
+     + Gets the hash of the `dsdl.mixer.Music`
      +
      + Returns: unique hash for the instance being the pointer of the internal `Mix_Music` pointer
      +/
@@ -985,13 +985,13 @@ final class Music {
     }
 
     /++
-     + Formats the `dsdl2.mixer.Music` into its construction representation:
-     + `"dsdl2.mixer.Music(<mixMusic>)"`
+     + Formats the `dsdl.mixer.Music` into its construction representation:
+     + `"dsdl.mixer.Music(<mixMusic>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.mixer.Music(0x%x)".format(this.mixMusic);
+        return "dsdl.mixer.Music(0x%x)".format(this.mixMusic);
     }
 
     /++
@@ -1036,7 +1036,7 @@ final class Music {
          +/
         static bool hasDecoder(string decoder) @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_HasMusicDecoder(decoder.toStringz()) == SDL_TRUE;
@@ -1044,9 +1044,9 @@ final class Music {
     }
 
     /++
-     + Wraps `Mix_GetMusicType` which gets the format type of the `dsdl2.mixer.Music`
+     + Wraps `Mix_GetMusicType` which gets the format type of the `dsdl.mixer.Music`
      +
-     + Returns: `dsdl2.mixer.MusicType` enumeration indicating the format type
+     + Returns: `dsdl.mixer.MusicType` enumeration indicating the format type
      +/
     MusicType type() const @property @trusted {
         return cast(MusicType) Mix_GetMusicType(this.mixMusic);
@@ -1060,7 +1060,7 @@ final class Music {
          +/
         string title() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicTitle(this.mixMusic).to!string;
@@ -1073,7 +1073,7 @@ final class Music {
          +/
         string titleTag() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicTitleTag(this.mixMusic).to!string;
@@ -1086,7 +1086,7 @@ final class Music {
          +/
         string artistTag() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicArtistTag(this.mixMusic).to!string;
@@ -1099,7 +1099,7 @@ final class Music {
          +/
         string albumTag() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicAlbumTag(this.mixMusic).to!string;
@@ -1112,7 +1112,7 @@ final class Music {
          +/
         string copyrightTag() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicCopyrightTag(this.mixMusic).to!string;
@@ -1125,7 +1125,7 @@ final class Music {
          +/
         ubyte volume() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return cast(ubyte) Mix_GetMusicVolume(cast(Mix_Music*) this.mixMusic);
@@ -1138,7 +1138,7 @@ final class Music {
          +/
         double position() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicPosition(cast(Mix_Music*) this.mixMusic);
@@ -1148,11 +1148,11 @@ final class Music {
          + Wraps `Mix_MusicDuration` (from SDL_mixer 2.6) which gets the duration of the music in seconds
          +
          + Returns: duration of the music in seconds
-         + Throws: `dsdl2.SDLException` if failed to get duration
+         + Throws: `dsdl.SDLException` if failed to get duration
          +/
         double duration() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             double duration = Mix_MusicDuration(cast(Mix_Music*) this.mixMusic);
@@ -1170,7 +1170,7 @@ final class Music {
          +/
         double loopStartTime() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicLoopStartTime(cast(Mix_Music*) this.mixMusic);
@@ -1183,7 +1183,7 @@ final class Music {
          +/
         double loopEndTime() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicLoopEndTime(cast(Mix_Music*) this.mixMusic);
@@ -1196,7 +1196,7 @@ final class Music {
          +/
         double loopLengthTime() const @property @trusted
         in {
-            assert(dsdl2.mixer.getVersion() >= Version(2, 6));
+            assert(dsdl.mixer.getVersion() >= Version(2, 6));
         }
         do {
             return Mix_GetMusicLoopLengthTime(cast(Mix_Music*) this.mixMusic);
@@ -1208,7 +1208,7 @@ final class Music {
      +
      + Params:
      +   newPosition = new timestamp position in seconds
-     + Throws: `dsdl2.SDLException` if failed to set position
+     + Throws: `dsdl.SDLException` if failed to set position
      +/
     static void position(double newPosition) @property @trusted {
         if (Mix_SetMusicPosition(newPosition) != 0) {
@@ -1256,7 +1256,7 @@ final class Music {
     /++
      + Wraps `Mix_FadingMusic` which gets the fading stage of the music
      +
-     + Returns: `dsdl2.mixer.Fading` enumeration indicating the music's fading stage
+     + Returns: `dsdl.mixer.Fading` enumeration indicating the music's fading stage
      +/
     static Fading fading() @property @trusted {
         return cast(Fading) Mix_FadingMusic();
@@ -1267,7 +1267,7 @@ final class Music {
      +
      + Params:
      +   newCommand = trigger command
-     + Throws: `dsdl2.SDLException` if failed to set command
+     + Throws: `dsdl.SDLException` if failed to set command
      +/
     static void command(string newCommand) @property @trusted {
         if (Mix_SetMusicCMD(newCommand.toStringz()) != 0) {
@@ -1276,11 +1276,11 @@ final class Music {
     }
 
     /++
-     + Wraps `Mix_PlayMusic` which plays the `dsdl2.mixer.Music`
+     + Wraps `Mix_PlayMusic` which plays the `dsdl.mixer.Music`
      +
      + Params:
      +   loops = how many times the music should be played (`cast(uint) -1` for infinity)
-     + Throws: `dsdl2.SDLException` if failed to play the music
+     + Throws: `dsdl.SDLException` if failed to play the music
      +/
     void play(uint loops = 1) const @trusted {
         if (Mix_PlayMusic(cast(Mix_Music*) this.mixMusic, loops.to!int) != 0) {
@@ -1289,13 +1289,13 @@ final class Music {
     }
 
     /++
-     + Wraps `Mix_FadeInMusicPos` which plays the `dsdl2.mixer.Music` with a fade-in effect
+     + Wraps `Mix_FadeInMusicPos` which plays the `dsdl.mixer.Music` with a fade-in effect
      +
      + Params:
      +   loops = how many times the chunk should be played (`cast(uint) -1` for infinity)
      +   fadeMs = number of milliseconds the chunk fades in before fully playing at full volume
      +   position = start timestamp of the music in seconds
-     + Throws: `dsdl2.SDLException` if failed to play the music
+     + Throws: `dsdl.SDLException` if failed to play the music
      +/
     void fadeIn(uint loops = 1, uint fadeMs = 0, double position = 0) const @trusted {
         if (Mix_FadeInMusicPos(cast(Mix_Music*) this.mixMusic, loops, fadeMs, position) != 0) {
@@ -1343,12 +1343,12 @@ final class Music {
 }
 
 /++
- + Wraps `Mix_LoadMUS` which loads an audio file from the filesystem to a `dsdl2.mixer.Music`
+ + Wraps `Mix_LoadMUS` which loads an audio file from the filesystem to a `dsdl.mixer.Music`
  +
  + Params:
  +   file = path to the audio file
- + Returns: loaded `dsdl2.mixer.Music`
- + Throws: `dsdl2.SDLException` if unable to load
+ + Returns: loaded `dsdl.mixer.Music`
+ + Throws: `dsdl.SDLException` if unable to load
  +/
 Music loadMusic(string file) @trusted {
     Mix_Music* mixMusic = Mix_LoadMUS(file.toStringz());
@@ -1361,12 +1361,12 @@ Music loadMusic(string file) @trusted {
 }
 
 /++
- + Wraps `Mix_LoadMUS_RW` which loads an audio file from a buffer to a `dsdl2.mixer.Music`
+ + Wraps `Mix_LoadMUS_RW` which loads an audio file from a buffer to a `dsdl.mixer.Music`
  +
  + Params:
  +   data = buffer of the audio file
- + Returns: loaded `dsdl2.mixer.Music`
- + Throws: `dsdl2.SDLException` if unable to load
+ + Returns: loaded `dsdl.mixer.Music`
+ + Throws: `dsdl.SDLException` if unable to load
  +/
 Music loadMusicRaw(const void[] data) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -1384,13 +1384,13 @@ Music loadMusicRaw(const void[] data) @trusted {
 }
 
 /++
- + Wraps `Mix_LoadMUSType_RW` which loads a typed audio file from a buffer to a `dsdl2.mixer.Music`
+ + Wraps `Mix_LoadMUSType_RW` which loads a typed audio file from a buffer to a `dsdl.mixer.Music`
  +
  + Params:
  +   data = buffer of the audio file
- +   type = specified `dsdl2.mixer.MusicType` enumeration of the music
- + Returns: loaded `dsdl2.mixer.Music`
- + Throws: `dsdl2.SDLException` if unable to load
+ +   type = specified `dsdl.mixer.MusicType` enumeration of the music
+ + Returns: loaded `dsdl.mixer.Music`
+ + Throws: `dsdl.SDLException` if unable to load
  +/
 Music loadMusicRaw(const void[] data, MusicType type) @trusted {
     SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);

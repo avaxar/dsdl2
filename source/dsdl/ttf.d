@@ -4,7 +4,7 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.ttf;
+module dsdl.ttf;
 @safe:
 
 // dfmt off
@@ -12,9 +12,9 @@ import bindbc.sdl;
 static if (bindSDLTTF):
 // dfmt on
 
-import dsdl2.sdl;
-import dsdl2.pixels : Color;
-import dsdl2.surface;
+import dsdl.sdl;
+import dsdl.pixels : Color;
+import dsdl.surface;
 
 import core.memory : GC;
 import std.conv : to;
@@ -33,7 +33,7 @@ else {
      +
      + Params:
      +   libName = name or path to look the SDL2_ttf SO/DLL for, otherwise `null` for default searching path
-     + Throws: `dsdl2.SDLException` if failed to find the library
+     + Throws: `dsdl.SDLException` if failed to find the library
      +/
     void loadSO(string libName = null) @trusted {
         SDLTTFSupport current = libName is null ? loadSDLTTF() : loadSDLTTF(libName.toStringz());
@@ -45,7 +45,7 @@ else {
         if (current == SDLTTFSupport.badLibrary) {
             import std.stdio : writeln;
 
-            writeln("WARNING: dsdl2 expects SDL_ttf ", wanted.format(), ", but got ", getVersion().format(), ".");
+            writeln("WARNING: dsdl expects SDL_ttf ", wanted.format(), ", but got ", getVersion().format(), ".");
         }
         else if (current == SDLTTFSupport.noLibrary) {
             throw new SDLException("No SDL2_ttf library found, especially of version " ~ wanted.format(),
@@ -57,10 +57,10 @@ else {
 /++
  + Wraps `TTF_Init` which initializes SDL2_ttf
  +
- + Throws: `dsdl2.SDLException` if failed to initialize
+ + Throws: `dsdl.SDLException` if failed to initialize
  + Example:
  + ---
- + dsdl2.ttf.init();
+ + dsdl.ttf.init();
  + ---
  +/
 void init() @trusted {
@@ -74,10 +74,10 @@ version (unittest) {
         version (BindSDL_Static) {
         }
         else {
-            dsdl2.ttf.loadSO();
+            dsdl.ttf.loadSO();
         }
 
-        dsdl2.ttf.init();
+        dsdl.ttf.init();
     }
 }
 
@@ -100,7 +100,7 @@ bool wasInit() @trusted {
 /++
  + Wraps `TTF_Linked_version` which gets the version of the linked SDL2_ttf library
  +
- + Returns: `dsdl2.Version` of the linked SDL2_ttf library
+ + Returns: `dsdl.Version` of the linked SDL2_ttf library
  +/
 Version getVersion() @trusted {
     return Version(*TTF_Linked_Version());
@@ -111,11 +111,11 @@ static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
      + Wraps `TTF_GetFreeTypeVersion` (from SDL_ttf 2.0.18) which gets the version of the FreeType library used by the
      + linked SDL2_ttf
      +
-     + Returns: `dsdl2.Version` of the used FreeType library
+     + Returns: `dsdl.Version` of the used FreeType library
      +/
     Version getFreeTypeVersion() @trusted
     in {
-        assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+        assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
     }
     do {
         int[3] ver = void;
@@ -127,11 +127,11 @@ static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
      + Wraps `TTF_GetHarfBuzzVersion` (from SDL_ttf 2.0.18) which gets the version of the HarfBuzz library used by the
      + linked SDL2_ttf
      +
-     + Returns: `dsdl2.Version` of the used HarfBuzz library
+     + Returns: `dsdl.Version` of the used HarfBuzz library
      +/
     Version getHarfBuzzVersion() @trusted
     in {
-        assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+        assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
     }
     do {
         int[3] ver = void;
@@ -151,7 +151,7 @@ struct GlyphMetrics {
     this() @disable;
 
     /++
-     + Constructs a new `dsdl2.ttf.GlyphMetrics` by feeding in its attributes
+     + Constructs a new `dsdl.ttf.GlyphMetrics` by feeding in its attributes
      +
      + Params:
      +   min = tuple of the `minX` and `minY` values
@@ -165,46 +165,46 @@ struct GlyphMetrics {
     }
 
     /++
-     + Formats the `dsdl2.ttf.GlyphMetrics` into its construction representation:
-     + `"dsdl2.ttf.GlyphMetrics(<min>, <max>, <advance>)"`
+     + Formats the `dsdl.ttf.GlyphMetrics` into its construction representation:
+     + `"dsdl.ttf.GlyphMetrics(<min>, <max>, <advance>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.ttf.GlyphMetrics(%s, %s, %d)".format(this.min, this.max, this.advance);
+        return "dsdl.ttf.GlyphMetrics(%s, %s, %d)".format(this.min, this.max, this.advance);
     }
 
     /++
-     + Proxy to the minimum X value of the `dsdl2.ttf.GlyphMetrics`
+     + Proxy to the minimum X value of the `dsdl.ttf.GlyphMetrics`
      +
-     + Returns: minimum X value of the `dsdl2.ttf.GlyphMetrics`
+     + Returns: minimum X value of the `dsdl.ttf.GlyphMetrics`
      +/
     ref inout(int) minX() return inout @property {
         return this.min[0];
     }
 
     /++
-     + Proxy to the minimum Y value of the `dsdl2.ttf.GlyphMetrics`
+     + Proxy to the minimum Y value of the `dsdl.ttf.GlyphMetrics`
      +
-     + Returns: minimum Y value of the `dsdl2.ttf.GlyphMetrics`
+     + Returns: minimum Y value of the `dsdl.ttf.GlyphMetrics`
      +/
     ref inout(int) minY() return inout @property {
         return this.min[1];
     }
 
     /++
-     + Proxy to the maximum X value of the `dsdl2.ttf.GlyphMetrics`
+     + Proxy to the maximum X value of the `dsdl.ttf.GlyphMetrics`
      +
-     + Returns: maximum X value of the `dsdl2.ttf.GlyphMetrics`
+     + Returns: maximum X value of the `dsdl.ttf.GlyphMetrics`
      +/
     ref inout(int) maxX() return inout @property {
         return this.max[0];
     }
 
     /++
-     + Proxy to the maximum Y value of the `dsdl2.ttf.GlyphMetrics`
+     + Proxy to the maximum Y value of the `dsdl.ttf.GlyphMetrics`
      +
-     + Returns: maximum Y value of the `dsdl2.ttf.GlyphMetrics`
+     + Returns: maximum Y value of the `dsdl.ttf.GlyphMetrics`
      +/
     ref inout(int) maxY() return inout @property {
         return this.max[1];
@@ -273,7 +273,7 @@ final class Font {
     @system TTF_Font* ttfFont = null; /// Internal `TTF_Font` pointer
 
     /++
-     + Constructs a `dsdl2.ttf.Font` from a vanilla `TTF_Font*` from bindbc-sdl
+     + Constructs a `dsdl.ttf.Font` from a vanilla `TTF_Font*` from bindbc-sdl
      +
      + Params:
      +   ttfFont = the `TTF_Font` pointer to manage
@@ -291,12 +291,12 @@ final class Font {
     }
 
     /++
-     + Loads a `dsdl2.ttf.Font` from a font file, which wraps `TTF_OpenFont`
+     + Loads a `dsdl.ttf.Font` from a font file, which wraps `TTF_OpenFont`
      +
      + Params:
      +   file = path to the font file
      +   size = point size of the loaded font
-     + Throws: `dsdl2.SDLException` if unable to load the font
+     + Throws: `dsdl.SDLException` if unable to load the font
      +/
     this(string file, uint size) @trusted {
         this.ttfFont = TTF_OpenFont(file.toStringz(), size.to!int);
@@ -306,13 +306,13 @@ final class Font {
     }
 
     /++
-     + Loads a `dsdl2.ttf.Font` from a font file with a face index, which wraps `TTF_OpenFontIndex`
+     + Loads a `dsdl.ttf.Font` from a font file with a face index, which wraps `TTF_OpenFontIndex`
      +
      + Params:
      +   file = path to the font file
      +   size = point size of the loaded font
      +   index = face index of the loaded font
-     + Throws: `dsdl2.SDLException` if unable to load the font
+     + Throws: `dsdl.SDLException` if unable to load the font
      +/
     this(string file, uint size, size_t index) @trusted {
         this.ttfFont = TTF_OpenFontIndex(file.toStringz(), size.to!int, index.to!c_long);
@@ -322,12 +322,12 @@ final class Font {
     }
 
     /++
-     + Loads a `dsdl2.ttf.Font` from a buffer, which wraps `TTF_OpenFontRW`
+     + Loads a `dsdl.ttf.Font` from a buffer, which wraps `TTF_OpenFontRW`
      +
      + Params:
      +   data = buffer of the font file
      +   size = point size of the loaded font
-     + Throws: `dsdl2.SDLException` if unable to load the font
+     + Throws: `dsdl.SDLException` if unable to load the font
      +/
     this(const void[] data, uint size) @trusted {
         SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -342,13 +342,13 @@ final class Font {
     }
 
     /++
-     + Loads a `dsdl2.ttf.Font` from a buffer with a face index, which wraps `TTF_OpenFontIndexRW`
+     + Loads a `dsdl.ttf.Font` from a buffer with a face index, which wraps `TTF_OpenFontIndexRW`
      +
      + Params:
      +   data = buffer of the font file
      +   size = point size of the loaded font
      +   index = face index of the loaded font
-     + Throws: `dsdl2.SDLException` if unable to load the font
+     + Throws: `dsdl.SDLException` if unable to load the font
      +/
     this(const void[] data, uint size, size_t index) @trusted {
         SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -364,18 +364,18 @@ final class Font {
 
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
         /++
-         + Loads a `dsdl2.ttf.Font` from a font file with DPI, which wraps `TTF_OpenFontDPI` (from SDL_ttf 2.0.18)
+         + Loads a `dsdl.ttf.Font` from a font file with DPI, which wraps `TTF_OpenFontDPI` (from SDL_ttf 2.0.18)
          +
          + Params:
          +   file = path to the font file
          +   size = point size of the loaded font
          +   hdpi = target horizontal DPI
          +   vdpi = target vertical DPI
-         + Throws: `dsdl2.SDLException` if unable to load the font
+         + Throws: `dsdl.SDLException` if unable to load the font
          +/
         this(string file, uint size, uint hdpi, uint vdpi) @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             this.ttfFont = TTF_OpenFontDPI(file.toStringz(), size.to!int, hdpi, vdpi);
@@ -385,7 +385,7 @@ final class Font {
         }
 
         /++
-         + Loads a `dsdl2.ttf.Font` from a font file with DPI and face index, which wraps `TTF_OpenFontIndexDPI` (from
+         + Loads a `dsdl.ttf.Font` from a font file with DPI and face index, which wraps `TTF_OpenFontIndexDPI` (from
          + SDL_ttf 2.0.18)
          +
          + Params:
@@ -394,11 +394,11 @@ final class Font {
          +   index = face index of the loaded font
          +   hdpi = target horizontal DPI
          +   vdpi = target vertical DPI
-         + Throws: `dsdl2.SDLException` if unable to load the font
+         + Throws: `dsdl.SDLException` if unable to load the font
          +/
         this(string file, uint size, size_t index, uint hdpi, uint vdpi) @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             this.ttfFont = TTF_OpenFontIndexDPI(file.toStringz(), size.to!int, index.to!c_long, hdpi, vdpi);
@@ -408,18 +408,18 @@ final class Font {
         }
 
         /++
-         + Loads a `dsdl2.ttf.Font` from a buffer with DPI, which wraps `TTF_OpenFontDPIRW` (from SDL_ttf 2.0.18)
+         + Loads a `dsdl.ttf.Font` from a buffer with DPI, which wraps `TTF_OpenFontDPIRW` (from SDL_ttf 2.0.18)
          +
          + Params:
          +   data = buffer of the font file
          +   size = point size of the loaded font
          +   hdpi = target horizontal DPI
          +   vdpi = target vertical DPI
-         + Throws: `dsdl2.SDLException` if unable to load the font
+         + Throws: `dsdl.SDLException` if unable to load the font
          +/
         this(const void[] data, uint size, uint hdpi, uint vdpi) @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -434,7 +434,7 @@ final class Font {
         }
 
         /++
-         + Loads a `dsdl2.ttf.Font` from a buffer with DPI and face index, which wraps `TTF_OpenFontIndexDPIRW` (from
+         + Loads a `dsdl.ttf.Font` from a buffer with DPI and face index, which wraps `TTF_OpenFontIndexDPIRW` (from
          + SDL_ttf 2.0.18)
          +
          + Params:
@@ -443,11 +443,11 @@ final class Font {
          +   index = face index of the loaded font
          +   hdpi = target horizontal DPI
          +   vdpi = target vertical DPI
-         + Throws: `dsdl2.SDLException` if unable to load the font
+         + Throws: `dsdl.SDLException` if unable to load the font
          +/
         this(const void[] data, uint size, size_t index, uint hdpi, uint vdpi) @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             SDL_RWops* sdlRWops = SDL_RWFromConstMem(data.ptr, data.length.to!int);
@@ -486,7 +486,7 @@ final class Font {
     }
 
     /++
-     + Gets the hash of the `dsdl2.ttf.Font`
+     + Gets the hash of the `dsdl.ttf.Font`
      +
      + Returns: unique hash for the instance being the pointer of the internal `TTF_Font` pointer
      +/
@@ -495,28 +495,28 @@ final class Font {
     }
 
     /++
-     + Formats the `dsdl2.ttf.Font` into its construction representation: `"dsdl2.ttf.Font(<ttfFont>)"`
+     + Formats the `dsdl.ttf.Font` into its construction representation: `"dsdl.ttf.Font(<ttfFont>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.ttf.Font(0x%x)".format(this.ttfFont);
+        return "dsdl.ttf.Font(0x%x)".format(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_GetFontStyle` to get whether the `dsdl2.ttf.Font` style is bold
+     + Wraps `TTF_GetFontStyle` to get whether the `dsdl.ttf.Font` style is bold
      +
-     + Returns: `true` if the `dsdl2.ttf.Font` is bold, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font` is bold, otherwise `false`
      +/
     bool bold() const @property @trusted {
         return (TTF_GetFontStyle(this.ttfFont) & TTF_STYLE_BOLD) == TTF_STYLE_BOLD;
     }
 
     /++
-     + Wraps `TTF_SetFontStyle` to set the `dsdl2.ttf.Font` style to be bold
+     + Wraps `TTF_SetFontStyle` to set the `dsdl.ttf.Font` style to be bold
      +
      + Params:
-     +   newBold = `true` to make the `dsdl2.ttf.Font` bold, otherwise `false`
+     +   newBold = `true` to make the `dsdl.ttf.Font` bold, otherwise `false`
      +/
     void bold(bool newBold) @property @trusted {
         if (newBold) {
@@ -528,19 +528,19 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_GetFontStyle` to get whether the `dsdl2.ttf.Font` style is italic
+     + Wraps `TTF_GetFontStyle` to get whether the `dsdl.ttf.Font` style is italic
      +
-     + Returns: `true` if the `dsdl2.ttf.Font` is italic, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font` is italic, otherwise `false`
      +/
     bool italic() const @property @trusted {
         return (TTF_GetFontStyle(this.ttfFont) & TTF_STYLE_ITALIC) == TTF_STYLE_ITALIC;
     }
 
     /++
-     + Wraps `TTF_SetFontStyle` to set the `dsdl2.ttf.Font` style to be italic
+     + Wraps `TTF_SetFontStyle` to set the `dsdl.ttf.Font` style to be italic
      +
      + Params:
-     +   newItalic = `true` to make the `dsdl2.ttf.Font` italic, otherwise `false`
+     +   newItalic = `true` to make the `dsdl.ttf.Font` italic, otherwise `false`
      +/
     void italic(bool newItalic) @property @trusted {
         if (newItalic) {
@@ -552,19 +552,19 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_GetFontStyle` to get whether the `dsdl2.ttf.Font` style is underlined
+     + Wraps `TTF_GetFontStyle` to get whether the `dsdl.ttf.Font` style is underlined
      +
-     + Returns: `true` if the `dsdl2.ttf.Font` is underlined, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font` is underlined, otherwise `false`
      +/
     bool underline() const @property @trusted {
         return (TTF_GetFontStyle(this.ttfFont) & TTF_STYLE_UNDERLINE) == TTF_STYLE_UNDERLINE;
     }
 
     /++
-     + Wraps `TTF_SetFontStyle` to set the `dsdl2.ttf.Font` style to be underlined
+     + Wraps `TTF_SetFontStyle` to set the `dsdl.ttf.Font` style to be underlined
      +
      + Params:
-     +   newUnderline = `true` to make the `dsdl2.ttf.Font` underlined, otherwise `false`
+     +   newUnderline = `true` to make the `dsdl.ttf.Font` underlined, otherwise `false`
      +/
     void underline(bool newUnderline) @property @trusted {
         if (newUnderline) {
@@ -576,19 +576,19 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_GetFontStyle` to get whether the `dsdl2.ttf.Font` style is strikethrough
+     + Wraps `TTF_GetFontStyle` to get whether the `dsdl.ttf.Font` style is strikethrough
      +
-     + Returns: `true` if the `dsdl2.ttf.Font` is strikethrough, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font` is strikethrough, otherwise `false`
      +/
     bool strikethrough() const @property @trusted {
         return (TTF_GetFontStyle(this.ttfFont) & TTF_STYLE_STRIKETHROUGH) == TTF_STYLE_STRIKETHROUGH;
     }
 
     /++
-     + Wraps `TTF_SetFontStyle` to set the `dsdl2.ttf.Font` style to be strikethrough
+     + Wraps `TTF_SetFontStyle` to set the `dsdl.ttf.Font` style to be strikethrough
      +
      + Params:
-     +   newStrikethrough = `true` to make the `dsdl2.ttf.Font` strikethrough, otherwise `false`
+     +   newStrikethrough = `true` to make the `dsdl.ttf.Font` strikethrough, otherwise `false`
      +/
     void strikethrough(bool newStrikethrough) @property @trusted {
         if (newStrikethrough) {
@@ -600,38 +600,38 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_GetFontOutline` to get the `dsdl2.ttf.Font` outline value
+     + Wraps `TTF_GetFontOutline` to get the `dsdl.ttf.Font` outline value
      +
-     + Returns: `uint` outline value of the `dsdl2.ttf.Font`
+     + Returns: `uint` outline value of the `dsdl.ttf.Font`
      +/
     uint outline() const @property @trusted {
         return TTF_GetFontOutline(this.ttfFont).to!uint;
     }
 
     /++
-     + Wraps `TTF_SetFontOutline` to set the `dsdl2.ttf.Font` outline value
+     + Wraps `TTF_SetFontOutline` to set the `dsdl.ttf.Font` outline value
      +
      + Params:
-     +   newOutline = new outline value for the `dsdl2.ttf.Font`; `0` to set as default
+     +   newOutline = new outline value for the `dsdl.ttf.Font`; `0` to set as default
      +/
     void outline(uint newOutline) @property @trusted {
         TTF_SetFontOutline(this.ttfFont, newOutline.to!int);
     }
 
     /++
-     + Wraps `TTF_GetFontHinting` to get the `dsdl2.ttf.Font` hinting
+     + Wraps `TTF_GetFontHinting` to get the `dsdl.ttf.Font` hinting
      +
-     + Returns: `dsdl2.ttf.Hinting` enumeration for the `dsdl2.ttf.Font` hinting
+     + Returns: `dsdl.ttf.Hinting` enumeration for the `dsdl.ttf.Font` hinting
      +/
     Hinting hinting() const @property @trusted {
         return cast(Hinting) TTF_GetFontHinting(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_SetFontHinting` to set the `dsdl2.ttf.Font` hinting
+     + Wraps `TTF_SetFontHinting` to set the `dsdl.ttf.Font` hinting
      +
      + Params:
-     +   newHinting = new `dsdl2.ttf.Hinting` for the `dsdl2.ttf.Font`
+     +   newHinting = new `dsdl.ttf.Hinting` for the `dsdl.ttf.Font`
      +/
     void hinting(Hinting newHinting) @property @trusted {
         TTF_SetFontHinting(this.ttfFont, newHinting);
@@ -639,13 +639,13 @@ final class Font {
 
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
         /++
-         + Wraps `TTF_GetFontSDF` (from SDL_ttf 2.0.18) to get whether the `dsdl2.ttf.Font` has signed distance field
+         + Wraps `TTF_GetFontSDF` (from SDL_ttf 2.0.18) to get whether the `dsdl.ttf.Font` has signed distance field
          +
-         + Returns: `true` if the `dsdl2.ttf.Font` has SDF, otherwise `false`
+         + Returns: `true` if the `dsdl.ttf.Font` has SDF, otherwise `false`
          +/
         bool sdf() const @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             return TTF_GetFontSDF(this.ttfFont) == SDL_TRUE;
@@ -660,7 +660,7 @@ final class Font {
          +/
         void sdf(bool newSDF) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             if (TTF_SetFontSDF(this.ttfFont, newSDF ? SDL_TRUE : SDL_FALSE) != 0) {
@@ -669,14 +669,14 @@ final class Font {
         }
 
         /++
-         + Wraps `TTF_SetFontSize` (from SDL_ttf 2.0.18) to set the `dsdl2.ttf.Font`'s size
+         + Wraps `TTF_SetFontSize` (from SDL_ttf 2.0.18) to set the `dsdl.ttf.Font`'s size
          +
          + Params:
-         +   newSize = new size for the `dsdl2.ttf.Font`
+         +   newSize = new size for the `dsdl.ttf.Font`
          +/
         void size(uint newSize) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             if (TTF_SetFontSize(this.ttfFont, newSize.to!int) != 0) {
@@ -685,7 +685,7 @@ final class Font {
         }
 
         /++
-         + Wraps `TTF_SetFontSizeDPI` (from SDL_ttf 2.0.18) to set the `dsdl2.ttf.Font`'s size in DPI
+         + Wraps `TTF_SetFontSizeDPI` (from SDL_ttf 2.0.18) to set the `dsdl.ttf.Font`'s size in DPI
          +
          + Params:
          +   newSizeDPI = new DPI size tuple of the font size, `hdpi`, and `vdpi`
@@ -693,7 +693,7 @@ final class Font {
          +/
         void sizeDPI(Tuple!(uint, uint, uint) newSizeDPI) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             if (TTF_SetFontSizeDPI(this.ttfFont, newSizeDPI[0].to!int, newSizeDPI[1], newSizeDPI[2]) != 0) {
@@ -704,42 +704,42 @@ final class Font {
 
     static if (sdlTTFSupport >= SDLTTFSupport.v2_20) {
         /++
-         + Wraps `TTF_GetFontWrappedAlign` (from SDL_ttf 2.20) to get the `dsdl2.ttf.Font`'s wrap alignment mode
+         + Wraps `TTF_GetFontWrappedAlign` (from SDL_ttf 2.20) to get the `dsdl.ttf.Font`'s wrap alignment mode
          +
-         + Returns: `dsdl2.ttf.WrappedAlign` enumeration of the `dsdl2.ttf.Font`
+         + Returns: `dsdl.ttf.WrappedAlign` enumeration of the `dsdl.ttf.Font`
          +/
         WrappedAlign wrappedAlign() const @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
         do {
             return cast(WrappedAlign) TTF_GetFontWrappedAlign(this.ttfFont);
         }
 
         /++
-         + Wraps `TTF_SetFontWrappedAlign` (from SDL_ttf 2.20) to set the `dsdl2.ttf.Font`'s wrap alignment mode
+         + Wraps `TTF_SetFontWrappedAlign` (from SDL_ttf 2.20) to set the `dsdl.ttf.Font`'s wrap alignment mode
          +
          + Params:
-         +   newWrappedAlign = new `dsdl2.ttf.WrappedAlign` of the `dsdl2.ttf.Font`
+         +   newWrappedAlign = new `dsdl.ttf.WrappedAlign` of the `dsdl.ttf.Font`
          +/
         void wrappedAlign(WrappedAlign newWrappedAlign) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
         do {
             TTF_SetFontWrappedAlign(this.ttfFont, newWrappedAlign);
         }
 
         /++
-         + Wraps `TTF_SetFontDirection` (from SDL_ttf 2.20) to set the `dsdl2.ttf.Font`'s script direction
+         + Wraps `TTF_SetFontDirection` (from SDL_ttf 2.20) to set the `dsdl.ttf.Font`'s script direction
          +
          + Params:
-         +   newDirection = new script `dsdl2.ttf.Direction` for the `dsdl2.ttf.Font`
+         +   newDirection = new script `dsdl.ttf.Direction` for the `dsdl.ttf.Font`
          + Throws: `dsdl.SDLException` if unable to set script direction
          +/
         void direction(Direction newDirection) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
         do {
             if (TTF_SetFontDirection(this.ttfFont, newDirection) != 0) {
@@ -748,15 +748,15 @@ final class Font {
         }
 
         /++
-         + Wraps `TTF_SetFontScriptName` (from SDL_ttf 2.20) to set the `dsdl2.ttf.Font`'s script name
+         + Wraps `TTF_SetFontScriptName` (from SDL_ttf 2.20) to set the `dsdl.ttf.Font`'s script name
          +
          + Params:
-         +   newScriptName = new script name for the `dsdl2.ttf.Font`
+         +   newScriptName = new script name for the `dsdl.ttf.Font`
          + Throws: `dsdl.SDLException` if unable to set script name
          +/
         void scriptName(string newScriptName) @property @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
         do {
             if (TTF_SetFontScriptName(this.ttfFont, newScriptName.toStringz()) != 0) {
@@ -766,102 +766,102 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_FontHeight` to get the `dsdl2.ttf.Font`'s height
+     + Wraps `TTF_FontHeight` to get the `dsdl.ttf.Font`'s height
      +
-     + Returns: `int` height of the `dsdl2.ttf.Font`
+     + Returns: `int` height of the `dsdl.ttf.Font`
      +/
     int height() const @property @trusted {
         return TTF_FontHeight(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_FontAscent` to get the `dsdl2.ttf.Font`'s ascent
+     + Wraps `TTF_FontAscent` to get the `dsdl.ttf.Font`'s ascent
      +
-     + Returns: `int` ascent of the `dsdl2.ttf.Font`
+     + Returns: `int` ascent of the `dsdl.ttf.Font`
      +/
     int ascent() const @property @trusted {
         return TTF_FontAscent(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_FontDescent` to get the `dsdl2.ttf.Font`'s descent
+     + Wraps `TTF_FontDescent` to get the `dsdl.ttf.Font`'s descent
      +
-     + Returns: `int` descent of the `dsdl2.ttf.Font`
+     + Returns: `int` descent of the `dsdl.ttf.Font`
      +/
     int descent() const @property @trusted {
         return TTF_FontDescent(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_FontLineSkip` to get the `dsdl2.ttf.Font`'s line skip
+     + Wraps `TTF_FontLineSkip` to get the `dsdl.ttf.Font`'s line skip
      +
-     + Returns: `int` line skip of the `dsdl2.ttf.Font`
+     + Returns: `int` line skip of the `dsdl.ttf.Font`
      +/
     int lineSkip() const @property @trusted {
         return TTF_FontLineSkip(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_GetFontKerning` to get the `dsdl2.ttf.Font`'s kerning
+     + Wraps `TTF_GetFontKerning` to get the `dsdl.ttf.Font`'s kerning
      +
-     + Returns: `bool` whether the `dsdl2.ttf.Font` has kerning
+     + Returns: `bool` whether the `dsdl.ttf.Font` has kerning
      +/
     bool kerning() const @property @trusted {
         return TTF_GetFontKerning(this.ttfFont) != 0;
     }
 
     /++
-     + Wraps `TTF_SetFontKerning` to set the `dsdl2.ttf.Font`'s kerning
+     + Wraps `TTF_SetFontKerning` to set the `dsdl.ttf.Font`'s kerning
      +
      + Params:
-     +   newKerning = new `bool` value for the `dsdl2.ttf.Font`'s kerning
+     +   newKerning = new `bool` value for the `dsdl.ttf.Font`'s kerning
      +/
     void kerning(bool newKerning) @property @trusted {
         TTF_SetFontKerning(this.ttfFont, newKerning ? 1 : 0);
     }
 
     /++
-     + Wraps `TTF_FontFaces` to get the `dsdl2.ttf.Font`'s number of font faces
+     + Wraps `TTF_FontFaces` to get the `dsdl.ttf.Font`'s number of font faces
      +
-     + Returns: number of font faces of the `dsdl2.ttf.Font`
+     + Returns: number of font faces of the `dsdl.ttf.Font`
      +/
     size_t faces() const @property @trusted {
         return TTF_FontFaces(this.ttfFont);
     }
 
     /++
-     + Wraps `TTF_FontFaceIsFixedWidth` to check whether the `dsdl2.ttf.Font`'s font face is fixed width
+     + Wraps `TTF_FontFaceIsFixedWidth` to check whether the `dsdl.ttf.Font`'s font face is fixed width
      +
-     + Returns: `true` if the `dsdl2.ttf.Font`'s font face is fixed width, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font`'s font face is fixed width, otherwise `false`
      +/
     bool fixedWidth() const @property @trusted {
         return TTF_FontFaceIsFixedWidth(this.ttfFont) != 0;
     }
 
     /++
-     + Wraps `TTF_FontFaceFamilyName` to get the `dsdl2.ttf.Font` family name
+     + Wraps `TTF_FontFaceFamilyName` to get the `dsdl.ttf.Font` family name
      +
-     + Returns: font family name of the `dsdl2.ttf.Font`
+     + Returns: font family name of the `dsdl.ttf.Font`
      +/
     string familyName() const @property @trusted {
         return TTF_FontFaceFamilyName(this.ttfFont).to!string;
     }
 
     /++
-     + Wraps `TTF_FontFaceStyleName` to get the `dsdl2.ttf.Font` style name
+     + Wraps `TTF_FontFaceStyleName` to get the `dsdl.ttf.Font` style name
      +
-     + Returns: font style name of the `dsdl2.ttf.Font`
+     + Returns: font style name of the `dsdl.ttf.Font`
      +/
     string styleName() const @property @trusted {
         return TTF_FontFaceStyleName(this.ttfFont).to!string;
     }
 
     /++
-     + Wraps `TTF_GlyphIsProvided` to check whether the `dsdl2.ttf.Font` provides a glyph
+     + Wraps `TTF_GlyphIsProvided` to check whether the `dsdl.ttf.Font` provides a glyph
      +
      + Params:
      +   glyph = `wchar` glyph to check
-     + Returns: `true` if the `dsdl2.ttf.Font` provides the glyph, otherwise `false`
+     + Returns: `true` if the `dsdl.ttf.Font` provides the glyph, otherwise `false`
      +/
     bool providesGlyph(wchar glyph) const @trusted {
         return TTF_GlyphIsProvided(this.ttfFont, cast(ushort) glyph) != 0;
@@ -869,15 +869,15 @@ final class Font {
 
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
         /++
-         + Wraps `TTF_GlyphIsProvided32` (from SDL_ttf 2.0.18) to check whether the `dsdl2.ttf.Font` provides a glyph
+         + Wraps `TTF_GlyphIsProvided32` (from SDL_ttf 2.0.18) to check whether the `dsdl.ttf.Font` provides a glyph
          +
          + Params:
          +   glyph = `dchar` glyph to check
-         + Returns: `true` if the `dsdl2.ttf.Font` provides the glyph, otherwise `false`
+         + Returns: `true` if the `dsdl.ttf.Font` provides the glyph, otherwise `false`
          +/
         bool providesGlyph(dchar glyph) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             return TTF_GlyphIsProvided32(cast(TTF_Font*) this.ttfFont, cast(uint) glyph) != 0;
@@ -885,11 +885,11 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_GlyphMetrics` to the metrics of a glyph in the `dsdl2.ttf.Font`
+     + Wraps `TTF_GlyphMetrics` to the metrics of a glyph in the `dsdl.ttf.Font`
      +
      + Params:
      +   glyph = `wchar` glyph to get the metrics of
-     + Returns: `dsdl2.ttf.GlyphMetrics` of the glyph
+     + Returns: `dsdl.ttf.GlyphMetrics` of the glyph
      + Throws: `dsdl.SDLException` if unable to get glyph metrics
      +/
     GlyphMetrics glyphMetrics(wchar glyph) const @trusted {
@@ -904,16 +904,16 @@ final class Font {
 
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
         /++
-         + Wraps `TTF_GlyphMetrics32` (from SDL_ttf 2.0.18) to the metrics of a glyph in the `dsdl2.ttf.Font`
+         + Wraps `TTF_GlyphMetrics32` (from SDL_ttf 2.0.18) to the metrics of a glyph in the `dsdl.ttf.Font`
          +
          + Params:
          +   glyph = `dchar` glyph to get the metrics of
-         + Returns: `dsdl2.ttf.GlyphMetrics` of the glyph
+         + Returns: `dsdl.ttf.GlyphMetrics` of the glyph
          + Throws: `dsdl.SDLException` if unable to get glyph metrics
          +/
         GlyphMetrics glyphMetrics(dchar glyph) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             GlyphMetrics metrics = void;
@@ -929,7 +929,7 @@ final class Font {
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_14) {
         /++
          + Wraps `TTF_GetFontKerningSize` (from SDL_ttf 2.0.14) to get the kerning between two glyphs in the
-         + `dsdl2.ttf.Font`
+         + `dsdl.ttf.Font`
          +
          + Params:
          +   prevGlyph = preceeding `wchar` glyph
@@ -938,7 +938,7 @@ final class Font {
          +/
         int glyphKerning(wchar prevGlyph, wchar glyph) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 14));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 14));
         }
         do {
             return TTF_GetFontKerningSizeGlyphs(cast(TTF_Font*) this.ttfFont, //
@@ -949,7 +949,7 @@ final class Font {
     static if (sdlTTFSupport >= SDLTTFSupport.v2_0_18) {
         /++
          + Wraps `TTF_GetFontKerningSize` (from SDL_ttf 2.0.18) to get the kerning between two glyphs in the
-         + `dsdl2.ttf.Font`
+         + `dsdl.ttf.Font`
          +
          + Params:
          +   prevGlyph = preceeding `dchar` glyph
@@ -958,7 +958,7 @@ final class Font {
          +/
         int glyphKerning(dchar prevGlyph, dchar glyph) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             return TTF_GetFontKerningSizeGlyphs32(cast(TTF_Font*) this.ttfFont, cast(uint) prevGlyph, cast(uint) glyph);
@@ -966,7 +966,7 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_SizeUTF8` to get the size of a rendered text in the `dsdl2.ttf.Font`
+     + Wraps `TTF_SizeUTF8` to get the size of a rendered text in the `dsdl.ttf.Font`
      +
      + Params:
      +   text = rendered `string` text to get the size of
@@ -983,7 +983,7 @@ final class Font {
     }
 
     /++
-     + Wraps `TTF_SizeUNICODE` to get the size of a rendered text in the `dsdl2.ttf.Font`
+     + Wraps `TTF_SizeUNICODE` to get the size of a rendered text in the `dsdl.ttf.Font`
      +
      + Params:
      +   text = rendered `wstring` text to get the size of
@@ -1021,7 +1021,7 @@ final class Font {
          +/
         TextMeasurement measureText(string text, uint measureWidth) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             TextMeasurement measurement = void;
@@ -1045,7 +1045,7 @@ final class Font {
          +/
         TextMeasurement measureText(wstring text, uint measureWidth) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
         do {
             // `std.string.toStringz` doesn't have any `wstring` overloads.
@@ -1066,22 +1066,22 @@ final class Font {
 
     /++
      + Wraps `TTF_RenderGlyph_Solid`, `TTF_RenderGlyph_Shaded`, `TTF_RenderGlyph_Blended`, and additionally
-     + `TTF_RenderGlyph_LCD` (from SDL_ttf 2.20) to render a glyph in the `dsdl2.ttf.Font`
+     + `TTF_RenderGlyph_LCD` (from SDL_ttf 2.20) to render a glyph in the `dsdl.ttf.Font`
      +
      + Params:
      +   glyph = `wchar` glyph to render
-     +   foreground = foreground `dsdl2.Color` of the glyph
-     +   background = background `dsdl2.Color` of the resulted surface (only for `RenderQuality.shaded` and
+     +   foreground = foreground `dsdl.Color` of the glyph
+     +   background = background `dsdl.Color` of the resulted surface (only for `RenderQuality.shaded` and
      +                `RenderQuality.lcd`)
-     +   quality = `dsdl2.ttf.RenderQuality` of the resulted render
-     + Returns: `dsdl2.Surface` containing the rendered glyph
+     +   quality = `dsdl.ttf.RenderQuality` of the resulted render
+     + Returns: `dsdl.Surface` containing the rendered glyph
      + Throws: `dsdl.SDLException` if failed to render glyph
      +/
     Surface render(wchar glyph, Color foreground, Color background = Color(0, 0, 0, 0),
             RenderQuality quality = RenderQuality.shaded) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
 
         if (background != Color(0, 0, 0, 0)) {
@@ -1130,24 +1130,24 @@ final class Font {
         /++
          + Wraps `TTF_RenderGlyph32_Solid`, `TTF_RenderGlyph32_Shaded`, `TTF_RenderGlyph32_Blended` (from SDL_ttf
          + 2.0.18), and additionally `TTF_RenderGlyph32_LCD` (from SDL_ttf 2.20) to render a glyph in the
-         + `dsdl2.ttf.Font`
+         + `dsdl.ttf.Font`
          +
          + Params:
          +   glyph = `dchar` glyph to render
-         +   foreground = foreground `dsdl2.Color` of the glyph
-         +   background = background `dsdl2.Color` of the resulted surface (only for `RenderQuality.shaded` and
+         +   foreground = foreground `dsdl.Color` of the glyph
+         +   background = background `dsdl.Color` of the resulted surface (only for `RenderQuality.shaded` and
          +                `RenderQuality.lcd`)
-         +   quality = `dsdl2.ttf.RenderQuality` of the resulted render
-         + Returns: `dsdl2.Surface` containing the rendered glyph
+         +   quality = `dsdl.ttf.RenderQuality` of the resulted render
+         + Returns: `dsdl.Surface` containing the rendered glyph
          + Throws: `dsdl.SDLException` if failed to render glyph
          +/
         Surface render(dchar glyph, Color foreground, Color background = Color(0, 0, 0, 0),
                 RenderQuality quality = RenderQuality.shaded) const @trusted
         in {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
 
             if (quality == RenderQuality.lcd) {
-                assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+                assert(dsdl.ttf.getVersion() >= Version(2, 20));
             }
 
             if (background != Color(0, 0, 0, 0)) {
@@ -1197,28 +1197,28 @@ final class Font {
      + Wraps `TTF_RenderUTF8_Solid`, `TTF_RenderUTF8_Shaded`, `TTF_RenderUTF8_Blended`, and additionally
      + `TTF_RenderUTF8_LCD` (from SDL_ttf 2.20), as well as `TTF_RenderUTF8_Solid_Wrapped`,
      + `TTF_RenderUTF8_Shaded_Wrapped`, `TTF_RenderUTF8_Blended_Wrapped` (from SDL_ttf 2.0.18),
-     + and `TTF_RenderUTF8_LCD_Wrapped` (from SDL_ttf 2.20) to render a text string in the `dsdl2.ttf.Font`
+     + and `TTF_RenderUTF8_LCD_Wrapped` (from SDL_ttf 2.20) to render a text string in the `dsdl.ttf.Font`
      +
      + Params:
      +   text = `string` text to render
-     +   foreground = foreground `dsdl2.Color` of the text
-     +   background = background `dsdl2.Color` of the resulted surface (only for `RenderQuality.shaded` and
+     +   foreground = foreground `dsdl.Color` of the text
+     +   background = background `dsdl.Color` of the resulted surface (only for `RenderQuality.shaded` and
      +                `RenderQuality.lcd`)
-     +   quality = `dsdl2.ttf.RenderQuality` of the resulted render
+     +   quality = `dsdl.ttf.RenderQuality` of the resulted render
      +   wrapLength = maximum width in pixels for wrapping text to the new line; `0` to only wrap on line breaks
      +                (wrapping only available from SDL_ttf 2.0.18)
-     + Returns: `dsdl2.Surface` containing the rendered text
+     + Returns: `dsdl.Surface` containing the rendered text
      + Throws: `dsdl.SDLException` if failed to render text
      +/
     Surface render(string text, Color foreground, Color background = Color(0, 0, 0, 0),
             RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
 
         if (wrapLength != cast(uint)-1) {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
 
         if (background != Color(0, 0, 0, 0)) {
@@ -1297,28 +1297,28 @@ final class Font {
      + Wraps `TTF_RenderUNICODE_Solid`, `TTF_RenderUNICODE_Shaded`, `TTF_RenderUNICODE_Blended`, and additionally
      + `TTF_RenderUNICODE_LCD` (from SDL_ttf 2.20), as well as `TTF_RenderUNICODE_Solid_Wrapped`,
      + `TTF_RenderUNICODE_Shaded_Wrapped`, `TTF_RenderUNICODE_Blended_Wrapped` (from SDL_ttf 2.0.18),
-     + and `TTF_RenderUNICODE_LCD_Wrapped` (from SDL_ttf 2.20) to render a text string in the `dsdl2.ttf.Font`
+     + and `TTF_RenderUNICODE_LCD_Wrapped` (from SDL_ttf 2.20) to render a text string in the `dsdl.ttf.Font`
      +
      + Params:
      +   text = `wstring` text to render
-     +   foreground = foreground `dsdl2.Color` of the text
-     +   background = background `dsdl2.Color` of the resulted surface (only for `RenderQuality.shaded` and
+     +   foreground = foreground `dsdl.Color` of the text
+     +   background = background `dsdl.Color` of the resulted surface (only for `RenderQuality.shaded` and
      +                `RenderQuality.lcd`)
-     +   quality = `dsdl2.ttf.RenderQuality` of the resulted render
+     +   quality = `dsdl.ttf.RenderQuality` of the resulted render
      +   wrapLength = maximum width in pixels for wrapping text to the new line; `0` to only wrap on line breaks
      +                (wrapping only available from SDL_ttf 2.0.18)
-     + Returns: `dsdl2.Surface` containing the rendered text
+     + Returns: `dsdl.Surface` containing the rendered text
      + Throws: `dsdl.SDLException` if failed to render text
      +/
     Surface render(wstring text, Color foreground, Color background = Color(0, 0, 0, 0),
             RenderQuality quality = RenderQuality.shaded, uint wrapLength = cast(uint)-1) const @trusted
     in {
         if (quality == RenderQuality.lcd) {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 20));
+            assert(dsdl.ttf.getVersion() >= Version(2, 20));
         }
 
         if (wrapLength != cast(uint)-1) {
-            assert(dsdl2.ttf.getVersion() >= Version(2, 0, 18));
+            assert(dsdl.ttf.getVersion() >= Version(2, 0, 18));
         }
 
         if (background != Color(0, 0, 0, 0)) {

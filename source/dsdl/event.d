@@ -4,14 +4,14 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.event;
+module dsdl.event;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.display;
-import dsdl2.keyboard;
-import dsdl2.mouse;
+import dsdl.sdl;
+import dsdl.display;
+import dsdl.keyboard;
+import dsdl.mouse;
 
 import std.conv : to;
 import std.format : format;
@@ -26,14 +26,14 @@ void pumpEvents() @trusted {
 /++
  + Wraps `SDL_PollEvent` which returns the latest event in queue
  +
- + Returns: `dsdl2.Event` if there's an event, otherwise `null`
+ + Returns: `dsdl.Event` if there's an event, otherwise `null`
  + Example:
  + ---
  + // Polls every upcoming event in queue
- + dsdl2.pumpEvents();
- + while (auto event = dsdl2.pollEvent()){
- +     if (cast(dsdl2.QuitEvent)event) {
- +         dsdl2.quit();
+ + dsdl.pumpEvents();
+ + while (auto event = dsdl.pollEvent()){
+ +     if (cast(dsdl.QuitEvent)event) {
+ +         dsdl.quit();
  +     }
  + }
  + ---
@@ -49,7 +49,7 @@ Event pollEvent() @trusted {
 }
 
 /++
- + D abstract class that wraps `SDL_Event` containing details of an event polled from `dsdl2.pollEvent()`
+ + D abstract class that wraps `SDL_Event` containing details of an event polled from `dsdl.pollEvent()`
  +/
 abstract class Event {
     SDL_Event sdlEvent; /// Internal `SDL_Event` struct
@@ -66,20 +66,20 @@ abstract class Event {
     }
 
     /++
-     + Proxy to the timestamp of the `dsdl2.Event`
+     + Proxy to the timestamp of the `dsdl.Event`
      +
-     + Returns: timestamp of the `dsdl2.Event`
+     + Returns: timestamp of the `dsdl.Event`
      +/
     ref inout(uint) timestamp() return inout @property {
         return this.sdlEvent.common.timestamp;
     }
 
     /++
-     + Turns a vanilla `SDL_Event` from bindbc-sdl to `dsdl2.Event`
+     + Turns a vanilla `SDL_Event` from bindbc-sdl to `dsdl.Event`
      +
      + Params:
      +   sdlEvent = vanilla `SDL_Event` from bindbc-sdl
-     + Returns: `dsdl2.Event` of the same attributes
+     + Returns: `dsdl.Event` of the same attributes
      +/
     static Event fromSDL(SDL_Event sdlEvent) @trusted {
         Event event;
@@ -217,7 +217,7 @@ abstract class Event {
 }
 
 /++
- + D class that wraps SDL events that aren't recognized by dsdl2
+ + D class that wraps SDL events that aren't recognized by dsdl
  +/
 final class UnknownEvent : Event {
     this(SDL_Event sdlEvent) {
@@ -225,7 +225,7 @@ final class UnknownEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.UnknownEvent(%s)".format(this.sdlEvent);
+        return "dsdl.UnknownEvent(%s)".format(this.sdlEvent);
     }
 }
 
@@ -242,7 +242,7 @@ final class QuitEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.QuitEvent()";
+        return "dsdl.QuitEvent()";
     }
 }
 
@@ -259,7 +259,7 @@ final class AppTerminatingEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppTerminatingEvent()";
+        return "dsdl.AppTerminatingEvent()";
     }
 }
 
@@ -276,7 +276,7 @@ final class AppLowMemoryEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppLowMemoryEvent()";
+        return "dsdl.AppLowMemoryEvent()";
     }
 }
 
@@ -293,7 +293,7 @@ final class AppWillEnterBackgroundEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppWillEnterBackgroundEvent()";
+        return "dsdl.AppWillEnterBackgroundEvent()";
     }
 }
 
@@ -310,7 +310,7 @@ final class AppDidEnterBackgroundEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppDidEnterBackgroundEvent()";
+        return "dsdl.AppDidEnterBackgroundEvent()";
     }
 }
 
@@ -327,7 +327,7 @@ final class AppWillEnterForegroundEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppWillEnterForegroundEvent()";
+        return "dsdl.AppWillEnterForegroundEvent()";
     }
 }
 
@@ -344,7 +344,7 @@ final class AppDidEnterForegroundEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.AppDidEnterForegroundEvent()";
+        return "dsdl.AppDidEnterForegroundEvent()";
     }
 }
 
@@ -362,7 +362,7 @@ static if (sdlSupport >= SDLSupport.v2_0_14) {
         }
 
         override string toString() const {
-            return "dsdl2.LocaleChangeEvent()";
+            return "dsdl.LocaleChangeEvent()";
         }
     }
 }
@@ -438,7 +438,7 @@ static if (sdlSupport >= SDLSupport.v2_0_9) {
         }
 
         override string toString() const {
-            return "dsdl2.DisplayOrientationEvent(%d, %d)".format(this.display, this.orientation);
+            return "dsdl.DisplayOrientationEvent(%d, %d)".format(this.display, this.orientation);
         }
 
         ref inout(DisplayOrientation) orientation() return inout @property @trusted {
@@ -463,7 +463,7 @@ static if (sdlSupport >= SDLSupport.v2_0_14) {
         }
 
         override string toString() const {
-            return "dsdl2.DisplayConnectedEvent(%d)".format(this.display);
+            return "dsdl.DisplayConnectedEvent(%d)".format(this.display);
         }
     }
 
@@ -482,7 +482,7 @@ static if (sdlSupport >= SDLSupport.v2_0_14) {
         }
 
         override string toString() const {
-            return "dsdl2.DisplayDisconnectedEvent(%d)".format(this.display);
+            return "dsdl.DisplayDisconnectedEvent(%d)".format(this.display);
         }
     }
 }
@@ -503,7 +503,7 @@ static if (sdlSupport >= SDLSupport.v2_28) {
         }
 
         override string toString() const {
-            return "dsdl2.DisplayMovedEvent(%d)".format(this.display);
+            return "dsdl.DisplayMovedEvent(%d)".format(this.display);
         }
     }
 }
@@ -636,7 +636,7 @@ final class WindowShownEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowShownEvent(%d)".format(this.windowID);
+        return "dsdl.WindowShownEvent(%d)".format(this.windowID);
     }
 }
 
@@ -655,7 +655,7 @@ final class WindowHiddenEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowHiddenEvent(%d)".format(this.windowID);
+        return "dsdl.WindowHiddenEvent(%d)".format(this.windowID);
     }
 }
 
@@ -674,7 +674,7 @@ final class WindowExposedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowExposedEvent(%d)".format(this.windowID);
+        return "dsdl.WindowExposedEvent(%d)".format(this.windowID);
     }
 }
 
@@ -695,7 +695,7 @@ final class WindowMovedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowMovedEvent(%d, %s)".format(this.windowID, this.xy);
+        return "dsdl.WindowMovedEvent(%d, %s)".format(this.windowID, this.xy);
     }
 
     ref inout(int) x() return inout @property {
@@ -728,7 +728,7 @@ final class WindowResizedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowResizedEvent(%d, %s)".format(this.windowID, this.size);
+        return "dsdl.WindowResizedEvent(%d, %s)".format(this.windowID, this.size);
     }
 
     ref inout(uint) width() return inout @property @trusted {
@@ -759,7 +759,7 @@ final class WindowSizeChangedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowSizeChangedEvent(%d)".format(this.windowID);
+        return "dsdl.WindowSizeChangedEvent(%d)".format(this.windowID);
     }
 }
 
@@ -778,7 +778,7 @@ final class WindowMinimizedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowMinimizedEvent(%d)".format(this.windowID);
+        return "dsdl.WindowMinimizedEvent(%d)".format(this.windowID);
     }
 }
 
@@ -797,7 +797,7 @@ final class WindowMaximizedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowMaximizedEvent(%d)".format(this.windowID);
+        return "dsdl.WindowMaximizedEvent(%d)".format(this.windowID);
     }
 }
 
@@ -816,7 +816,7 @@ final class WindowRestoredEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowRestoredEvent(%d)".format(this.windowID);
+        return "dsdl.WindowRestoredEvent(%d)".format(this.windowID);
     }
 }
 
@@ -835,7 +835,7 @@ final class WindowEnterEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowEnterEvent(%d)".format(this.windowID);
+        return "dsdl.WindowEnterEvent(%d)".format(this.windowID);
     }
 }
 
@@ -854,7 +854,7 @@ final class WindowLeaveEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowLeaveEvent(%d)".format(this.windowID);
+        return "dsdl.WindowLeaveEvent(%d)".format(this.windowID);
     }
 }
 
@@ -873,7 +873,7 @@ final class WindowFocusGainedEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowFocusGainedEvent(%d)".format(this.windowID);
+        return "dsdl.WindowFocusGainedEvent(%d)".format(this.windowID);
     }
 }
 
@@ -892,7 +892,7 @@ final class WindowFocusLostEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowFocusLostEvent(%d)".format(this.windowID);
+        return "dsdl.WindowFocusLostEvent(%d)".format(this.windowID);
     }
 }
 
@@ -911,7 +911,7 @@ final class WindowCloseEvent : WindowEvent {
     }
 
     override string toString() const {
-        return "dsdl2.WindowCloseEvent(%d)".format(this.windowID);
+        return "dsdl.WindowCloseEvent(%d)".format(this.windowID);
     }
 }
 
@@ -931,7 +931,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         override string toString() const {
-            return "dsdl2.WindowTakeFocusEvent(%d)".format(this.windowID);
+            return "dsdl.WindowTakeFocusEvent(%d)".format(this.windowID);
         }
     }
 
@@ -950,7 +950,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         override string toString() const {
-            return "dsdl2.WindowHitTestEvent(%d)".format(this.windowID);
+            return "dsdl.WindowHitTestEvent(%d)".format(this.windowID);
         }
     }
 }
@@ -971,7 +971,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         }
 
         override string toString() const {
-            return "dsdl2.WindowICCProfileChangedEvent(%d)".format(this.windowID);
+            return "dsdl.WindowICCProfileChangedEvent(%d)".format(this.windowID);
         }
     }
 
@@ -991,7 +991,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         }
 
         override string toString() const {
-            return "dsdl2.WindowDisplayChangedEvent(%d)".format(this.windowID, this.display);
+            return "dsdl.WindowDisplayChangedEvent(%d)".format(this.windowID, this.display);
         }
 
         ref inout(int) display() return inout @property {
@@ -1014,7 +1014,7 @@ final class SysWMEvent : Event {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.SysWMEvent(0x%x)".format(this.msg);
+        return "dsdl.SysWMEvent(0x%x)".format(this.msg);
     }
 
     ref inout(SDL_SysWMmsg*) msg() return inout @property @system {
@@ -1100,7 +1100,7 @@ final class KeyDownKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const {
-        return "dsdl2.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
+        return "dsdl.KeyDownKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
                 this.scancode, this.sym, this.mod);
     }
 }
@@ -1123,7 +1123,7 @@ final class KeyUpKeyboardEvent : KeyboardEvent {
     }
 
     override string toString() const {
-        return "dsdl2.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
+        return "dsdl.KeyUpKeyboardEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.repeat,
                 this.scancode, this.sym, this.mod);
     }
 }
@@ -1149,7 +1149,7 @@ final class TextEditingEvent : Event {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.TextEditingEvent(%d, %s, %d, %d)".format(this.windowID,
+        return "dsdl.TextEditingEvent(%d, %s, %d, %d)".format(this.windowID,
                 [this.text].to!string[1 .. $ - 1], this.start, this.length);
     }
 
@@ -1197,7 +1197,7 @@ final class TextInputEvent : Event {
     }
 
     override string toString() const @trusted {
-        return "dsdl2.TextInputEvent(%d, %s)".format(this.windowID, [this.text].to!string[1 .. $ - 1]);
+        return "dsdl.TextInputEvent(%d, %s)".format(this.windowID, [this.text].to!string[1 .. $ - 1]);
     }
 
     ref inout(uint) windowID() return inout @property {
@@ -1231,7 +1231,7 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
         }
 
         override string toString() const {
-            return "dsdl2.KeymapChangedEvent()";
+            return "dsdl.KeymapChangedEvent()";
         }
     }
 }
@@ -1256,7 +1256,7 @@ final class MouseMotionEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.MouseMotionEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
+        return "dsdl.MouseMotionEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
                 this.state, this.xy, this.xyRel);
     }
 
@@ -1412,7 +1412,7 @@ final class MouseButtonDownEvent : MouseButtonEvent {
     }
 
     override string toString() const {
-        return "dsdl2.MouseButtonDownEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
+        return "dsdl.MouseButtonDownEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
                 this.button, this.clicks, this.xy);
     }
 }
@@ -1443,7 +1443,7 @@ final class MouseButtonUpEvent : MouseButtonEvent {
     }
 
     override string toString() const {
-        return "dsdl2.MouseButtonUpEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
+        return "dsdl.MouseButtonUpEvent(%d, %d, %s, %d, %s)".format(this.windowID, this.which,
                 this.button, this.clicks, this.xy);
     }
 }
@@ -1495,14 +1495,14 @@ final class MouseWheelEvent : Event {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_18) {
-            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
+            return "dsdl.MouseWheelEvent(%d, %d, %s, %s, %s)".format(this.windowID, this.which,
                     this.xy, this.direction, this.preciseXY);
         }
         else static if (sdlSupport >= SDLSupport.v2_0_4) {
-            return "dsdl2.MouseWheelEvent(%d, %d, %s, %s)".format(this.windowID, this.which, this.xy, this.direction);
+            return "dsdl.MouseWheelEvent(%d, %d, %s, %s)".format(this.windowID, this.which, this.xy, this.direction);
         }
         else {
-            return "dsdl2.MouseWheelEvent(%d, %d, %s)".format(this.windowID, this.which, this.xy);
+            return "dsdl.MouseWheelEvent(%d, %d, %s)".format(this.windowID, this.which, this.xy);
         }
     }
 
@@ -1677,11 +1677,11 @@ class FingerMotionEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+            return "dsdl.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+            return "dsdl.FingerMotionEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
@@ -1722,11 +1722,11 @@ class FingerDownEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+            return "dsdl.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+            return "dsdl.FingerDownEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
@@ -1767,11 +1767,11 @@ class FingerUpEvent : FingerEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_12) {
-            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
+            return "dsdl.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f, %d)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure, this.windowID);
         }
         else {
-            return "dsdl2.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
+            return "dsdl.FingerUpEvent(%d, %d, %f, %f, %f, %f, %f)".format(this.touchID,
                     this.fingerID, this.x, this.y, this.dx, this.dy, this.pressure);
         }
     }
@@ -1796,7 +1796,7 @@ class MultiGestureEvent : Event {
     }
 
     override string toString() const {
-        return "dsdl2.MultiGestureEvent(%d, %f, %f, %f, %f, %d)".format(this.touchID, this.dTheta,
+        return "dsdl.MultiGestureEvent(%d, %f, %f, %f, %f, %d)".format(this.touchID, this.dTheta,
                 this.dDist, this.x, this.y, this.numFingers);
     }
 
@@ -1885,7 +1885,7 @@ class DollarGestureEvent : DollarEvent {
     }
 
     override string toString() const {
-        return "dsdl2.DollarGestureEvent(%d, %d, %d, %f, %f, %f)".format(this.touchID,
+        return "dsdl.DollarGestureEvent(%d, %d, %d, %f, %f, %f)".format(this.touchID,
                 this.gestureID, this.numFingers, this.error, this.x, this.y);
     }
 
@@ -1921,7 +1921,7 @@ class DollarRecordEvent : DollarEvent {
     }
 
     override string toString() const {
-        return "dsdl2.DollarRecordEvent(%d, %d)".format(this.touchID, this.gestureID);
+        return "dsdl.DollarRecordEvent(%d, %d)".format(this.touchID, this.gestureID);
     }
 }
 
@@ -2024,10 +2024,10 @@ class DropFileEvent : DropEvent {
 
     override string toString() const {
         static if (sdlSupport >= SDLSupport.v2_0_5) {
-            return "dsdl2.DropFileEvent(%s, %d)".format(this.file, this.windowID);
+            return "dsdl.DropFileEvent(%s, %d)".format(this.file, this.windowID);
         }
         else {
-            return "dsdl2.DropFileEvent(%s)".format(this.file);
+            return "dsdl.DropFileEvent(%s)".format(this.file);
         }
     }
 
@@ -2061,7 +2061,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         override string toString() const {
-            return "dsdl2.DropTextEvent(%s, %d)".format(this.file, this.windowID);
+            return "dsdl.DropTextEvent(%s, %d)".format(this.file, this.windowID);
         }
 
         string file() const @property @trusted {
@@ -2089,7 +2089,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         override string toString() const {
-            return "dsdl2.DropBeginEvent(%d)".format(this.windowID);
+            return "dsdl.DropBeginEvent(%d)".format(this.windowID);
         }
     }
 
@@ -2107,7 +2107,7 @@ static if (sdlSupport >= SDLSupport.v2_0_5) {
         }
 
         override string toString() const {
-            return "dsdl2.DropCompleteEvent(%d)".format(this.windowID);
+            return "dsdl.DropCompleteEvent(%d)".format(this.windowID);
         }
     }
 }

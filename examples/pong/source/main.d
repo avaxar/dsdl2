@@ -4,55 +4,55 @@ import std.stdio;
 import std.math;
 import std.random;
 
-static import dsdl2;
+static import dsdl;
 
 void main() {
-    dsdl2.loadSO();
-    dsdl2.init(everything : true);
+    dsdl.loadSO();
+    dsdl.init(everything : true);
 
     // dfmt off
-    auto window = new dsdl2.Window("Pong",
-        [dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined], [800, 600]);
+    auto window = new dsdl.Window("Pong",
+        [dsdl.WindowPos.undefined, dsdl.WindowPos.undefined], [800, 600]);
     // dfmt on
 
     auto rand = Random(unpredictableSeed());
 
     float playerSpeed = 300.0;
-    auto playerA = dsdl2.FRect(10, 250, 10, 100);
-    auto playerB = dsdl2.FRect(780, 250, 10, 100);
+    auto playerA = dsdl.FRect(10, 250, 10, 100);
+    auto playerB = dsdl.FRect(780, 250, 10, 100);
 
     float ballSpeed = 300.0;
     float ballDirection = uniform(-PI, PI, rand);
-    auto ball = dsdl2.FRect(390, 290, 20, 20);
+    auto ball = dsdl.FRect(390, 290, 20, 20);
 
     bool running = true;
-    float lastTick = dsdl2.getTicks() / 1000.0;
+    float lastTick = dsdl.getTicks() / 1000.0;
     float deltaTime = 0.0;
 
     // Game loop
     while (running) {
-        dsdl2.pumpEvents();
-        while (auto event = dsdl2.pollEvent()) {
-            if (cast(dsdl2.QuitEvent) event) {
+        dsdl.pumpEvents();
+        while (auto event = dsdl.pollEvent()) {
+            if (cast(dsdl.QuitEvent) event) {
                 running = false;
                 break;
             }
         }
 
         // Updates movement from the keyboard
-        auto keys = dsdl2.getKeyboardState();
+        auto keys = dsdl.getKeyboardState();
         // W and S for player A
-        if (keys[dsdl2.Scancode.w]) {
+        if (keys[dsdl.Scancode.w]) {
             playerA.y -= playerSpeed * deltaTime;
         }
-        if (keys[dsdl2.Scancode.s]) {
+        if (keys[dsdl.Scancode.s]) {
             playerA.y += playerSpeed * deltaTime;
         }
         // Up and down arrows for player B
-        if (keys[dsdl2.Scancode.up]) {
+        if (keys[dsdl.Scancode.up]) {
             playerB.y -= playerSpeed * deltaTime;
         }
-        if (keys[dsdl2.Scancode.down]) {
+        if (keys[dsdl.Scancode.down]) {
             playerB.y += playerSpeed * deltaTime;
         }
 
@@ -96,22 +96,22 @@ void main() {
 
         // If the ball hits the left or right side of the screen, reset the game
         if (ball.x < 0 || ball.x + ball.width > window.width) {
-            ball.point = dsdl2.FPoint((window.width - ball.width) / 2, (window.size[1] - ball.height) / 2);
+            ball.point = dsdl.FPoint((window.width - ball.width) / 2, (window.size[1] - ball.height) / 2);
             ballDirection = uniform(0.0, 2.0 * PI, rand);
         }
 
         // Clears the screen
-        window.surface.fill(dsdl2.Color(0, 0, 0));
+        window.surface.fill(dsdl.Color(0, 0, 0));
 
         // Draws both of the players' paddles and the ball
-        window.surface.fillRect(dsdl2.Rect(playerA), dsdl2.Color(255, 0, 0)); // Player A -> Red
-        window.surface.fillRect(dsdl2.Rect(playerB), dsdl2.Color(0, 0, 255)); // Player B -> Blue
-        window.surface.fillRect(dsdl2.Rect(ball), dsdl2.Color(255, 255, 255)); // Ball -> White
+        window.surface.fillRect(dsdl.Rect(playerA), dsdl.Color(255, 0, 0)); // Player A -> Red
+        window.surface.fillRect(dsdl.Rect(playerB), dsdl.Color(0, 0, 255)); // Player B -> Blue
+        window.surface.fillRect(dsdl.Rect(ball), dsdl.Color(255, 255, 255)); // Ball -> White
 
         window.update();
-        deltaTime = dsdl2.getTicks() / 1000.0 - lastTick;
+        deltaTime = dsdl.getTicks() / 1000.0 - lastTick;
         lastTick += deltaTime;
     }
 
-    dsdl2.quit();
+    dsdl.quit();
 }

@@ -4,14 +4,14 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.surface;
+module dsdl.surface;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.blend;
-import dsdl2.pixels;
-import dsdl2.rect;
+import dsdl.sdl;
+import dsdl.blend;
+import dsdl.pixels;
+import dsdl.rect;
 
 import core.memory : GC;
 import std.conv : to;
@@ -21,8 +21,8 @@ import std.typecons : Nullable, nullable;
 /++
  + D class that wraps `SDL_Surface` storing a 2D image in the RAM
  +
- + `dsdl2.Surface` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
- + RAM according to its defined `dsdl2.PixelFormat`.
+ + `dsdl.Surface` stores a 2D image out of pixels with a `width` and `height`, where each pixel stored in the
+ + RAM according to its defined `dsdl.PixelFormat`.
  +/
 final class Surface {
     private PixelFormat pixelFormatProxy = null;
@@ -32,7 +32,7 @@ final class Surface {
     @system SDL_Surface* sdlSurface = null; /// Internal `SDL_Surface` pointer
 
     /++
-     + Constructs a `dsdl2.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
+     + Constructs a `dsdl.Surface` from a vanilla `SDL_Surface*` from bindbc-sdl
      +
      + Params:
      +   sdlSurface = the `SDL_Surface` pointer to manage
@@ -50,13 +50,13 @@ final class Surface {
     }
 
     /++
-     + Constructs a blank RGB(A) `dsdl2.Surface` with a set width, height, and `dsdl2.PixelFormat` that wraps
+     + Constructs a blank RGB(A) `dsdl.Surface` with a set width, height, and `dsdl.PixelFormat` that wraps
      + `SDL_CreateRGBSurface`
      +
      + Params:
-     +   size = size (width and height) of the `dsdl2.Surface` in pixels
-     +   rgbPixelFormat = an RGB(A) `dsdl2.PixelFormat`
-     + Throws: `dsdl2.SDLException` if allocation failed
+     +   size = size (width and height) of the `dsdl.Surface` in pixels
+     +   rgbPixelFormat = an RGB(A) `dsdl.PixelFormat`
+     + Throws: `dsdl.SDLException` if allocation failed
      +/
     this(uint[2] size, const PixelFormat rgbPixelFormat) @trusted
     in {
@@ -74,14 +74,14 @@ final class Surface {
     }
 
     /++
-     + Constructs an RGB(A) `dsdl2.Surface` from an array of `pixels`
+     + Constructs an RGB(A) `dsdl.Surface` from an array of `pixels`
      +
      + Params:
      +   pixels = array of pixel data (copied internally)
-     +   size = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch = skips in bytes per line/row of the `dsdl2.Surface`
-     +   rgbPixelFormat = an RGB(A) `dsdl2.PixelFormat`
-     + Throws: `dsdl2.SDLException` if allocation failed
+     +   size = size (width and height) of the `dsdl.Surface` in pixels
+     +   pitch = skips in bytes per line/row of the `dsdl.Surface`
+     +   rgbPixelFormat = an RGB(A) `dsdl.PixelFormat`
+     + Throws: `dsdl.SDLException` if allocation failed
      +/
     this(const void[] pixels, uint[2] size, size_t pitch, const PixelFormat rgbPixelFormat) @trusted
     in {
@@ -105,14 +105,14 @@ final class Surface {
     }
 
     /++
-     + Constructs a blank indexed palette-using `dsdl2.Surface` with a set width, height, and index bit depth,
+     + Constructs a blank indexed palette-using `dsdl.Surface` with a set width, height, and index bit depth,
      + which wraps `SDL_CreateRGBSurface`
      +
      + Params:
-     +   size = size (width and height) of the `dsdl2.Surface` in pixels
+     +   size = size (width and height) of the `dsdl.Surface` in pixels
      +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette = `dsdl2.Palette` to use
-     + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
+     +   palette = `dsdl.Palette` to use
+     + Throws: `dsdl.SDLException` if allocation failed or palette-setting failed
      +/
     this(uint[2] size, ubyte bitDepth, Palette palette) @trusted
     in {
@@ -129,15 +129,15 @@ final class Surface {
     }
 
     /++
-     + Constructs a blank indexed palette-using `dsdl2.Surface` from an array of `pixels`
+     + Constructs a blank indexed palette-using `dsdl.Surface` from an array of `pixels`
      +
      + Params:
      +   pixels = array of pixel data (copied internally)
-     +   size = size (width and height) of the `dsdl2.Surface` in pixels
-     +   pitch = skips in bytes per line/row of the `dsdl2.Surface`
+     +   size = size (width and height) of the `dsdl.Surface` in pixels
+     +   pitch = skips in bytes per line/row of the `dsdl.Surface`
      +   bitDepth = bit depth of the palette index (1, 4, or 8)
-     +   palette = `dsdl2.Palette` to use
-     + Throws: `dsdl2.SDLException` if allocation failed or palette-setting failed
+     +   palette = `dsdl.Palette` to use
+     + Throws: `dsdl.SDLException` if allocation failed or palette-setting failed
      +/
     this(const void[] pixels, uint[2] size, size_t pitch, ubyte bitDepth, Palette palette) @trusted
     in {
@@ -184,7 +184,7 @@ final class Surface {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Surface`
+     + Gets the hash of the `dsdl.Surface`
      +
      + Returns: unique hash for the instance being the pointer of the internal `SDL_Surface` pointer
      +/
@@ -193,19 +193,19 @@ final class Surface {
     }
 
     /++
-     + Formats the `dsdl2.Surface` into its construction representation:
-     + `"dsdl2.PixelFormat([<bytes>], [<width>, <height>], <pitch>, <pixelFormat>)"`
+     + Formats the `dsdl.Surface` into its construction representation:
+     + `"dsdl.PixelFormat([<bytes>], [<width>, <height>], <pitch>, <pixelFormat>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Surface(%s, %s, %d, %s)".format(this.buffer, this.size, this.pitch, this.pixelFormat);
+        return "dsdl.Surface(%s, %s, %d, %s)".format(this.buffer, this.size, this.pitch, this.pixelFormat);
     }
 
     /++
-     + Gets the `dsdl2.PixelFormat` of the `dsdl2.Surface`
+     + Gets the `dsdl.PixelFormat` of the `dsdl.Surface`
      +
-     + Returns: `const` proxy to the `dsdl2.PixelFormat` of the `dsdl2.Surface`
+     + Returns: `const` proxy to the `dsdl.PixelFormat` of the `dsdl.Surface`
      +/
     const(PixelFormat) pixelFormat() const @property @trusted {
         if (this.pixelFormatProxy is null) {
@@ -222,7 +222,7 @@ final class Surface {
     }
 
     /++
-     + Gets the internal pixel buffer of the `dsdl2.Surface`
+     + Gets the internal pixel buffer of the `dsdl.Surface`
      +
      + This function is marked as `@system` due to the potential of referencing invalid memory.
      +
@@ -233,45 +233,45 @@ final class Surface {
     }
 
     /++
-     + Gets the width of the `dsdl2.Surface` in pixels
+     + Gets the width of the `dsdl.Surface` in pixels
      +
-     + Returns: width of the `dsdl2.Surface` in pixels
+     + Returns: width of the `dsdl.Surface` in pixels
      +/
     uint width() const @property @trusted {
         return this.sdlSurface.w;
     }
 
     /++
-     + Gets the height of the `dsdl2.Surface` in pixels
+     + Gets the height of the `dsdl.Surface` in pixels
      +
-     + Returns: height of the `dsdl2.Surface` in pixels
+     + Returns: height of the `dsdl.Surface` in pixels
      +/
     uint height() const @property @trusted {
         return this.sdlSurface.h;
     }
 
     /++
-     + Gets the size of the `dsdl2.Surface` in pixels
+     + Gets the size of the `dsdl.Surface` in pixels
      +
-     + Returns: array of width and height of the `dsdl2.Surface` in pixels
+     + Returns: array of width and height of the `dsdl.Surface` in pixels
      +/
     uint[2] size() const @property @trusted {
         return [this.sdlSurface.w, this.sdlSurface.h];
     }
 
     /++
-     + Gets the pitch of the `dsdl2.Surface` in bytes (multiple of bytes for each line/row)
+     + Gets the pitch of the `dsdl.Surface` in bytes (multiple of bytes for each line/row)
      +
-     + Returns: pitch of the `dsdl2.Surface` in bytes
+     + Returns: pitch of the `dsdl.Surface` in bytes
      +/
     size_t pitch() const @property @trusted {
         return this.sdlSurface.pitch;
     }
 
     /++
-     + Gets the used color palette of the `dsdl2.Surface`
+     + Gets the used color palette of the `dsdl.Surface`
      +
-     + Returns: `dsdl2.Palette` instance of the `dsdl2.Surface`
+     + Returns: `dsdl.Palette` instance of the `dsdl.Surface`
      +/
     inout(Palette) palette() inout @property @trusted
     in {
@@ -282,10 +282,10 @@ final class Surface {
     }
 
     /++
-     + Sets the color palette of the `dsdl2.Surface`
+     + Sets the color palette of the `dsdl.Surface`
      +
      + Params:
-     +   newPalette = new `dsdl2.Palette` instance to use for the `dsdl2.Surface`
+     +   newPalette = new `dsdl.Palette` instance to use for the `dsdl.Surface`
      +/
     void palette(Palette newPalette) @property @trusted
     in {
@@ -300,7 +300,7 @@ final class Surface {
     }
 
     /++
-     + Gets the pixel value in the `dsdl2.Surface` at the given coordinate
+     + Gets the pixel value in the `dsdl.Surface` at the given coordinate
      +
      + Params:
      +   xy = X and Y values of the coordinate
@@ -345,7 +345,7 @@ final class Surface {
     }
 
     /++
-     + Sets the pixel value in the `dsdl2.Surface` at the given coordinate
+     + Sets the pixel value in the `dsdl.Surface` at the given coordinate
      +
      + Params:
      +   xy = X and Y values of the coordinate
@@ -399,7 +399,7 @@ final class Surface {
     }
 
     /++
-     + Gets the pixel color in the `dsdl2.Surface` at the given coordinate
+     + Gets the pixel color in the `dsdl.Surface` at the given coordinate
      +
      + Params:
      +   xy = X and Y values of the coordinate
@@ -420,7 +420,7 @@ final class Surface {
     }
 
     /++
-     + Sets the pixel color in the `dsdl2.Surface` at the given coordinate
+     + Sets the pixel color in the `dsdl.Surface` at the given coordinate
      +
      + Params:
      +   xy = X and Y values of the coordinate
@@ -441,10 +441,10 @@ final class Surface {
     }
 
     /++
-     + Gets the color and alpha multipliers of the `dsdl2.Surface` that wraps `SDL_GetSurfaceColorMod` and
+     + Gets the color and alpha multipliers of the `dsdl.Surface` that wraps `SDL_GetSurfaceColorMod` and
      + `SDL_GetSurfaceAlphaMod`
      +
-     + Returns: color and alpha multipliers of the `dsdl2.Surface`
+     + Returns: color and alpha multipliers of the `dsdl.Surface`
      +/
     Color mod() const @property @trusted {
         Color multipliers = void;
@@ -455,11 +455,11 @@ final class Surface {
     }
 
     /++
-     + Sets the color and alpha multipliers of the `dsdl2.Surface` that wraps `SDL_SetSurfaceColorMod` and
+     + Sets the color and alpha multipliers of the `dsdl.Surface` that wraps `SDL_SetSurfaceColorMod` and
      + `SDL_SetSurfaceAlphaMod`
      +
      + Params:
-     +   newMod = `dsdl2.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
+     +   newMod = `dsdl.Color` with `.r`, `.g`, `.b` as the color multipliers, and `.a` as the alpha multiplier
      +/
     void mod(Color newMod) @property @trusted {
         SDL_SetSurfaceColorMod(this.sdlSurface, newMod.r, newMod.g, newMod.b);
@@ -467,9 +467,9 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_GetSurfaceColorMod` which gets the color multipliers of the `dsdl2.Surface`
+     + Wraps `SDL_GetSurfaceColorMod` which gets the color multipliers of the `dsdl.Surface`
      +
-     + Returns: color multipliers of the `dsdl2.Surface`
+     + Returns: color multipliers of the `dsdl.Surface`
      +/
     ubyte[3] colorMod() const @property @trusted {
         ubyte[3] rgbMod = void;
@@ -478,7 +478,7 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetSurfaceColorMod` which sets the color multipliers of the `dsdl2.Surface`
+     + Wraps `SDL_SetSurfaceColorMod` which sets the color multipliers of the `dsdl.Surface`
      +
      + Params:
      +   newColorMod = an array of `ubyte`s representing red, green, and blue multipliers (each 0-255)
@@ -488,9 +488,9 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_GetSurfaceAlphaMod` which gets the alpha multiplier of the `dsdl2.Surface`
+     + Wraps `SDL_GetSurfaceAlphaMod` which gets the alpha multiplier of the `dsdl.Surface`
      +
-     + Returns: alpha multiplier of the `dsdl2.Surface`
+     + Returns: alpha multiplier of the `dsdl.Surface`
      +/
     ubyte alphaMod() const @property @trusted {
         ubyte aMod = void;
@@ -499,7 +499,7 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetSurfaceAlphaMod` which sets the alpha multiplier of the `dsdl2.Surface`
+     + Wraps `SDL_SetSurfaceAlphaMod` which sets the alpha multiplier of the `dsdl.Surface`
      +
      + Params:
      +   newAlphaMod = alpha multiplier (0-255)
@@ -509,9 +509,9 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_GetClipRect` which gets the clipping `dsdl2.Rect` of the `dsdl2.Surface`
+     + Wraps `SDL_GetClipRect` which gets the clipping `dsdl.Rect` of the `dsdl.Surface`
      +
-     + Returns: clipping `dsdl2.Rect` of the `dsdl2.Surface`
+     + Returns: clipping `dsdl.Rect` of the `dsdl.Surface`
      +/
     Rect clipRect() const @property @trusted {
         Rect rect = void;
@@ -520,28 +520,28 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetClipRect` which sets the clipping `dsdl2.Rect` of the `dsdl2.Surface`
+     + Wraps `SDL_SetClipRect` which sets the clipping `dsdl.Rect` of the `dsdl.Surface`
      +
      + Params:
-     +   newRect = `dsdl2.Rect` to set as the clipping rectangle
+     +   newRect = `dsdl.Rect` to set as the clipping rectangle
      +/
     void clipRect(Rect newRect) @property @trusted {
         SDL_SetClipRect(this.sdlSurface, &newRect.sdlRect);
     }
 
     /++
-     + Acts as `SDL_SetClipRect(surface, NULL)` which removes the clipping `dsdl2.Rect` of the
-     + `dsdl2.Surface`
+     + Acts as `SDL_SetClipRect(surface, NULL)` which removes the clipping `dsdl.Rect` of the
+     + `dsdl.Surface`
      +/
     void clipRect(typeof(null) _) @property @trusted {
         SDL_SetClipRect(this.sdlSurface, null);
     }
 
     /++
-     + Wraps `SDL_SetClipRect` which sets or removes the clipping `dsdl2.Rect` of the `dsdl2.Surface`
+     + Wraps `SDL_SetClipRect` which sets or removes the clipping `dsdl.Rect` of the `dsdl.Surface`
      +
      + Params:
-     +   newRect = `dsdl2.Rect` to set as the clipping rectangle; `null` to remove the clipping rectangle
+     +   newRect = `dsdl.Rect` to set as the clipping rectangle; `null` to remove the clipping rectangle
      +/
     void clipRect(Nullable!Rect newRect) @property @trusted {
         if (newRect.isNull) {
@@ -553,10 +553,10 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_GetColorKey` which gets the color key used by the `dsdl2.Surface` for transparency
+     + Wraps `SDL_GetColorKey` which gets the color key used by the `dsdl.Surface` for transparency
      +
-     + Returns: transparency color key in `dsdl2.Color`
-     + Throws: `dsdl2.SDLException` if color key unable to be fetched
+     + Returns: transparency color key in `dsdl.Color`
+     + Throws: `dsdl.SDLException` if color key unable to be fetched
      +/
     Color colorKey() const @property @trusted {
         uint key = void;
@@ -573,12 +573,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetColorKey` which sets the color key used for the `dsdl2.Surface` making pixels of the same
+     + Wraps `SDL_SetColorKey` which sets the color key used for the `dsdl.Surface` making pixels of the same
      + color transparent
      +
      + Params:
      +   newPixelKey = pixel value of the color key that get transparency
-     + Throws: `dsdl2.SDLException` if color key unable to set
+     + Throws: `dsdl.SDLException` if color key unable to set
      +/
     void colorKey(uint newPixelKey) @property @trusted {
         if (SDL_SetColorKey(this.sdlSurface, SDL_TRUE, newPixelKey) != 0) {
@@ -587,12 +587,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetColorKey` which sets the color key used for the `dsdl2.Surface` making pixels of the same
+     + Wraps `SDL_SetColorKey` which sets the color key used for the `dsdl.Surface` making pixels of the same
      + color transparent
      +
      + Params:
-     +   newColorKey = `dsdl2.Color` specifying pixels that get transparency
-     + Throws: `dsdl2.SDLException` if color key unable to set
+     +   newColorKey = `dsdl.Color` specifying pixels that get transparency
+     + Throws: `dsdl.SDLException` if color key unable to set
      +/
     void colorKey(Color newColorKey) @property @trusted {
         if (this.pixelFormat.hasAlpha) {
@@ -613,12 +613,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetColorKey` which sets or removes the color key used for the `dsdl2.Surface` making pixels
+     + Wraps `SDL_SetColorKey` which sets or removes the color key used for the `dsdl.Surface` making pixels
      + of the same color transparent
      +
      + Params:
-     +   newColorKey = `dsdl2.Color` specifying pixels that get transparency; `null` to remove the color key
-     + Throws: `dsdl2.SDLException` if color key unable to set or removed
+     +   newColorKey = `dsdl.Color` specifying pixels that get transparency; `null` to remove the color key
+     + Throws: `dsdl.SDLException` if color key unable to set or removed
      +/
     void colorKey(Nullable!Color newColorKey) @property @trusted {
         if (newColorKey.isNull) {
@@ -631,7 +631,7 @@ final class Surface {
 
     static if (sdlSupport >= SDLSupport.v2_0_9) {
         /++
-         + Wraps `SDL_HasColorKey` (from SDL 2.0.9) which checks whether the `dsdl2.Surface` has a color key
+         + Wraps `SDL_HasColorKey` (from SDL 2.0.9) which checks whether the `dsdl.Surface` has a color key
          + for transparency
          +
          + Returns: `true` if it does, otherwise `false`
@@ -646,10 +646,10 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_GetSurfaceBlendMode` which gets the `dsdl2.Surface`'s `dsdl2.BlendMode` defining blitting
+     + Wraps `SDL_GetSurfaceBlendMode` which gets the `dsdl.Surface`'s `dsdl.BlendMode` defining blitting
      +
-     + Returns: `dsdl2.BlendMode` of the `dsdl2.Surface`
-     + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to get
+     + Returns: `dsdl.BlendMode` of the `dsdl.Surface`
+     + Throws: `dsdl.SDLException` if `dsdl.BlendMode` unable to get
      +/
     BlendMode blendMode() const @property @trusted {
         BlendMode mode = void;
@@ -661,11 +661,11 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_SetSurfaceBlendMode` which sets the `dsdl2.Surface`'s `dsdl2.BlendMode` defining blitting
+     + Wraps `SDL_SetSurfaceBlendMode` which sets the `dsdl.Surface`'s `dsdl.BlendMode` defining blitting
      +
      + Params:
-     +   newMode = `dsdl2.BlendMode` to set
-     + Throws: `dsdl2.SDLException` if `dsdl2.BlendMode` unable to set
+     +   newMode = `dsdl.BlendMode` to set
+     + Throws: `dsdl.SDLException` if `dsdl.BlendMode` unable to set
      +/
     void blendMode(BlendMode newMode) @property @trusted {
         if (SDL_SetSurfaceBlendMode(this.sdlSurface, newMode.sdlBlendMode) != 0) {
@@ -674,13 +674,13 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_ConvertPixels` which converts the `dsdl2.Surface` from its RGB(A) `dsdl2.PixelFormat` to another
-     + `dsdl2.Surface` with a different RGB(A) `dsdl2.PixelFormat`
+     + Wraps `SDL_ConvertPixels` which converts the `dsdl.Surface` from its RGB(A) `dsdl.PixelFormat` to another
+     + `dsdl.Surface` with a different RGB(A) `dsdl.PixelFormat`
      +
      + Params:
-     +   rgbPixelFormat = the RGB(A) `dsdl2.PixelFormat` to target the conversion
-     + Returns: result `dsdl2.Surface` with the `targetPixelFormat`
-     + Throws: `dsdl2.SDLException` if pixels failed to convert
+     +   rgbPixelFormat = the RGB(A) `dsdl.PixelFormat` to target the conversion
+     + Returns: result `dsdl.Surface` with the `targetPixelFormat`
+     + Throws: `dsdl.SDLException` if pixels failed to convert
      +/
     Surface convert(const PixelFormat rgbPixelFormat) const @trusted
     in {
@@ -699,10 +699,10 @@ final class Surface {
     }
 
     /++
-     + Acts as `SDL_FillRect(surface, NULL)` which fills the entire `dsdl2.Surface` with a pixel value
+     + Acts as `SDL_FillRect(surface, NULL)` which fills the entire `dsdl.Surface` with a pixel value
      +
      + Params:
-     +   pixel = pixel value of the color to fill the entire `dsdl2.Surface`
+     +   pixel = pixel value of the color to fill the entire `dsdl.Surface`
      +/
     void fill(uint pixel) @trusted {
         if (SDL_FillRect(this.sdlSurface, null, pixel) != 0) {
@@ -711,10 +711,10 @@ final class Surface {
     }
 
     /++
-     + Acts as `SDL_FillRect(surface, NULL)` which fills the entire `dsdl2.Surface` with a `dsdl2.Color` value
+     + Acts as `SDL_FillRect(surface, NULL)` which fills the entire `dsdl.Surface` with a `dsdl.Color` value
      +
      + Params:
-     +   color = `dsdl2.Color` of the color to fill the entire `dsdl2.Surface`
+     +   color = `dsdl.Color` of the color to fill the entire `dsdl.Surface`
      +/
     void fill(Color color) @trusted {
         if (this.pixelFormat.hasAlpha) {
@@ -726,12 +726,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl2.Surface` with specifying a pixel color value
+     + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl.Surface` with specifying a pixel color value
      +
      + Params:
-     +   rect = `dsdl2.Rect` specifying the position and size
+     +   rect = `dsdl.Rect` specifying the position and size
      +   pixel = pixel value of the color to fill the rectangle
-     + Throws: `dsdl2.SDLException` if rectangle failed to draw
+     + Throws: `dsdl.SDLException` if rectangle failed to draw
      +/
     void fillRect(Rect rect, uint pixel) @trusted {
         if (SDL_FillRect(this.sdlSurface, &rect.sdlRect, pixel) != 0) {
@@ -740,12 +740,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl2.Surface` with specifying a `dsdl2.Color` value
+     + Wraps `SDL_FillRect` which draws a filled rectangle in the `dsdl.Surface` with specifying a `dsdl.Color` value
      +
      + Params:
-     +   rect = `dsdl2.Rect` specifying the position and size
-     +   color = `dsdl2.Color` of the color to fill the rectangle
-     + Throws: `dsdl2.SDLException` if rectangle failed to draw
+     +   rect = `dsdl.Rect` specifying the position and size
+     +   color = `dsdl.Color` of the color to fill the rectangle
+     + Throws: `dsdl.SDLException` if rectangle failed to draw
      +/
     void fillRect(Rect rect, Color color) @trusted {
         if (this.pixelFormat.hasAlpha) {
@@ -757,13 +757,13 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_FillRects` which draws multiple filled rectangles in the `dsdl2.Surface` with specifying a pixel
+     + Wraps `SDL_FillRects` which draws multiple filled rectangles in the `dsdl.Surface` with specifying a pixel
      + color value
      +
      + Params:
-     +   rects = an array of `dsdl2.Rect`s specifying the drawn rectangles' positions and sizes
+     +   rects = an array of `dsdl.Rect`s specifying the drawn rectangles' positions and sizes
      +   pixel = pixel value of the color to fill the rectangles
-     + Throws: `dsdl2.SDLException` if the rectangles failed to draw
+     + Throws: `dsdl.SDLException` if the rectangles failed to draw
      +/
     void fillRects(const Rect[] rects, uint pixel) @trusted {
         if (SDL_FillRects(this.sdlSurface, cast(SDL_Rect*) rects.ptr, rects.length.to!int, pixel) != 0) {
@@ -772,13 +772,13 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_FillRects` which draws multiple filled rectangles in the `dsdl2.Surface` with specifying a
-     + `dsdl2.Color` value
+     + Wraps `SDL_FillRects` which draws multiple filled rectangles in the `dsdl.Surface` with specifying a
+     + `dsdl.Color` value
      +
      + Params:
-     +   rects = an array of `dsdl2.Rect`s specifying the drawn rectangles' positions and sizes
-     +   color = `dsdl2.Color` of the color to fill the rectangles
-     + Throws: `dsdl2.SDLException` if the rectangles failed to draw
+     +   rects = an array of `dsdl.Rect`s specifying the drawn rectangles' positions and sizes
+     +   color = `dsdl.Color` of the color to fill the rectangles
+     + Throws: `dsdl.SDLException` if the rectangles failed to draw
      +/
     void fillRects(const Rect[] rects, Color color) @trusted {
         if (this.pixelFormat.hasAlpha) {
@@ -790,12 +790,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_BlitSurface` which blits/draws a `dsdl2.Surface` on top of the `dsdl2.Surface` at a specific
-     + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
+     + Wraps `SDL_BlitSurface` which blits/draws a `dsdl.Surface` on top of the `dsdl.Surface` at a specific
+     + point as the top-left point of the drawn `dsdl.Surface` without any scaling done
      +
      + Params:
-     +   source = `dsdl2.Surface` to blit/draw
-     +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
+     +   source = `dsdl.Surface` to blit/draw
+     +   destPoint = top-left `dsdl.Point` of where `source` is drawn
      +/
     void blit(const Surface source, Point destPoint) @trusted {
         SDL_Rect dstrect = SDL_Rect(destPoint.x, destPoint.y, 0, 0);
@@ -805,12 +805,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_BlitSurface` which blits/draws a `dsdl2.Surface` on top of the `dsdl2.Surface` at a specific
-     + point as the top-left point of the drawn `dsdl2.Surface` without any scaling done
+     + Wraps `SDL_BlitSurface` which blits/draws a `dsdl.Surface` on top of the `dsdl.Surface` at a specific
+     + point as the top-left point of the drawn `dsdl.Surface` without any scaling done
      +
      + Params:
-     +   source = `dsdl2.Surface` to blit/draw
-     +   destPoint = top-left `dsdl2.Point` of where `source` is drawn
+     +   source = `dsdl.Surface` to blit/draw
+     +   destPoint = top-left `dsdl.Point` of where `source` is drawn
      +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blit(const Surface source, Point destPoint, Rect srcRect) @trusted {
@@ -821,12 +821,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_BlitScaled` which blits/draws a `dsdl2.Surface` on top of the `dsdl2.Surface` at a specific
-     + point as the top-left point of the drawn `dsdl2.Surface` with scaling
+     + Wraps `SDL_BlitScaled` which blits/draws a `dsdl.Surface` on top of the `dsdl.Surface` at a specific
+     + point as the top-left point of the drawn `dsdl.Surface` with scaling
      +
      + Params:
-     +   source = `dsdl2.Surface` to blit/draw
-     +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
+     +   source = `dsdl.Surface` to blit/draw
+     +   destRect = `dsdl.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +/
     void blitScaled(const Surface source, Rect destRect) @trusted {
         if (SDL_BlitScaled(cast(SDL_Surface*) source.sdlSurface, null, this.sdlSurface, &destRect.sdlRect) != 0) {
@@ -835,12 +835,12 @@ final class Surface {
     }
 
     /++
-     + Wraps `SDL_BlitScaled` which blits/draws a `dsdl2.Surface` on top of the `dsdl2.Surface` at a specific
-     + point as the top-left point of the drawn `dsdl2.Surface` with scaling
+     + Wraps `SDL_BlitScaled` which blits/draws a `dsdl.Surface` on top of the `dsdl.Surface` at a specific
+     + point as the top-left point of the drawn `dsdl.Surface` with scaling
      +
      + Params:
-     +   source = `dsdl2.Surface` to blit/draw
-     +   destRect = `dsdl2.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
+     +   source = `dsdl.Surface` to blit/draw
+     +   destRect = `dsdl.Rect` of where `source` should be drawn (squeezes/stretches to the dimensions as well)
      +   srcRect = the clipping rect of `source` specifying which part is drawn
      +/
     void blitScaled(const Surface source, Rect destRect, Rect srcRect) @trusted {
@@ -852,10 +852,10 @@ final class Surface {
 }
 ///
 unittest {
-    auto surface = new dsdl2.Surface([100, 100], dsdl2.PixelFormat.rgba8888);
-    surface.fill(dsdl2.Color(24, 24, 24));
-    surface.fillRect(dsdl2.Rect(25, 25, 50, 50), dsdl2.Color(42, 42, 42));
+    auto surface = new dsdl.Surface([100, 100], dsdl.PixelFormat.rgba8888);
+    surface.fill(dsdl.Color(24, 24, 24));
+    surface.fillRect(dsdl.Rect(25, 25, 50, 50), dsdl.Color(42, 42, 42));
 
-    assert(surface.getAt([0, 0]) == dsdl2.Color(24, 24, 24));
-    assert(surface.getAt([50, 50]) == dsdl2.Color(42, 42, 42));
+    assert(surface.getAt([0, 0]) == dsdl.Color(24, 24, 24));
+    assert(surface.getAt([50, 50]) == dsdl.Color(42, 42, 42));
 }

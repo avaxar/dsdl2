@@ -4,11 +4,11 @@
 	],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
-		"dsdl2": {
+		"dsdl": {
 			"path": "../.."
 		}
 	},
-	"description": "A boilerplate dsdl2 application.",
+	"description": "A boilerplate dsdl application.",
 	"buildTypes": {
 		"debug": {
 			"buildOptions-windows": [

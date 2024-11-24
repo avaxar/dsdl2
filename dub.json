@@ -36,11 +36,11 @@
 			]
 		}
 	},
-	"homepage": "https://dsdl2.avaxar.dev",
+	"homepage": "https://dsdl.avaxar.dev",
 	"importPaths": [
 		"source"
 	],
 	"license": "MIT",
-	"name": "dsdl2",
+	"name": "dsdl",
 	"targetType": "library"
 }
