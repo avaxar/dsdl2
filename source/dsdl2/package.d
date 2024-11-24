@@ -36,7 +36,3 @@ import dsdl2.surface;
 import dsdl2.texture;
 import dsdl2.video;
 import dsdl2.window;
-
-import image = dsdl2.image;
-import mixer = dsdl2.mixer;
-import ttf = dsdl2.ttf;

@@ -21,7 +21,7 @@
 *.pdb
 
 # Executables
-opengles-triangle
+opengl-triangle
 *.exe
 
 # DUB
