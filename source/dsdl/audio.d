@@ -4,11 +4,11 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.audio;
+module dsdl.audio;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
+import dsdl.sdl;
 
 import core.memory : GC;
 import std.conv : to;
@@ -62,7 +62,7 @@ enum maxVolume = cast(ubyte) SDL_MIX_MAXVOLUME; /// Alias to `SDL_MIX_MAXVOLUME`
  +
  + Params:
  +   driverName = the name of the audio driver
- + Throws: `dsdl2.SDLException` if the audio driver could not be initialized
+ + Throws: `dsdl.SDLException` if the audio driver could not be initialized
  +/
 void initAudio(string driverName) @trusted {
     if (SDL_AudioInit(driverName.toStringz()) != 0) {
@@ -81,7 +81,7 @@ void quitAudio() @trusted {
  + Wraps `SDL_GetNumAudioDrivers` and `SDL_GetAudioDriver` which return a list of available audio drivers
  +
  + Returns: names of the available audio drivers
- + Throws: `dsdl2.SDLException` if failed to get the available audio drivers
+ + Throws: `dsdl.SDLException` if failed to get the available audio drivers
  +/
 const(string[]) getAudioDrivers() @trusted {
     int numDrivers = SDL_GetNumAudioDrivers();
@@ -163,7 +163,7 @@ private const(string[]) getAudioDeviceNamesRaw(int isCapture)() @trusted {
  + non-capturing audio devices
  +
  + Returns: names of the available non-capturing audio devices
- + Throws: `dsdl2.SDLException` if failed to get the available non-capturing audio devices
+ + Throws: `dsdl.SDLException` if failed to get the available non-capturing audio devices
  +/
 const(string[]) getAudioDeviceNames() @trusted {
     return getAudioDeviceNamesRaw!0;
@@ -174,7 +174,7 @@ const(string[]) getAudioDeviceNames() @trusted {
  + capturing audio devices
  +
  + Returns: names of the available capturing audio devices
- + Throws: `dsdl2.SDLException` if failed to get the available capturing audio devices
+ + Throws: `dsdl.SDLException` if failed to get the available capturing audio devices
  +/
 const(string[]) getCapturingAudioDeviceNames() @trusted {
     return getAudioDeviceNamesRaw!1;
@@ -184,8 +184,8 @@ const(string[]) getCapturingAudioDeviceNames() @trusted {
  + Wraps `SDL_OpenAudio` which opens the default audio device
  +
  + Params:
- +   desired = desired `dsdl2.AudioSpec`ifications
- + Returns: obtained `dsdl2.AudioSpec`ifications
+ +   desired = desired `dsdl.AudioSpec`ifications
+ + Returns: obtained `dsdl.AudioSpec`ifications
  +/
 AudioSpec openAudio(AudioSpec desired) @trusted {
     // TODO: implement handling for `AudioSpec`
@@ -202,7 +202,7 @@ void closeAudio() @trusted {
 /++
  + Wraps `SDL_GetAudioStatus` which returns the current status of the default audio device
  +
- + Returns: `dsdl2.AudioStatus` of the default audio device
+ + Returns: `dsdl.AudioStatus` of the default audio device
  +/
 AudioStatus getAudioStatus() @trusted {
     return cast(AudioStatus) SDL_GetAudioStatus();

@@ -4,13 +4,13 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.display;
+module dsdl.display;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.pixels;
-import dsdl2.rect;
+import dsdl.sdl;
+import dsdl.pixels;
+import dsdl.rect;
 
 import std.array : uninitializedArray;
 import std.conv : to;
@@ -30,7 +30,7 @@ struct DisplayMode {
     this() @disable;
 
     /++
-     + Contructs a `dsdl2.DisplayMode` from a vanilla `SDL_DisplayMode` from bindbc-sdl
+     + Contructs a `dsdl.DisplayMode` from a vanilla `SDL_DisplayMode` from bindbc-sdl
      +
      + Params:
      +   sdlDisplayMode = the `SDL_DisplayMode` struct
@@ -43,7 +43,7 @@ struct DisplayMode {
     }
 
     /++
-     + Constructs a `dsdl2.DisplayMode` by feeding it its attributes
+     + Constructs a `dsdl.DisplayMode` by feeding it its attributes
      +
      + Params:
      +   pixelFormat = pixel format
@@ -68,13 +68,13 @@ struct DisplayMode {
     }
 
     /++
-     + Formats the `dsdl2.DisplayMode` into its construction representation:
-     + `"dsdl2.DisplayMode(<pixelFormat>, <size>, <refreshRate>, <driverData>)"`
+     + Formats the `dsdl.DisplayMode` into its construction representation:
+     + `"dsdl.DisplayMode(<pixelFormat>, <size>, <refreshRate>, <driverData>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.DisplayMode(%s, %s, %d, %p)".format(this.pixelFormat, this.size,
+        return "dsdl.DisplayMode(%s, %s, %d, %p)".format(this.pixelFormat, this.size,
                 this.refreshRate, this.driverData);
     }
 
@@ -89,18 +89,18 @@ struct DisplayMode {
     }
 
     /++
-     + Proxy to the width of the `dsdl2.DisplayMode`
+     + Proxy to the width of the `dsdl.DisplayMode`
      +
-     + Returns: width of the `dsdl2.DisplayMode`
+     + Returns: width of the `dsdl.DisplayMode`
      +/
     ref inout(uint) width() return inout @property {
         return this.size[0];
     }
 
     /++
-     + Proxy to the height of the `dsdl2.DisplayMode`
+     + Proxy to the height of the `dsdl.DisplayMode`
      +
-     + Returns: height of the `dsdl2.DisplayMode`
+     + Returns: height of the `dsdl.DisplayMode`
      +/
     ref inout(uint) height() return inout @property {
         return this.size[1];
@@ -143,7 +143,7 @@ final class Display {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Display`
+     + Gets the hash of the `dsdl.Display`
      +
      + Returns: unique hash for the instance being the display index
      +/
@@ -152,19 +152,19 @@ final class Display {
     }
 
     /++
-     + Formats the `dsdl2.Display` showing its internal information: `"dsdl2.PixelFormat(<sdlDisplayIndex>)"`
+     + Formats the `dsdl.Display` showing its internal information: `"dsdl.PixelFormat(<sdlDisplayIndex>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const {
-        return "dsdl2.Display(%d)".format(this.sdlDisplayIndex);
+        return "dsdl.Display(%d)".format(this.sdlDisplayIndex);
     }
 
     /++
      + Wraps `SDL_GetDisplayName` which gets the display's name
      +
      + Returns: the display's name
-     + Throws: `dsdl2.SDLException` if failed to get the display name
+     + Throws: `dsdl.SDLException` if failed to get the display name
      +/
     string name() const @property @trusted {
         if (const(char)* name = SDL_GetDisplayName(this.sdlDisplayIndex)) {
@@ -178,8 +178,8 @@ final class Display {
     /++
      + Wraps `SDL_GetDisplayBounds` which gets the display's bounding rectangle
      +
-     + Returns: `dsdl2.Rect` of the display's bounding rectangle
-     + Throws: `dsdl2.SDLException` if failed to get the display bounds
+     + Returns: `dsdl.Rect` of the display's bounding rectangle
+     + Throws: `dsdl.SDLException` if failed to get the display bounds
      +/
     Rect bounds() const @property @trusted {
         Rect rect = void;
@@ -213,8 +213,8 @@ final class Display {
      + Wraps `SDL_GetNumDisplayModes` and `SDL_GetDisplayMode` which get return a list of the available
      + display modes of the display
      +
-     + Returns: array of the `dsdl2.DisplayMode`s
-     + Throws: `dsdl2.SDLException` if failed to get the display modes
+     + Returns: array of the `dsdl.DisplayMode`s
+     + Throws: `dsdl.SDLException` if failed to get the display modes
      +/
     DisplayMode[] displayModes() const @property @trusted {
         int numModes = SDL_GetNumDisplayModes(this.sdlDisplayIndex);
@@ -240,8 +240,8 @@ final class Display {
     /++
      + Wraps `SDL_GetDesktopDisplayMode` which gets the desktop display mode of the display
      +
-     + Returns: the desktop `dsdl2.DisplayMode`
-     + Throws: `dsdl2.SDLException` if failed to get the desktop display mode
+     + Returns: the desktop `dsdl.DisplayMode`
+     + Throws: `dsdl.SDLException` if failed to get the desktop display mode
      +/
     DisplayMode desktopDisplayMode() const @property @trusted {
         SDL_DisplayMode sdlMode = void;
@@ -255,8 +255,8 @@ final class Display {
     /++
      + Wraps `SDL_GetCurrentDisplayMode` which gets the current display mode for the display
      +
-     + Returns: the current `dsdl2.DisplayMode`
-     + Throws: `dsdl2.SDLException` if failed to get the current display mode
+     + Returns: the current `dsdl.DisplayMode`
+     + Throws: `dsdl.SDLException` if failed to get the current display mode
      +/
     DisplayMode currentDisplayMode() const @property @trusted {
         SDL_DisplayMode sdlMode = void;
@@ -271,9 +271,9 @@ final class Display {
      + Wraps `SDL_GetClosestDisplayMode` which gets the closest display mode of the display to the desired mode
      +
      + Params:
-     +   desiredMode = the desired `dsdl2.DisplayMode`
-     + Returns: the closest available `dsdl2.DisplayMode` of the display
-     + Throws: `dsdl2.SDLException` if failed to get the closest display mode
+     +   desiredMode = the desired `dsdl.DisplayMode`
+     + Returns: the closest available `dsdl.DisplayMode` of the display
+     + Throws: `dsdl.SDLException` if failed to get the closest display mode
      +/
     DisplayMode getClosestDisplayMode(DisplayMode desiredMode) const @trusted {
         SDL_DisplayMode sdlDesiredMode = desiredMode.sdlDisplayMode;
@@ -293,7 +293,7 @@ final class Display {
          + Wraps `SDL_GetDisplayDPI` (from SDL 2.0.4) which gets the display's DPI information
          +
          + Returns: named tuple of `ddpi`, `hdpi`, and `vdpi`
-         + Throws: `dsdl2.SDLException` if failed to get the display's DPI information
+         + Throws: `dsdl.SDLException` if failed to get the display's DPI information
          +/
         DisplayDPI displayDPI() const @property @trusted
         in {
@@ -313,7 +313,7 @@ final class Display {
         /++
          + Wraps `SDL_GetDisplayOrientation` (from SDL 2.0.9) which gets the display's orientation
          +
-         + Returns: `dsdl2.DisplayOrientation` of the display
+         + Returns: `dsdl.DisplayOrientation` of the display
          +/
         DisplayOrientation orientation() const @property @trusted
         in {
@@ -326,10 +326,10 @@ final class Display {
 }
 
 /++
- + Gets `dsdl2.Display` proxy instances of the available displays in the system
+ + Gets `dsdl.Display` proxy instances of the available displays in the system
  +
- + Returns: array of proxies to the available `dsdl2.Display`s
- + Throws: `dsdl2.SDLException` if failed to get the available displays
+ + Returns: array of proxies to the available `dsdl.Display`s
+ + Throws: `dsdl.SDLException` if failed to get the available displays
  +/
 const(Display[]) getDisplays() @trusted {
     int numDisplays = SDL_GetNumVideoDisplays();

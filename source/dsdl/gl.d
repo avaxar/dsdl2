@@ -4,12 +4,12 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.gl;
+module dsdl.gl;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.window;
+import dsdl.sdl;
+import dsdl.window;
 
 import core.memory : GC;
 import std.conv : to;
@@ -20,7 +20,7 @@ import std.string : toStringz;
  +
  + Params:
  +   path = path to the OpenGL library; `null` to load the default
- + Throws: `dsdl2.SDLException` if unable to load the library
+ + Throws: `dsdl.SDLException` if unable to load the library
  +/
 void loadGL(string path = null) @trusted {
     if (SDL_GL_LoadLibrary(path is null ? null : path.toStringz()) != 0) {
@@ -40,7 +40,7 @@ void* getGLProcAddress(string proc) @system {
 }
 
 /++
- + Wraps `SDL_GL_UnloadLibrary` which unloads the loaded OpenGL library from `dsdl2.loadGL`
+ + Wraps `SDL_GL_UnloadLibrary` which unloads the loaded OpenGL library from `dsdl.loadGL`
  +/
 void unloadGL() @trusted {
     SDL_GL_UnloadLibrary();
@@ -105,9 +105,9 @@ enum GLProfile : uint {
  + Wraps `SDL_GL_SetAttribute` which sets OpenGL attributes for initialization
  +
  + Params:
- +   attribute = the `dsdl2.GLAttribute` to set
+ +   attribute = the `dsdl.GLAttribute` to set
  +   value = requested value for the attribute to be set as
- + Throws: `dsdl2.SDLException` if unable to set the attribute
+ + Throws: `dsdl.SDLException` if unable to set the attribute
  +/
 void setGLAttribute(GLAttribute attribute, uint value) @trusted {
     if (SDL_GL_SetAttribute(attribute, value.to!int) != 0) {
@@ -119,9 +119,9 @@ void setGLAttribute(GLAttribute attribute, uint value) @trusted {
  + Wraps `SDL_GL_GetAttribute` which gets previously set OpenGL attributes for initialization
  +
  + Params:
- +   attribute = the `dsdl2.GLAttribute` whose value to get
+ +   attribute = the `dsdl.GLAttribute` whose value to get
  + Returns: value of the requested attribute
- + Throws: `dsdl2.SDLException` if unable to get the attribute
+ + Throws: `dsdl.SDLException` if unable to get the attribute
  +/
 uint getGLAttribute(GLAttribute attribute) @trusted {
     uint value = void;
@@ -150,8 +150,8 @@ static if (sdlSupport >= SDLSupport.v2_0_2) {
  +
  + This function is marked as `@system` due to the potential of referencing invalid memory.
  +
- + Returns: `dsdl2.Window` proxy to the target window for OpenGL
- + Throws: `dsdl2.SDLException` if unable to get the window
+ + Returns: `dsdl.Window` proxy to the target window for OpenGL
+ + Throws: `dsdl.SDLException` if unable to get the window
  +/
 Window getCurrentGLWindow() @system {
     if (SDL_Window* sdlWindow = SDL_GL_GetCurrentWindow()) {
@@ -167,8 +167,8 @@ Window getCurrentGLWindow() @system {
  +
  + This function is marked as `@system` due to the potential of referencing invalid memory.
  +
- + Returns: `dsdl2.GLContext` proxy to the OpenGL context used by SDL
- + Throws: `dsdl2.SDLException` if unable to get the context
+ + Returns: `dsdl.GLContext` proxy to the OpenGL context used by SDL
+ + Throws: `dsdl.SDLException` if unable to get the context
  +/
 GLContext getCurrentGLContext() @system {
     if (SDL_GLContext sdlGLContext = SDL_GL_GetCurrentContext()) {
@@ -192,8 +192,8 @@ enum GLSwapInterval {
  + Wraps `SDL_GL_SetSwapInterval` which gets the swap interval method for OpenGL
  +
  + Params:
- +   interval = the `dsdl2.GLSwapInterval` method to use
- + Throws: `dsdl2.SDLException` if unable to set the swap interval
+ +   interval = the `dsdl.GLSwapInterval` method to use
+ + Throws: `dsdl.SDLException` if unable to set the swap interval
  +/
 void setGLSwapInterval(GLSwapInterval interval) @trusted {
     if (SDL_GL_SetSwapInterval(cast(int) interval) != 0) {
@@ -204,8 +204,8 @@ void setGLSwapInterval(GLSwapInterval interval) @trusted {
 /++
  + Wraps `SDL_GL_GetSwapInterval` which gets the currently-used swap interval method for OpenGL
  +
- + Returns: the currently-used `dsdl2.GLSwapInterval` method
- + Throws: `dsdl2.SDLException` if unable to get the swap interval
+ + Returns: the currently-used `dsdl.GLSwapInterval` method
+ + Throws: `dsdl.SDLException` if unable to get the swap interval
  +/
 GLSwapInterval getGLSwapInterval() @trusted {
     // NOTE: This function is able to return an error. But the docs aren't clear when.
@@ -222,7 +222,7 @@ class GLContext {
     @system SDL_GLContext sdlGLContext = null; /// Internal `SDL_GLContext`
 
     /++
-     + Constructs a `dsdl2.GLContext` from a vanilla `SDL_GLContext` from bindbc-sdl
+     + Constructs a `dsdl.GLContext` from a vanilla `SDL_GLContext` from bindbc-sdl
      +
      + Params:
      +   sdlGLContext = the `SDL_GLContext` to manage
@@ -243,8 +243,8 @@ class GLContext {
      + Creates an OpenGL context to use by SDL, which wraps `SDL_GL_CreateContext`
      +
      + Params:
-     +   window = the default OpenGL `dsdl2.Window` to be set current as the rendering target for the context
-     + Throws: `dsdl2.SDLException` if OpenGL context creation failed
+     +   window = the default OpenGL `dsdl.Window` to be set current as the rendering target for the context
+     + Throws: `dsdl.SDLException` if OpenGL context creation failed
      +/
     this(Window window) @trusted
     in {
@@ -277,8 +277,8 @@ class GLContext {
      + Wraps `SDL_GL_MakeCurrent` which makes a window current as the rendering target for OpenGL rendering
      +
      + Params:
-     +   window = new OpenGL `dsdl2.Window` to be set current as the rendering target for the context
-     + Throws: `dsdl2.SDLException` if failed to set the new window current
+     +   window = new OpenGL `dsdl.Window` to be set current as the rendering target for the context
+     + Throws: `dsdl.SDLException` if failed to set the new window current
      +/
     void makeCurrent(Window window) @trusted
     in {

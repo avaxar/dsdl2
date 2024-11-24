@@ -5,11 +5,11 @@
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
 		"bindbc-opengl": "~>1",
-		"dsdl2": {
+		"dsdl": {
 			"path": "../.."
 		}
 	},
-	"description": "Rendering an RGB triangle in OpenGL with dsdl2.",
+	"description": "Rendering an RGB triangle in OpenGL with dsdl.",
 	"buildTypes": {
 		"debug": {
 			"buildOptions-windows": [

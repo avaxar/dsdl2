@@ -4,13 +4,13 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.keyboard;
+module dsdl.keyboard;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.rect;
-import dsdl2.window;
+import dsdl.sdl;
+import dsdl.rect;
+import dsdl.window;
 
 import std.bitmanip : bitfields;
 import std.format : format;
@@ -20,7 +20,7 @@ import std.format : format;
  +
  + This function is marked as `@system` due to the potential of referencing invalid memory.
  +
- + Returns: `dsdl2.Window` proxy of the window with the keyboard focus; `null` if no window is focused
+ + Returns: `dsdl.Window` proxy of the window with the keyboard focus; `null` if no window is focused
  +/
 Window getKeyboardFocusedWindow() @system {
     SDL_Window* sdlWindow = SDL_GetKeyboardFocus();
@@ -34,7 +34,7 @@ Window getKeyboardFocusedWindow() @system {
 /++
  + Wraps `SDL_GetKeyboardState` which gets the current key states of the keyboard
  +
- + Returns: `bool` array of whether the keys are pressed or not as indexed by `dsdl2.Scancode`
+ + Returns: `bool` array of whether the keys are pressed or not as indexed by `dsdl.Scancode`
  +/
 const(bool[]) getKeyboardState() @trusted {
     int numKeys = void;
@@ -45,29 +45,29 @@ const(bool[]) getKeyboardState() @trusted {
 /++
  + Wraps `SDL_GetModState` which gets the current modifier key states
  +
- + Returns: `dsdl2.Keymod` containing whether the modifier keys are pressed or not
+ + Returns: `dsdl.Keymod` containing whether the modifier keys are pressed or not
  +/
 Keymod getModState() @trusted {
     return Keymod(SDL_GetModState());
 }
 
 /++
- + Wraps `SDL_GetScancodeFromKey` which gets the `dsdl2.Scancode` from a `dsdl2.Keycode`
+ + Wraps `SDL_GetScancodeFromKey` which gets the `dsdl.Scancode` from a `dsdl.Keycode`
  +
  + Params:
- +   keycode = the `dsdl2.Keycode` enumeration
- + Returns: `dsdl2.Scancode` equivalent
+ +   keycode = the `dsdl.Keycode` enumeration
+ + Returns: `dsdl.Scancode` equivalent
  +/
 Scancode keycodeToScancode(Keycode keycode) @trusted {
     return cast(Scancode) SDL_GetScancodeFromKey(keycode);
 }
 
 /++
- + Wraps `SDL_GetKeyFromScancode` which gets the `dsdl2.Keycode` from a `dsdl2.Scancode`
+ + Wraps `SDL_GetKeyFromScancode` which gets the `dsdl.Keycode` from a `dsdl.Scancode`
  +
  + Params:
- +   scancode = the `dsdl2.Scancode` enumeration
- + Returns: `dsdl2.Keycode` equivalent
+ +   scancode = the `dsdl.Scancode` enumeration
+ + Returns: `dsdl.Keycode` equivalent
  +/
 Keycode scancodeToKeycode(Scancode scancode) @trusted {
     return cast(Keycode) SDL_GetKeyFromScancode(scancode);
@@ -171,7 +171,7 @@ struct Keymod {
     this() @disable;
 
     /++
-     + Constructs a `dsdl2.Keymod` from a vanilla `SDL_Keymod` from bindbc-sdl
+     + Constructs a `dsdl.Keymod` from a vanilla `SDL_Keymod` from bindbc-sdl
      +
      + Params:
      +   sdlKeymod = the `SDL_Keymod` flag
@@ -192,7 +192,7 @@ struct Keymod {
     }
 
     /++
-     + Constructs a `dsdl2.Keymod` by providing the flags
+     + Constructs a `dsdl.Keymod` by providing the flags
      +
      + Params:
      +   base = base `SDL_Keymod` to assign (Put `0` for none)
@@ -228,13 +228,13 @@ struct Keymod {
     }
 
     /++
-     + Formats the `dsdl2.Keymod` into its construction representation:
-     + `"dsdl2.Keymod(<sdlKeymod>, <lShift>, <rShift>, <lCtrl>, <rCtrl>, <lAlt>, <rAlt>, <lGUI>, <rGUI>, <num>, <caps>, <mode>, <scroll>)"`
+     + Formats the `dsdl.Keymod` into its construction representation:
+     + `"dsdl.Keymod(<sdlKeymod>, <lShift>, <rShift>, <lCtrl>, <rCtrl>, <lAlt>, <rAlt>, <lGUI>, <rGUI>, <num>, <caps>, <mode>, <scroll>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,
+        return "dsdl.Keymod(%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(this.sdlKeymod,
                 this.lShift, this.rShift, this.lCtrl, this.rCtrl, this.lAlt, this.rAlt,
                 this.lGUI, this.rGUI, this.num, this.caps, this.mode, this.scroll);
     }

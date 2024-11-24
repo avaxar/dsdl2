@@ -4,18 +4,18 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.renderer;
+module dsdl.renderer;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.blend;
-import dsdl2.rect;
-import dsdl2.frect;
-import dsdl2.pixels;
-import dsdl2.surface;
-import dsdl2.texture;
-import dsdl2.window;
+import dsdl.sdl;
+import dsdl.blend;
+import dsdl.rect;
+import dsdl.frect;
+import dsdl.pixels;
+import dsdl.surface;
+import dsdl.texture;
+import dsdl.window;
 
 import core.memory : GC;
 import std.bitmanip : bitfields;
@@ -47,7 +47,7 @@ struct RendererInfo {
     this() @disable;
 
     /++
-     + Constructs a `dsdl2.RendererInfo` from a vanilla `SDL_RendererInfo` from bindbc-sdl
+     + Constructs a `dsdl.RendererInfo` from a vanilla `SDL_RendererInfo` from bindbc-sdl
      +
      + Params:
      +   sdlRendererInfo = the `SDL_RendererInfo` struct
@@ -65,7 +65,7 @@ struct RendererInfo {
     }
 
     /++
-     + Constructs a `dsdl2.RendererInfo` by feeding it its attributes
+     + Constructs a `dsdl.RendererInfo` by feeding it its attributes
      +
      + Params:
      +   name = name of the renderer
@@ -85,13 +85,13 @@ struct RendererInfo {
     }
 
     /++
-     + Formats the `dsdl2.RendererInfo` into its construction representation:
-     + `"dsdl2.RendererInfo(<name>, <textureFormats>, <maxTextureSize>, <flag> : <value> ...)"`
+     + Formats the `dsdl.RendererInfo` into its construction representation:
+     + `"dsdl.RendererInfo(<name>, <textureFormats>, <maxTextureSize>, <flag> : <value> ...)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.RendererInfo(%s, %s, %s, software : %s, accelerated : %s, presentVSync : %s, targetTexture : %s)"
+        return "dsdl.RendererInfo(%s, %s, %s, software : %s, accelerated : %s, presentVSync : %s, targetTexture : %s)"
             .format([this.name].to!string[1 .. $ - 1], this.textureFormats, this.maxTextureSize,
                     this.software, this.accelerated, this.presentVSync, this.targetTexture);
     }
@@ -112,7 +112,7 @@ struct RendererInfo {
     }
 
     /++
-     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
+     + Gets whether the `dsdl.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
      +
      + Returns: `true` if it has `SDL_RENDERER_SOFTWARE` flag, otherwise `false`
      +/
@@ -121,7 +121,7 @@ struct RendererInfo {
     }
 
     /++
-     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
+     + Sets whether the `dsdl.RendererInfo` has `SDL_RENDERER_SOFTWARE` flag
      +
      + Params:
      +   value = `true` to set `SDL_RENDERER_SOFTWARE` flag; `false` to unset it
@@ -131,7 +131,7 @@ struct RendererInfo {
     }
 
     /++
-     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
+     + Gets whether the `dsdl.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
      +
      + Returns: `true` if it has `SDL_RENDERER_ACCELERATED` flag, otherwise `false`
      +/
@@ -140,7 +140,7 @@ struct RendererInfo {
     }
 
     /++
-     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
+     + Sets whether the `dsdl.RendererInfo` has `SDL_RENDERER_ACCELERATED` flag
      +
      + Params:
      +   value = `true` to set `SDL_RENDERER_ACCELERATED` flag; `false` to unset it
@@ -150,7 +150,7 @@ struct RendererInfo {
     }
 
     /++
-     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
+     + Gets whether the `dsdl.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
      +
      + Returns: `true` if it has `SDL_RENDERER_PRESENTVSYNC` flag, otherwise `false`
      +/
@@ -159,7 +159,7 @@ struct RendererInfo {
     }
 
     /++
-     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
+     + Sets whether the `dsdl.RendererInfo` has `SDL_RENDERER_PRESENTVSYNC` flag
      +
      + Params:
      +   value = `true` to set `SDL_RENDERER_PRESENTVSYNC` flag; `false` to unset it
@@ -169,7 +169,7 @@ struct RendererInfo {
     }
 
     /++
-     + Gets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
+     + Gets whether the `dsdl.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
      +
      + Returns: `true` if it has `SDL_RENDERER_TARGETTEXTURE` flag, otherwise `false`
      +/
@@ -178,7 +178,7 @@ struct RendererInfo {
     }
 
     /++
-     + Sets whether the `dsdl2.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
+     + Sets whether the `dsdl.RendererInfo` has `SDL_RENDERER_TARGETTEXTURE` flag
      +
      + Params:
      +   value = `true` to set `SDL_RENDERER_TARGETTEXTURE` flag; `false` to unset it
@@ -188,18 +188,18 @@ struct RendererInfo {
     }
 
     /++
-     + Proxy to the maximum texture width of the `dsdl2.RendererInfo`
+     + Proxy to the maximum texture width of the `dsdl.RendererInfo`
      +
-     + Returns: maximum texture width of the `dsdl2.RendererInfo`
+     + Returns: maximum texture width of the `dsdl.RendererInfo`
      +/
     ref inout(uint) maxTextureWidth() return inout @property {
         return this.maxTextureSize[0];
     }
 
     /++
-     + Proxy to the maximum texture height of the `dsdl2.RendererInfo`
+     + Proxy to the maximum texture height of the `dsdl.RendererInfo`
      +
-     + Returns: maximum texture height of the `dsdl2.RendererInfo`
+     + Returns: maximum texture height of the `dsdl.RendererInfo`
      +/
     ref inout(uint) maxTextureHeight() return inout @property {
         return this.maxTextureSize[1];
@@ -211,7 +211,7 @@ struct RendererInfo {
  +/
 final class RenderDriver {
     const uint sdlRenderDriverIndex; /// Render driver index from SDL
-    const RendererInfo info = void; /// `dsdl2.RendererInfo` instance fetched from the driver
+    const RendererInfo info = void; /// `dsdl.RendererInfo` instance fetched from the driver
 
     this() @disable;
 
@@ -227,21 +227,21 @@ final class RenderDriver {
     }
 
     /++
-     + Formats the `dsdl2.RenderDriver` into its construction representation:
-     + `"dsdl2.RenderDriver(<sdlRenderDriverIndex>)"`
+     + Formats the `dsdl.RenderDriver` into its construction representation:
+     + `"dsdl.RenderDriver(<sdlRenderDriverIndex>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const {
-        return "dsdl2.RenderDriver(%d)".format(this.sdlRenderDriverIndex);
+        return "dsdl.RenderDriver(%d)".format(this.sdlRenderDriverIndex);
     }
 }
 
 /++
- + Gets `dsdl2.RenderDriver` proxy instances of the available render drivers in the system
+ + Gets `dsdl.RenderDriver` proxy instances of the available render drivers in the system
  +
- + Returns: array of proxies to the available `dsdl2.RenderDriver`s
- + Throws: `dsdl2.SDLException` if failed to get the available render drivers
+ + Returns: array of proxies to the available `dsdl.RenderDriver`s
+ + Throws: `dsdl.SDLException` if failed to get the available render drivers
  +/
 const(RenderDriver[]) getRenderDrivers() @trusted {
     int numDrivers = SDL_GetNumRenderDrivers();
@@ -274,7 +274,7 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
     /++
      + D struct that wraps `SDL_Vertex` (from SDL 2.0.18) containing 2D vertex information
      +
-     + `dsdl2.Vertex` stores the `position` of the vertex, `color` modulation (as well as alpha), and mapped texture
+     + `dsdl.Vertex` stores the `position` of the vertex, `color` modulation (as well as alpha), and mapped texture
      + `texCoord`inate.
      +/
     struct Vertex {
@@ -283,17 +283,17 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         this() @disable;
 
         /++
-         + Constructs a `dsdl2.Vertex` from a vanilla `SDL_Vertex` from bindbc-sdl
+         + Constructs a `dsdl.Vertex` from a vanilla `SDL_Vertex` from bindbc-sdl
          +
          + Params:
-         +   sdlVertex = the `dsdl2.Vertex` struct
+         +   sdlVertex = the `dsdl.Vertex` struct
          +/
         this(SDL_Vertex sdlVertex) {
             this.sdlVertex = sdlVertex;
         }
 
         /++
-         + Constructs a `dsdl2.Vertex` by feeding in the position, color, and texture coordinate
+         + Constructs a `dsdl.Vertex` by feeding in the position, color, and texture coordinate
          +
          + Params:
          +   position = vertex target position
@@ -307,73 +307,73 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
         }
 
         /++
-         + Formats the `dsdl2.Vertex` into its construction representation:
-         + `"dsdl2.Vertex(<position>, <color>, <texCoord>)"`
+         + Formats the `dsdl.Vertex` into its construction representation:
+         + `"dsdl.Vertex(<position>, <color>, <texCoord>)"`
          +
          + Returns: the formatted `string`
          +/
         string toString() const {
-            return "dsdl2.Vertex(%f, %f)".format(this.position, this.color, this.texCoord);
+            return "dsdl.Vertex(%f, %f)".format(this.position, this.color, this.texCoord);
         }
 
         /++
-         + Proxy to the X position of the `dsdl2.Vertex`
+         + Proxy to the X position of the `dsdl.Vertex`
          +
-         + Returns: X position of the `dsdl2.Vertex`
+         + Returns: X position of the `dsdl.Vertex`
          +/
         ref inout(float) x() return inout @property {
             return this.sdlVertex.position.x;
         }
 
         /++
-         + Proxy to the Y position of the `dsdl2.Vertex`
+         + Proxy to the Y position of the `dsdl.Vertex`
          +
-         + Returns: Y position of the `dsdl2.Vertex`
+         + Returns: Y position of the `dsdl.Vertex`
          +/
         ref inout(float) y() return inout @property {
             return this.sdlVertex.position.y;
         }
 
         /++
-         + Proxy to the position of the `dsdl2.Vertex`
+         + Proxy to the position of the `dsdl.Vertex`
          +
-         + Returns: position of the `dsdl2.Vertex`
+         + Returns: position of the `dsdl.Vertex`
          +/
         ref inout(FPoint) position() return inout @property {
             return *cast(inout(FPoint*))&this.sdlVertex.position;
         }
 
         /++
-         + Proxy to the color of the `dsdl2.Vertex`
+         + Proxy to the color of the `dsdl.Vertex`
          +
-         + Returns: color of the `dsdl2.Vertex`
+         + Returns: color of the `dsdl.Vertex`
          +/
         ref inout(Color) color() return inout @property {
             return *cast(inout(Color*))&this.sdlVertex.color;
         }
 
         /++
-         + Proxy to the X texture coordinate of the `dsdl2.Vertex`
+         + Proxy to the X texture coordinate of the `dsdl.Vertex`
          +
-         + Returns: X texture coordinate of the `dsdl2.Vertex`
+         + Returns: X texture coordinate of the `dsdl.Vertex`
          +/
         ref inout(float) texX() return inout @property {
             return this.sdlVertex.tex_coord.x;
         }
 
         /++
-         + Proxy to the Y texture coordinate of the `dsdl2.Vertex`
+         + Proxy to the Y texture coordinate of the `dsdl.Vertex`
          +
-         + Returns: Y texture coordinate of the `dsdl2.Vertex`
+         + Returns: Y texture coordinate of the `dsdl.Vertex`
          +/
         ref inout(float) texY() return inout @property {
             return this.sdlVertex.tex_coord.y;
         }
 
         /++
-         + Proxy to the texture coordinate of the `dsdl2.Vertex`
+         + Proxy to the texture coordinate of the `dsdl.Vertex`
          +
-         + Returns: texture coordinate of the `dsdl2.Vertex`
+         + Returns: texture coordinate of the `dsdl.Vertex`
          +/
         ref inout(FPoint) texCoord() return inout @property {
             return *cast(inout(FPoint*))&this.sdlVertex.tex_coord;
@@ -384,14 +384,14 @@ static if (sdlSupport >= SDLSupport.v2_0_18) {
 /++
  + D class that wraps `SDL_Renderer` managing a backend rendering instance
  +
- + `dsdl2.Renderer` provides access to 2D draw commands, which accesses the internal backend renderer. The output/target
- + of the renderer can be displayed to a `dsdl2.Window` if desired, or be done in software to the RAM as a
- + `dsdl2.Surface`.
+ + `dsdl.Renderer` provides access to 2D draw commands, which accesses the internal backend renderer. The output/target
+ + of the renderer can be displayed to a `dsdl.Window` if desired, or be done in software to the RAM as a
+ + `dsdl.Surface`.
  +
  + Example:
  + ---
- + auto window = new dsdl2.Window("My Window", [dsdl2.WindowPos.centered, dsdl2.WindowPos.centered], [800, 600]);
- + auto renderer = new dsdl2.Renderer(window, accelerated : true, acceleratedVSync : true);
+ + auto window = new dsdl.Window("My Window", [dsdl.WindowPos.centered, dsdl.WindowPos.centered], [800, 600]);
+ + auto renderer = new dsdl.Renderer(window, accelerated : true, acceleratedVSync : true);
  + ---
  +/
 final class Renderer {
@@ -402,7 +402,7 @@ final class Renderer {
     @system SDL_Renderer* sdlRenderer = null; /// Internal `SDL_Renderer` pointer
 
     /++
-     + Constructs a `dsdl2.Renderer` from a vanilla `SDL_Renderer*` from bindbc-sdl
+     + Constructs a `dsdl.Renderer` from a vanilla `SDL_Renderer*` from bindbc-sdl
      +
      + Params:
      +   sdlRenderer = the `SDL_Renderer` pointer to manage
@@ -420,16 +420,16 @@ final class Renderer {
     }
 
     /++
-     + Creates a hardware `dsdl2.Renderer` that renders to a `dsdl2.Window`, which wraps `SDL_CreateRenderer`
+     + Creates a hardware `dsdl.Renderer` that renders to a `dsdl.Window`, which wraps `SDL_CreateRenderer`
      +
      + Params:
-     +   window = target `dsdl2.Window` for the renderer to draw onto which must not have a surface associated
-     +   renderDriver = the `dsdl2.RenderDriver` to use; `null` to use the default
+     +   window = target `dsdl.Window` for the renderer to draw onto which must not have a surface associated
+     +   renderDriver = the `dsdl.RenderDriver` to use; `null` to use the default
      +   software = adds `SDL_RENDERER_SOFTWARE` flag
      +   accelerated = adds `SDL_RENDERER_ACCELERATED` flag
      +   presentVSync = adds `SDL_RENDERER_PRESENTVSYNC` flag
      +   targetTexture = adds `SDL_RENDERER_TARGETTEXTURE` flag
-     + Throws: `dsdl2.SDLException` if creation failed
+     + Throws: `dsdl.SDLException` if creation failed
      +/
     this(Window window, const RenderDriver renderDriver = null, bool software = false,
             bool accelerated = false, bool presentVSync = false, bool targetTexture = false) @trusted
@@ -446,11 +446,11 @@ final class Renderer {
     }
 
     /++
-     + Creates a software `dsdl2.Renderer` that renders to a target surface, which wraps `SDL_CreateSoftwareRenderer`
+     + Creates a software `dsdl.Renderer` that renders to a target surface, which wraps `SDL_CreateSoftwareRenderer`
      +
      + Params:
-     +   surface = `dsdl2.Surface` to be the target of rendering
-     + Throws: `dsdl2.SDLException` if creation failed
+     +   surface = `dsdl.Surface` to be the target of rendering
+     + Throws: `dsdl.SDLException` if creation failed
      +/
     this(Surface surface) @trusted
     in {
@@ -489,7 +489,7 @@ final class Renderer {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Renderer`
+     + Gets the hash of the `dsdl.Renderer`
      +
      + Returns: unique hash for the instance being the pointer of the internal `SDL_Renderer` pointer
      +/
@@ -498,19 +498,19 @@ final class Renderer {
     }
 
     /++
-     + Formats the `dsdl2.Renderer` into its construction representation: `"dsdl2.Renderer(<sdlRenderer>)"`
+     + Formats the `dsdl.Renderer` into its construction representation: `"dsdl.Renderer(<sdlRenderer>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Renderer(0x%x)".format(this.sdlRenderer);
+        return "dsdl.Renderer(0x%x)".format(this.sdlRenderer);
     }
 
     /++
      + Wraps `SDL_GetRendererInfo` which gets the renderer information
      +
-     + Returns: `dsdl2.RendererInfo` of the renderer
-     + Throws: `dsdl2.SDLException` if failed to get the renderer information
+     + Returns: `dsdl.RendererInfo` of the renderer
+     + Throws: `dsdl.SDLException` if failed to get the renderer information
      +/
     RendererInfo info() const @property @trusted {
         SDL_RendererInfo sdlRendererInfo = void;
@@ -525,7 +525,7 @@ final class Renderer {
      + Wraps `SDL_GetRendererOutputSize` which gets the renderer output's width
      +
      + Returns: drawable width of the renderer's output/target
-     + Throws: `dsdl2.SDLException` if failed to get the renderer output width
+     + Throws: `dsdl.SDLException` if failed to get the renderer output width
      +/
     uint width() const @property @trusted {
         uint w = void;
@@ -540,7 +540,7 @@ final class Renderer {
      + Wraps `SDL_GetRendererOutputSize` which gets the renderer output's height
      +
      + Returns: drawable height of the renderer's output/target
-     + Throws: `dsdl2.SDLException` if failed to get the renderer output height
+     + Throws: `dsdl.SDLException` if failed to get the renderer output height
      +/
     uint height() const @property @trusted {
         uint h = void;
@@ -555,7 +555,7 @@ final class Renderer {
      + Wraps `SDL_GetRendererOutputSize` which gets the renderer output's size
      +
      + Returns: drawable size of the renderer's output/target
-     + Throws: `dsdl2.SDLException` if failed to get the renderer output size
+     + Throws: `dsdl.SDLException` if failed to get the renderer output size
      +/
     uint[2] size() const @property @trusted {
         uint[2] xy = void;
@@ -578,7 +578,7 @@ final class Renderer {
     /++
      + Wraps `SDL_GetRenderTarget` which gets the renderer's target
      +
-     + Returns: `null` if the renderer uses the default target (usually the window), otherwise a `dsdl2.Texture`
+     + Returns: `null` if the renderer uses the default target (usually the window), otherwise a `dsdl.Texture`
      +          proxy to the the set texture target
      +/
     inout(Texture) target() inout @property @trusted {
@@ -601,8 +601,8 @@ final class Renderer {
      +
      + Params:
      +   newTarget = `null` to set the target to be the default target (usually the window), or a valid target
-     +               `dsdl2.Texture` as the texture target
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's target
+     +               `dsdl.Texture` as the texture target
+     + Throws: `dsdl.SDLException` if failed to set the renderer's target
      +/
     void target(Texture newTarget) @property @trusted {
         if (newTarget is null) {
@@ -618,9 +618,9 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderGetClipRect` which gets the clipping `dsdl2.Rect` of the renderer
+     + Wraps `SDL_RenderGetClipRect` which gets the clipping `dsdl.Rect` of the renderer
      +
-     + Returns: clipping `dsdl2.Rect` of the renderer
+     + Returns: clipping `dsdl.Rect` of the renderer
      +/
     Rect clipRect() const @property @trusted {
         Rect rect = void;
@@ -629,17 +629,17 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderSetClipRect` which sets the clipping `dsdl2.Rect` of the renderer
+     + Wraps `SDL_RenderSetClipRect` which sets the clipping `dsdl.Rect` of the renderer
      +
      + Params:
-     +   newRect = `dsdl2.Rect` to set as the clipping rectangle
+     +   newRect = `dsdl.Rect` to set as the clipping rectangle
      +/
     void clipRect(Rect newRect) @property @trusted {
         SDL_RenderSetClipRect(this.sdlRenderer, &newRect.sdlRect);
     }
 
     /++
-     + Acts as `SDL_RenderSetClipRect(renderer, NULL)` which removes the clipping `dsdl2.Rect` of the
+     + Acts as `SDL_RenderSetClipRect(renderer, NULL)` which removes the clipping `dsdl.Rect` of the
      + renderer
      +/
     void clipRect(typeof(null) _) @property @trusted {
@@ -647,10 +647,10 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderSetClipRect` which sets or removes the clipping `dsdl2.Rect` of the renderer
+     + Wraps `SDL_RenderSetClipRect` which sets or removes the clipping `dsdl.Rect` of the renderer
      +
      + Params:
-     +   newRect = `dsdl2.Rect` to set as the clipping rectangle; `null` to remove the clipping rectangle
+     +   newRect = `dsdl.Rect` to set as the clipping rectangle; `null` to remove the clipping rectangle
      +/
     void clipRect(Nullable!Rect newRect) @property @trusted {
         if (newRect.isNull) {
@@ -677,7 +677,7 @@ final class Renderer {
      +
      + Params:
      +   newWidth = new logical width of the renderer's output
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's logical width
+     + Throws: `dsdl.SDLException` if failed to set the renderer's logical width
      +/
     void logicalWidth(uint newWidth) @property @trusted {
         if (SDL_RenderSetLogicalSize(this.sdlRenderer, newWidth, this.logicalHeight) != 0) {
@@ -701,7 +701,7 @@ final class Renderer {
      +
      + Params:
      +   newHeight = new logical height of the renderer's output
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's logical height
+     + Throws: `dsdl.SDLException` if failed to set the renderer's logical height
      +/
     void logicalHeight(uint newHeight) @property @trusted {
         if (SDL_RenderSetLogicalSize(this.sdlRenderer, this.logicalWidth, newHeight) != 0) {
@@ -725,7 +725,7 @@ final class Renderer {
      +
      + Params:
      +   newSize = new logical size (width and height) of the renderer's output
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's logical size
+     + Throws: `dsdl.SDLException` if failed to set the renderer's logical size
      +/
     void logicalSize(uint[2] newSize) @property @trusted {
         if (SDL_RenderSetLogicalSize(this.sdlRenderer, newSize[0].to!int, newSize[1].to!int) != 0) {
@@ -734,9 +734,9 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderGetViewport` which gets the `dsdl2.Rect` viewport of the renderer
+     + Wraps `SDL_RenderGetViewport` which gets the `dsdl.Rect` viewport of the renderer
      +
-     + Returns: viewport `dsdl2.Rect` of the renderer
+     + Returns: viewport `dsdl.Rect` of the renderer
      +/
     Rect viewport() const @property @trusted {
         Rect rect = void;
@@ -745,11 +745,11 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderSetViewport` which sets the `dsdl2.Rect` viewport of the `dsdl2.Renderer`
+     + Wraps `SDL_RenderSetViewport` which sets the `dsdl.Rect` viewport of the `dsdl.Renderer`
      +
      + Params:
-     +   newViewport = `dsdl2.Rect` to set as the rectangle viewport
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's viewport
+     +   newViewport = `dsdl.Rect` to set as the rectangle viewport
+     + Throws: `dsdl.SDLException` if failed to set the renderer's viewport
      +/
     void viewport(Rect newViewport) @property @trusted {
         if (SDL_RenderSetViewport(this.sdlRenderer, &newViewport.sdlRect) != 0) {
@@ -758,9 +758,9 @@ final class Renderer {
     }
 
     /++
-     + Acts as `SDL_RenderSetViewport(renderer, NULL)` which removes the `dsdl2.Rect` viewport of the
-     + `dsdl2.Renderer`
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's viewport
+     + Acts as `SDL_RenderSetViewport(renderer, NULL)` which removes the `dsdl.Rect` viewport of the
+     + `dsdl.Renderer`
+     + Throws: `dsdl.SDLException` if failed to set the renderer's viewport
      +/
     void viewport(typeof(null) _) @property @trusted {
         if (SDL_RenderSetViewport(this.sdlRenderer, null) != 0) {
@@ -769,11 +769,11 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderSetViewport` which sets or removes the viewport `dsdl2.Rect` of the `dsdl2.Renderer`
+     + Wraps `SDL_RenderSetViewport` which sets or removes the viewport `dsdl.Rect` of the `dsdl.Renderer`
      +
      + Params:
-     +   newViewport = `dsdl2.Rect` to set as the rectangle viewport; `null` to remove the rectangle viewport
-     + Throws: `dsdl2.SDLException` if failed to set the renderer's viewport
+     +   newViewport = `dsdl.Rect` to set as the rectangle viewport; `null` to remove the rectangle viewport
+     + Throws: `dsdl.SDLException` if failed to set the renderer's viewport
      +/
     void viewport(Nullable!Rect newViewport) @property @trusted {
         if (newViewport.isNull) {
@@ -800,7 +800,7 @@ final class Renderer {
      +
      + Params:
      +   newX = new `float` scale of the X axis
-     + Throws: `dsdl2.SDLException` if failed to set the scale
+     + Throws: `dsdl.SDLException` if failed to set the scale
      +/
     void scaleX(float newX) @property @trusted {
         if (SDL_RenderSetScale(this.sdlRenderer, newX, this.scaleY) != 0) {
@@ -824,7 +824,7 @@ final class Renderer {
      +
      + Params:
      +   newY = new `float` scale of the Y axis
-     + Throws: `dsdl2.SDLException` if failed to set the scale
+     + Throws: `dsdl.SDLException` if failed to set the scale
      +/
     void scaleY(float newY) @property @trusted {
         if (SDL_RenderSetScale(this.sdlRenderer, this.scaleX, newY) != 0) {
@@ -848,7 +848,7 @@ final class Renderer {
      +
      + Params:
      +   newScale = array of 2 `float`s for the new X and Y scales
-     + Throws: `dsdl2.SDLException` if failed to set the scale
+     + Throws: `dsdl.SDLException` if failed to set the scale
      +/
     void scale(float[2] newScale) @property @trusted {
         if (SDL_RenderSetScale(this.sdlRenderer, newScale[0], newScale[1]) != 0) {
@@ -859,7 +859,7 @@ final class Renderer {
     /++
      + Wraps `SDL_GetRenderDrawColor` which gets the draw color for the following draw calls
      +
-     + Returns: `dsdl2.Color` of the renderer's current draw color
+     + Returns: `dsdl.Color` of the renderer's current draw color
      +/
     Color drawColor() const @property @trusted {
         Color color = void;
@@ -875,8 +875,8 @@ final class Renderer {
      + Wraps `SDL_SetRenderDrawColor` which sets the draw color for the following draw calls
      +
      + Params:
-     +   newColor = new `dsdl2.Color` as the renderer's current draw color
-     + Throws: `dsdl2.SDLException` if failed to set the draw color
+     +   newColor = new `dsdl.Color` as the renderer's current draw color
+     + Throws: `dsdl.SDLException` if failed to set the draw color
      +/
     void drawColor(Color newColor) @property @trusted {
         if (SDL_SetRenderDrawColor(this.sdlRenderer, newColor.r, newColor.g, newColor.b, newColor.a) != 0) {
@@ -887,8 +887,8 @@ final class Renderer {
     /++
      + Wraps `SDL_GetRenderDrawBlendMode` which gets the color blending mode of the renderer
      +
-     + Returns: color `dsdl2.BlendMode` of the renderer
-     + Throws: `dsdl2.SDLException` if failed to get the color blending mode
+     + Returns: color `dsdl.BlendMode` of the renderer
+     + Throws: `dsdl.SDLException` if failed to get the color blending mode
      +/
     BlendMode blendMode() const @property @trusted {
         BlendMode mode = void;
@@ -903,8 +903,8 @@ final class Renderer {
      + Wraps `SDL_SetRenderDrawBlendMode` which sets the color blending mode of the renderer
      +
      + Params:
-     +   newMode = new `dsdl2.BlendMode` as the renderer's current color blending mode
-     + Throws: `dsdl2.SDLException` if failed to set the color blending mode
+     +   newMode = new `dsdl.BlendMode` as the renderer's current color blending mode
+     + Throws: `dsdl.SDLException` if failed to set the color blending mode
      +/
     void blendMode(BlendMode newMode) @property @trusted {
         if (SDL_SetRenderDrawBlendMode(this.sdlRenderer, newMode.sdlBlendMode) != 0) {
@@ -915,7 +915,7 @@ final class Renderer {
     /++
      + Wraps `SDL_RenderClear` which clears the target with the renderer's draw color
      +
-     + Throws: `dsdl2.SDLException` if failed to clear
+     + Throws: `dsdl.SDLException` if failed to clear
      +/
     void clear() @trusted {
         if (SDL_RenderClear(this.sdlRenderer) != 0) {
@@ -927,8 +927,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawPoint` which draws a single point at a given position with the renderer's draw color
      +
      + Params:
-     +   point = `dsdl2.Point` position the point is drawn at
-     + Throws: `dsdl2.SDLException` if point failed to draw
+     +   point = `dsdl.Point` position the point is drawn at
+     + Throws: `dsdl.SDLException` if point failed to draw
      +/
     void drawPoint(Point point) @trusted {
         if (SDL_RenderDrawPoint(this.sdlRenderer, point.x, point.y) != 0) {
@@ -940,8 +940,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawPoints` which draws multiple points at given positions with the renderer's draw color
      +
      + Params:
-     +   points = array of `dsdl2.Point` positions the points are drawn at
-     + Throws: `dsdl2.SDLException` if points failed to draw
+     +   points = array of `dsdl.Point` positions the points are drawn at
+     + Throws: `dsdl.SDLException` if points failed to draw
      +/
     void drawPoints(const Point[] points) @trusted {
         if (SDL_RenderDrawPoints(this.sdlRenderer, cast(SDL_Point*) points.ptr, points.length.to!int) != 0) {
@@ -953,8 +953,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawLine` which draws a line between two points with the renderer's draw color
      +
      + Params:
-     +   line = array of two `dsdl2.Point`s indicating the line's start and end
-     + Throws: `dsdl2.SDLException` if line failed to draw
+     +   line = array of two `dsdl.Point`s indicating the line's start and end
+     + Throws: `dsdl.SDLException` if line failed to draw
      +/
     void drawLine(Point[2] line) @trusted {
         if (SDL_RenderDrawLine(this.sdlRenderer, line[0].x, line[0].y, line[1].x, line[1].y) != 0) {
@@ -966,8 +966,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawLines` which draws multiple lines following given points with the renderer's draw color
      +
      + Params:
-     +   points = array of `dsdl2.Point` edges the lines are drawn from and to
-     + Throws: `dsdl2.SDLException` if lines failed to draw
+     +   points = array of `dsdl.Point` edges the lines are drawn from and to
+     + Throws: `dsdl.SDLException` if lines failed to draw
      +/
     void drawLines(const Point[] points) @trusted {
         if (SDL_RenderDrawLines(this.sdlRenderer, cast(SDL_Point*) points.ptr, points.length.to!int) != 0) {
@@ -979,8 +979,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawRect` which draws a rectangle's edges with the renderer's draw color
      +
      + Params:
-     +   rect = `dsdl2.Rect` of the rectangle
-     + Throws: `dsdl2.SDLException` if rectangle failed to draw
+     +   rect = `dsdl.Rect` of the rectangle
+     + Throws: `dsdl.SDLException` if rectangle failed to draw
      +/
     void drawRect(Rect rect) @trusted {
         if (SDL_RenderDrawRect(this.sdlRenderer, &rect.sdlRect) != 0) {
@@ -992,8 +992,8 @@ final class Renderer {
      + Wraps `SDL_RenderDrawRects` which draws multiple rectangles' edges with the renderer's draw color
      +
      + Params:
-     +   rects = array of `dsdl2.Rect` of the rectangles
-     + Throws: `dsdl2.SDLException` if rectangles failed to draw
+     +   rects = array of `dsdl.Rect` of the rectangles
+     + Throws: `dsdl.SDLException` if rectangles failed to draw
      +/
     void drawRects(const Rect[] rects) @trusted {
         if (SDL_RenderDrawRects(this.sdlRenderer, cast(SDL_Rect*) rects.ptr, rects.length.to!int) != 0) {
@@ -1005,8 +1005,8 @@ final class Renderer {
      + Wraps `SDL_RenderFillRect` which fills a rectangle with the renderer's draw color
      +
      + Params:
-     +   rect = `dsdl2.Rect` of the rectangle
-     + Throws: `dsdl2.SDLException` if rectangle failed to fill
+     +   rect = `dsdl.Rect` of the rectangle
+     + Throws: `dsdl.SDLException` if rectangle failed to fill
      +/
     void fillRect(Rect rect) @trusted {
         if (SDL_RenderFillRect(this.sdlRenderer, &rect.sdlRect) != 0) {
@@ -1018,8 +1018,8 @@ final class Renderer {
      + Wraps `SDL_RenderFillRects` which fills multiple rectangles with the renderer's draw color
      +
      + Params:
-     +   rects = array of `dsdl2.Rect` of the rectangles
-     + Throws: `dsdl2.SDLException` if rectangles failed to fill
+     +   rects = array of `dsdl.Rect` of the rectangles
+     + Throws: `dsdl.SDLException` if rectangles failed to fill
      +/
     void fillRects(const Rect[] rects) @trusted {
         if (SDL_RenderFillRects(this.sdlRenderer, cast(SDL_Rect*) rects.ptr, rects.length.to!int) != 0) {
@@ -1032,9 +1032,9 @@ final class Renderer {
      + the renderer's target
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copy(const Texture texture, Rect destRect) @trusted
     in {
@@ -1050,10 +1050,10 @@ final class Renderer {
      + Wraps `SDL_RenderCopy` which copies a part of the texture at `srcRect` to `destRect` at the renderer's target
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
-     +   srcRect = source `dsdl2.Rect` which clips the given texture
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
+     +   srcRect = source `dsdl.Rect` which clips the given texture
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copy(const Texture texture, Rect destRect, Rect srcRect) @trusted
     in {
@@ -1071,12 +1071,12 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
      +   angle = angle in degrees to rotate the texture counterclockwise
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
      +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, bool flippedHorizontally = false,
             bool flippedVertically = false) @trusted
@@ -1096,13 +1096,13 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
      +   angle = angle in degrees to rotate the texture counterclockwise
-     +   srcRect = source `dsdl2.Rect` which clips the given texture
+     +   srcRect = source `dsdl.Rect` which clips the given texture
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
      +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Rect srcRect,
             bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1122,13 +1122,13 @@ final class Renderer {
      + entire texture to `destRect` at the renderer's target with certain `angle` and flipping
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
      +   angle = angle in degrees to rotate the texture counterclockwise
-     +   center = pivot `dsdl2.Point` of the texture for rotation
+     +   center = pivot `dsdl.Point` of the texture for rotation
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
      +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Point center,
             bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1148,14 +1148,14 @@ final class Renderer {
      + `angle` and flipping
      +
      + Params:
-     +   texture = `dsdl2.Texture` to be copied/drawn
-     +   destRect = destination `dsdl2.Rect` in the target for the texture to be drawn to
+     +   texture = `dsdl.Texture` to be copied/drawn
+     +   destRect = destination `dsdl.Rect` in the target for the texture to be drawn to
      +   angle = angle in degrees to rotate the texture counterclockwise
-     +   srcRect = source `dsdl2.Rect` which clips the given texture
-     +   center = pivot `dsdl2.Point` of the texture for rotation
+     +   srcRect = source `dsdl.Rect` which clips the given texture
+     +   center = pivot `dsdl.Point` of the texture for rotation
      +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
      +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-     + Throws: `dsdl2.SDLException` if texture failed to draw
+     + Throws: `dsdl.SDLException` if texture failed to draw
      +/
     void copyEx(const Texture texture, Rect destRect, double angle, Rect srcRect, Point center,
             bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1171,12 +1171,12 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderReadPixels` which makes a `dsdl2.Surface` from the renderer's entire target
+     + Wraps `SDL_RenderReadPixels` which makes a `dsdl.Surface` from the renderer's entire target
      +
      + Params:
-     +   format = requested `dsdl2.PixelFormat` of the returned `dsdl2.Surface`
-     + Returns: `dsdl2.Surface` copy of the renderer's entire target
-     + Throws: `dsdl2.SDLException` if pixels failed to be read
+     +   format = requested `dsdl.PixelFormat` of the returned `dsdl.Surface`
+     + Returns: `dsdl.Surface` copy of the renderer's entire target
+     + Throws: `dsdl.SDLException` if pixels failed to be read
      +/
     Surface readPixels(const PixelFormat format = PixelFormat.rgba8888) const @trusted
     in {
@@ -1193,14 +1193,14 @@ final class Renderer {
     }
 
     /++
-     + Wraps `SDL_RenderReadPixels` which makes a `dsdl2.Surface` from a specified `dsdl2.Rect` boundary at the
+     + Wraps `SDL_RenderReadPixels` which makes a `dsdl.Surface` from a specified `dsdl.Rect` boundary at the
      + renderer's target
      +
      + Params:
-     +   rect = `dsdl2.Rect` boundary to be read and copied
-     +   format = requested `dsdl2.PixelFormat` of the returned `dsdl2.Surface`
-     + Returns: `dsdl2.Surface` copy of the specified rectangle boundary in the renderer's target
-     + Throws: `dsdl2.SDLException` if pixels failed to be read
+     +   rect = `dsdl.Rect` boundary to be read and copied
+     +   format = requested `dsdl.PixelFormat` of the returned `dsdl.Surface`
+     + Returns: `dsdl.Surface` copy of the specified rectangle boundary in the renderer's target
+     + Throws: `dsdl.SDLException` if pixels failed to be read
      +/
     Surface readPixels(Rect rect, const PixelFormat format = PixelFormat.rgba8888) const @trusted
     in {
@@ -1258,7 +1258,7 @@ final class Renderer {
          +
          + Params:
          +   newScale = `true` to enable integer scaling, otherwise `false`
-         + Throws: `dsdl2.SDLException` if failed to set integer scaling
+         + Throws: `dsdl.SDLException` if failed to set integer scaling
          +/
         void integerScaling(bool newScale) @property @trusted
         in {
@@ -1307,8 +1307,8 @@ final class Renderer {
          + renderer's draw color
          +
          + Params:
-         +   point = `dsdl2.FPoint` position the point is drawn at
-         + Throws: `dsdl2.SDLException` if point failed to draw
+         +   point = `dsdl.FPoint` position the point is drawn at
+         + Throws: `dsdl.SDLException` if point failed to draw
          +/
         void drawPoint(FPoint point) @trusted
         in {
@@ -1325,8 +1325,8 @@ final class Renderer {
          + renderer's draw color
          +
          + Params:
-         +   points = array of `dsdl2.FPoint` positions the points are drawn at
-         + Throws: `dsdl2.SDLException` if points failed to draw
+         +   points = array of `dsdl.FPoint` positions the points are drawn at
+         + Throws: `dsdl.SDLException` if points failed to draw
          +/
         void drawPoints(const FPoint[] points) @trusted
         in {
@@ -1343,8 +1343,8 @@ final class Renderer {
          + color
          +
          + Params:
-         +   line = array of two `dsdl2.FPoint`s indicating the line's start and end
-         + Throws: `dsdl2.SDLException` if line failed to draw
+         +   line = array of two `dsdl.FPoint`s indicating the line's start and end
+         + Throws: `dsdl.SDLException` if line failed to draw
          +/
         void drawLine(FPoint[2] line) @trusted
         in {
@@ -1361,8 +1361,8 @@ final class Renderer {
          + renderer's draw color
          +
          + Params:
-         +   points = array of `dsdl2.FPoint` edges the lines are drawn from and to
-         + Throws: `dsdl2.SDLException` if lines failed to draw
+         +   points = array of `dsdl.FPoint` edges the lines are drawn from and to
+         + Throws: `dsdl.SDLException` if lines failed to draw
          +/
         void drawLines(const FPoint[] points) @trusted
         in {
@@ -1378,8 +1378,8 @@ final class Renderer {
          + Wraps `SDL_RenderDrawRectF` (from SDL 2.0.10) which draws a rectangle's edges with the renderer's draw color
          +
          + Params:
-         +   rect = `dsdl2.FRect` of the rectangle
-         + Throws: `dsdl2.SDLException` if rectangle failed to draw
+         +   rect = `dsdl.FRect` of the rectangle
+         + Throws: `dsdl.SDLException` if rectangle failed to draw
          +/
         void drawRect(FRect rect) @trusted
         in {
@@ -1396,8 +1396,8 @@ final class Renderer {
          + draw color
          +
          + Params:
-         +   rects = array of `dsdl2.FRect` of the rectangles
-         + Throws: `dsdl2.SDLException` if rectangles failed to draw
+         +   rects = array of `dsdl.FRect` of the rectangles
+         + Throws: `dsdl.SDLException` if rectangles failed to draw
          +/
         void drawRects(const FRect[] rects) @trusted
         in {
@@ -1413,8 +1413,8 @@ final class Renderer {
          + Wraps `SDL_RenderFillRectF` (from SDL 2.0.10) which fills a rectangle with the renderer's draw color
          +
          + Params:
-         +   rect = `dsdl2.FRect` of the rectangle
-         + Throws: `dsdl2.SDLException` if rectangle failed to fill
+         +   rect = `dsdl.FRect` of the rectangle
+         + Throws: `dsdl.SDLException` if rectangle failed to fill
          +/
         void fillRect(FRect rect) @trusted
         in {
@@ -1430,8 +1430,8 @@ final class Renderer {
          + Wraps `SDL_RenderFillRectsF` (from SDL 2.0.10) which fills multiple rectangles with the renderer's draw color
          +
          + Params:
-         +   rects = array of `dsdl2.FRect` of the rectangles
-         + Throws: `dsdl2.SDLException` if rectangles failed to fill
+         +   rects = array of `dsdl.FRect` of the rectangles
+         + Throws: `dsdl.SDLException` if rectangles failed to fill
          +/
         void fillRects(const FRect[] rects) @trusted
         in {
@@ -1448,9 +1448,9 @@ final class Renderer {
          + texture to `destRect` at the renderer's target
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copy(const Texture texture, FRect destRect) @trusted
         in {
@@ -1469,10 +1469,10 @@ final class Renderer {
          + the renderer's target
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
-         +   srcRect = source `dsdl2.Rect` which clips the given texture
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
+         +   srcRect = source `dsdl.Rect` which clips the given texture
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copy(const Texture texture, FRect destRect, Rect srcRect) @trusted
         in {
@@ -1491,12 +1491,12 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
          +   angle = angle in degrees to rotate the texture counterclockwise
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
          +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle,
                 bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1517,13 +1517,13 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
          +   angle = angle in degrees to rotate the texture counterclockwise
-         +   srcRect = source `dsdl2.Rect` which clips the given texture
+         +   srcRect = source `dsdl.Rect` which clips the given texture
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
          +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect,
                 bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1544,13 +1544,13 @@ final class Renderer {
          + copies the entire texture to `destRect` at the renderer's target with certain `angle` and flipping
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
          +   angle = angle in degrees to rotate the texture counterclockwise
-         +   center = pivot `dsdl2.FPoint` of the texture for rotation
+         +   center = pivot `dsdl.FPoint` of the texture for rotation
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
          +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, FPoint center,
                 bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1571,14 +1571,14 @@ final class Renderer {
          + target with certain `angle` and flipping
          +
          + Params:
-         +   texture = `dsdl2.Texture` to be copied/drawn
-         +   destRect = destination `dsdl2.FRect` in the target for the texture to be drawn to
+         +   texture = `dsdl.Texture` to be copied/drawn
+         +   destRect = destination `dsdl.FRect` in the target for the texture to be drawn to
          +   angle = angle in degrees to rotate the texture counterclockwise
-         +   srcRect = source `dsdl2.Rect` which clips the given texture
-         +   center = pivot `dsdl2.FPoint` of the texture for rotation
+         +   srcRect = source `dsdl.Rect` which clips the given texture
+         +   center = pivot `dsdl.FPoint` of the texture for rotation
          +   flippedHorizontally = `true` to flip the texture horizontally, otherwise `false`
          +   flippedVertically = `true` to flip the texture vertically, otherwise `false`
-         + Throws: `dsdl2.SDLException` if texture failed to draw
+         + Throws: `dsdl.SDLException` if texture failed to draw
          +/
         void copyEx(const Texture texture, FRect destRect, double angle, Rect srcRect, FPoint center,
                 bool flippedHorizontally = false, bool flippedVertically = false) @trusted
@@ -1597,7 +1597,7 @@ final class Renderer {
         /++
          + Wraps `SDL_RenderFlush` (from SDL 2.0.10) which executes and flushes all pending rendering operations
          +
-         + Throws: `dsdl2.SDLException` if cannot flush
+         + Throws: `dsdl.SDLException` if cannot flush
          +/
         void flush() @trusted
         in {
@@ -1649,11 +1649,11 @@ final class Renderer {
          + Wraps `SDL_RenderGeometry` (from SDL 2.0.18) which renders triangles to the renderer's target
          +
          + Params:
-         +   vertices = array of `dsdl2.Vertex`es of the triangles
-         +   texture = `dsdl2.Texture` for the drawn triangles; `null` for none
+         +   vertices = array of `dsdl.Vertex`es of the triangles
+         +   texture = `dsdl.Texture` for the drawn triangles; `null` for none
          +   indices = array of `uint` indices for the vertices to be drawn (must be in multiples of three); `null`
          +             for order defined by `vertices` directly
-         + Throws: `dsdl2.SDLException` if failed to render
+         + Throws: `dsdl.SDLException` if failed to render
          +/
         void renderGeometry(const Vertex[] vertices, Texture texture = null, const uint[] indices = null) @trusted {
             SDL_Texture* sdlTexture = texture is null ? null : texture.sdlTexture;
@@ -1668,7 +1668,7 @@ final class Renderer {
          +
          + Params:
          +   vSync = `true` to enable v-sync, otherwise `false`
-         + Throws: `dsdl2.SDLException` if failed to set v-sync
+         + Throws: `dsdl.SDLException` if failed to set v-sync
          +/
         void setVSync(bool vSync) @trusted {
             if (SDL_RenderSetVSync(this.sdlRenderer, vSync) != 0) {
@@ -1679,11 +1679,11 @@ final class Renderer {
 
     static if (sdlSupport >= SDLSupport.v2_0_22) {
         /++
-         + Wraps `SDL_RenderGetWindow` (from SDL 2.0.22) which gets a `dsdl2.Window` proxy to the window associated
+         + Wraps `SDL_RenderGetWindow` (from SDL 2.0.22) which gets a `dsdl.Window` proxy to the window associated
          + with the renderer
          +
-         + Returns: `dsdl2.Window` proxy to the window
-         + Throws: `dsdl2.SDLException` if failed to get window
+         + Returns: `dsdl.Window` proxy to the window
+         + Throws: `dsdl.SDLException` if failed to get window
          +/
         inout(Window) window() inout @property @trusted
         in {

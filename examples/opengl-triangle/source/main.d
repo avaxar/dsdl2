@@ -2,28 +2,28 @@ import std.conv : to;
 import std.stdio;
 
 import bindbc.opengl;
-static import dsdl2;
+static import dsdl;
 
 int main() {
     // Initializes SDL2 and OpenGL 3.0
-    dsdl2.loadSO();
-    dsdl2.init(everything : true);
-    dsdl2.setGLAttribute(dsdl2.GLAttribute.contextProfileMask, dsdl2.GLProfile.core);
-    dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMajorVersion, 3);
-    dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMinorVersion, 0);
+    dsdl.loadSO();
+    dsdl.init(everything : true);
+    dsdl.setGLAttribute(dsdl.GLAttribute.contextProfileMask, dsdl.GLProfile.core);
+    dsdl.setGLAttribute(dsdl.GLAttribute.contextMajorVersion, 3);
+    dsdl.setGLAttribute(dsdl.GLAttribute.contextMinorVersion, 0);
 
     // Prints backkend information
-    writeln("Version of SDL used: ", dsdl2.getVersion());
-    writeln("List of drivers: ", dsdl2.getVideoDrivers());
-    writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
+    writeln("Version of SDL used: ", dsdl.getVersion());
+    writeln("List of drivers: ", dsdl.getVideoDrivers());
+    writeln("Used driver: ", dsdl.getCurrentVideoDriver());
 
     // dfmt off
-    auto window = new dsdl2.Window("OpenGL Window", [
-        dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
+    auto window = new dsdl.Window("OpenGL Window", [
+        dsdl.WindowPos.undefined, dsdl.WindowPos.undefined
     ], [800, 600], openGL : true, resizable : true);
     // dfmt on
     window.minimumSize = [400, 300];
-    auto context = new dsdl2.GLContext(window);
+    auto context = new dsdl.GLContext(window);
 
     // Loads OpenGL through bindbc-opengl
     auto glSupportReceived = loadOpenGL();
@@ -135,13 +135,13 @@ int main() {
 
     while (running) {
         // Handle events
-        dsdl2.pumpEvents();
-        while (auto event = dsdl2.pollEvent()) {
-            if (cast(dsdl2.QuitEvent) event) {
+        dsdl.pumpEvents();
+        while (auto event = dsdl.pollEvent()) {
+            if (cast(dsdl.QuitEvent) event) {
                 running = false;
                 break;
             }
-            else if (auto resizeEvent = cast(dsdl2.WindowResizedEvent) event) {
+            else if (auto resizeEvent = cast(dsdl.WindowResizedEvent) event) {
                 glViewport(0, 0, resizeEvent.width, resizeEvent.height);
             }
         }
@@ -158,7 +158,7 @@ int main() {
     }
 
     // Quit SDL
-    dsdl2.quit();
+    dsdl.quit();
 
     return 0;
 }

@@ -4,13 +4,13 @@
  + License: $(LINK2 https://mit-license.org, MIT License)
  +/
 
-module dsdl2.mouse;
+module dsdl.mouse;
 @safe:
 
 import bindbc.sdl;
-import dsdl2.sdl;
-import dsdl2.surface;
-import dsdl2.window;
+import dsdl.sdl;
+import dsdl.surface;
+import dsdl.window;
 
 import core.memory : GC;
 import std.bitmanip : bitfields;
@@ -21,7 +21,7 @@ import std.format : format;
  +
  + This function is marked as `@system` due to the potential of referencing invalid memory.
  +
- + Returns: `dsdl2.Window` proxy of the window with the mouse focus; `null` if no window is focused
+ + Returns: `dsdl.Window` proxy of the window with the mouse focus; `null` if no window is focused
  +/
 Window getMouseFocusedWindow() @system {
     SDL_Window* sdlWindow = SDL_GetMouseFocus();
@@ -35,7 +35,7 @@ Window getMouseFocusedWindow() @system {
 /++
  + Wraps `SDL_GetMouseState` which gets the states of the mouse buttons
  +
- + Returns: `dsdl2.MouseState` specifying the pressed-states of the mouse buttons
+ + Returns: `dsdl.MouseState` specifying the pressed-states of the mouse buttons
  +/
 MouseState getMouseState() @trusted {
     return MouseState(SDL_GetMouseState(null, null));
@@ -79,7 +79,7 @@ bool getRelativeMouseMode() @trusted {
  +
  + Params:
  +   newRelativeMouseMode = `true` to enable relative mouse mode, otherwise `false`
- + Throws: `dsdl2.SDLException` if failed to toggle relative mouse mode
+ + Throws: `dsdl.SDLException` if failed to toggle relative mouse mode
  +/
 void setRelativeMouseMode(bool newRelativeMouseMode) @trusted {
     if (SDL_SetRelativeMouseMode(newRelativeMouseMode) != 0) {
@@ -90,7 +90,7 @@ void setRelativeMouseMode(bool newRelativeMouseMode) @trusted {
 /++
  + Wraps `SDL_GetRelativeMouseState` which gets the relative states of the mouse buttons
  +
- + Returns: `dsdl2.MouseState` specifying the relative pressed-states of the mouse buttons
+ + Returns: `dsdl.MouseState` specifying the relative pressed-states of the mouse buttons
  +/
 MouseState getRelativeMouseState() @trusted {
     return MouseState(SDL_GetRelativeMouseState(null, null));
@@ -113,7 +113,7 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
      +
      + Params:
      +   newMouseCapture = `true` to enable mouse capture, otherwise `false`
-     + Throws: `dsdl2.SDLException` if failed to toggle mouse capture
+     + Throws: `dsdl.SDLException` if failed to toggle mouse capture
      +/
     void setMouseCapture(bool newMouseCapture) @trusted
     in {
@@ -128,7 +128,7 @@ static if (sdlSupport >= SDLSupport.v2_0_4) {
     /++
      + Wraps `SDL_GetGlobalMouseState` (from SDL 2.0.4) which gets the global states of the mouse buttons
      +
-     + Returns: `dsdl2.MouseState` specifying the global pressed-states of the mouse buttons
+     + Returns: `dsdl.MouseState` specifying the global pressed-states of the mouse buttons
      +/
     MouseState getGlobalMouseState() @trusted
     in {
@@ -212,7 +212,7 @@ struct MouseState {
     this() @disable;
 
     /++
-     + Constructs a `dsdl2.MouseState` from a vanilla SDL mouse state flag
+     + Constructs a `dsdl.MouseState` from a vanilla SDL mouse state flag
      +
      + Params:
      +   sdlMouseState = the `uint` flag
@@ -226,7 +226,7 @@ struct MouseState {
     }
 
     /++
-     + Constructs a `dsdl2.MouseState` by providing the flags
+     + Constructs a `dsdl.MouseState` by providing the flags
      +
      + Params:
      +   base = base flag to assign (`0` for none)
@@ -246,13 +246,13 @@ struct MouseState {
     }
 
     /++
-     + Formats the `dsdl2.MouseState` into its construction representation:
-     + `"dsdl2.MouseState(<sdlMouseState>, <left>, <middle>, <right>, <x1>, <x2>)"`
+     + Formats the `dsdl.MouseState` into its construction representation:
+     + `"dsdl.MouseState(<sdlMouseState>, <left>, <middle>, <right>, <x1>, <x2>)"`
      +
      + Returns: the formatted `string`
      +/
     string toString() const {
-        return "dsdl2.MouseState(%d, %s, %s, %s, %s, %s)".format(this.sdlMouseState, this.left,
+        return "dsdl.MouseState(%d, %s, %s, %s, %s, %s)".format(this.sdlMouseState, this.left,
                 this.middle, this.right, this.x1, this.x2);
     }
 
@@ -275,7 +275,7 @@ struct MouseState {
 /++
  + Wraps `SDL_GetCursor` which gets the current set cursor
  +
- + Returns: `dsdl2.Cursor` proxy of the set cursor
+ + Returns: `dsdl.Cursor` proxy of the set cursor
  +/
 Cursor getCursor() @trusted {
     return new Cursor(SDL_GetCursor(), false);
@@ -284,7 +284,7 @@ Cursor getCursor() @trusted {
 /++
  + Wraps `SDL_GetDefaultCursor` which gets the default cursor
  +
- + Returns: `dsdl2.Cursor` proxy of the default cursor
+ + Returns: `dsdl.Cursor` proxy of the default cursor
  +/
 Cursor getDefaultCursor() @trusted {
     return new Cursor(SDL_GetDefaultCursor(), false);
@@ -304,7 +304,7 @@ bool getCursorVisibility() @trusted {
  +
  + Params:
  +   visible = `true` to make cursor visible, otherwise `false`
- + Throws: `dsdl2.SDLException` if failed to set cursor visibility
+ + Throws: `dsdl.SDLException` if failed to set cursor visibility
  +/
 void setCursorVisibility(bool visible) @trusted {
     if (SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE) < 0) {
@@ -331,7 +331,7 @@ final class Cursor {
     }
 
     /++
-     + Retrieves one of the `dsdl2.Cursor` system cursor presets from `SDL_SYSTEM_CURSOR_*` enumeration constants
+     + Retrieves one of the `dsdl.Cursor` system cursor presets from `SDL_SYSTEM_CURSOR_*` enumeration constants
      +/
     static alias systemArrow = _multiton!SDL_SYSTEM_CURSOR_ARROW; /// dutto
     static alias systemIBeam = _multiton!SDL_SYSTEM_CURSOR_IBEAM; /// ditto
@@ -352,7 +352,7 @@ final class Cursor {
     @system SDL_Cursor* sdlCursor = null; /// Internal `SDL_Cursor` pointer
 
     /++
-     + Constructs a `dsdl2.Cursor` from a vanilla `SDL_Cursor*` from bindbc-sdl
+     + Constructs a `dsdl.Cursor` from a vanilla `SDL_Cursor*` from bindbc-sdl
      +
      + Params:
      +   sdlCursor = the `SDL_Cursor` pointer to manage
@@ -370,12 +370,12 @@ final class Cursor {
     }
 
     /++
-     + Constructs a `dsdl2.Cursor` from a `dsdl2.Surface`, which wraps `SDL_CreateColorCursor`
+     + Constructs a `dsdl.Cursor` from a `dsdl.Surface`, which wraps `SDL_CreateColorCursor`
      +
      + Params:
      +   surface = surface image of the cursor
      +   hotPosition = pixel position of the cursor hotspot
-     + Throws: `dsdl2.Exception` if cursor creation failed
+     + Throws: `dsdl.Exception` if cursor creation failed
      +/
     this(Surface surface, uint[2] hotPosition) @trusted {
         this.sdlCursor = SDL_CreateColorCursor(surface.sdlSurface, hotPosition[0], hotPosition[1]);
@@ -408,7 +408,7 @@ final class Cursor {
     }
 
     /++
-     + Gets the hash of the `dsdl2.Cursor`
+     + Gets the hash of the `dsdl.Cursor`
      +
      + Returns: unique hash for the instance being the pointer of the internal `SDL_Cursor` pointer
      +/
@@ -417,16 +417,16 @@ final class Cursor {
     }
 
     /++
-     + Formats the `dsdl2.Cursor` into its construction representation: `"dsdl2.Cursor(<sdlCursor>)"`
+     + Formats the `dsdl.Cursor` into its construction representation: `"dsdl.Cursor(<sdlCursor>)"`
      +
      + Returns: the formatted `string`
      +/
     override string toString() const @trusted {
-        return "dsdl2.Cursor(0x%x)".format(this.sdlCursor);
+        return "dsdl.Cursor(0x%x)".format(this.sdlCursor);
     }
 
     /++
-     + Wraps `SDL_SetCursor` which sets the `dsdl2.Cursor` to be the cursor
+     + Wraps `SDL_SetCursor` which sets the `dsdl.Cursor` to be the cursor
      +/
     void set() const @trusted {
         SDL_SetCursor(cast(SDL_Cursor*) this.sdlCursor);
