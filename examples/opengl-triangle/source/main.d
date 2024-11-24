@@ -1,15 +1,14 @@
 import std.conv : to;
 import std.stdio;
 
+import bindbc.opengl;
 static import dsdl2;
-import glad.gl.all;
-import glad.gl.loader;
 
-void main() {
-    // Initializes SDL2 and OpenGLES 3.0
+int main() {
+    // Initializes SDL2 and OpenGL 3.0
     dsdl2.loadSO();
     dsdl2.init(everything : true);
-    dsdl2.setGLAttribute(dsdl2.GLAttribute.contextProfileMask, dsdl2.GLProfile.es);
+    dsdl2.setGLAttribute(dsdl2.GLAttribute.contextProfileMask, dsdl2.GLProfile.core);
     dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMajorVersion, 3);
     dsdl2.setGLAttribute(dsdl2.GLAttribute.contextMinorVersion, 0);
 
@@ -19,14 +18,39 @@ void main() {
     writeln("Used driver: ", dsdl2.getCurrentVideoDriver());
 
     // dfmt off
-    auto window = new dsdl2.Window("OpenGLES Window", [
+    auto window = new dsdl2.Window("OpenGL Window", [
         dsdl2.WindowPos.undefined, dsdl2.WindowPos.undefined
     ], [800, 600], openGL : true, resizable : true);
     // dfmt on
+    window.minimumSize = [400, 300];
     auto context = new dsdl2.GLContext(window);
 
-    // Loads OpenGLES 3.0 functions from GLAD
-    gladLoadGLES2((const(char)* proc) => dsdl2.getGLProcAddress(proc.to!string));
+    // Loads OpenGL through bindbc-opengl
+    auto glSupportReceived = loadOpenGL();
+    if (glSupportReceived != glSupport) {
+        import loader = bindbc.loader.sharedlib;
+
+        foreach (info; loader.errors) {
+            writeln(info.error, info.message);
+        }
+
+        switch (glSupportReceived) {
+        case GLSupport.noLibrary:
+            writeln("No OpenGL library detected!");
+            return 1;
+
+        case GLSupport.badLibrary:
+            writeln("The OpenGL version provided is lower than 3.0!");
+            return 1;
+
+        case GLSupport.noContext:
+            writeln("No OpenGL context is available!");
+            return 1;
+
+        default:
+            break;
+        }
+    }
 
     // Dumps version information
     int glMajor, glMinor;
@@ -135,4 +159,6 @@ void main() {
 
     // Quit SDL
     dsdl2.quit();
+
+    return 0;
 }

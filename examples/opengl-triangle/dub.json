@@ -4,11 +4,12 @@
 	],
 	"copyright": "Copyright © 2023, Avaxar",
 	"dependencies": {
+		"bindbc-opengl": "~>1",
 		"dsdl2": {
 			"path": "../.."
 		}
 	},
-	"description": "Rendering an RGB triangle in OpenGLES with dsdl2.",
+	"description": "Rendering an RGB triangle in OpenGL with dsdl2.",
 	"buildTypes": {
 		"debug": {
 			"buildOptions-windows": [
@@ -17,19 +18,13 @@
 		}
 	},
 	"license": "none",
-	"name": "opengles-triangle",
+	"name": "opengl-triangle",
 	"targetType": "executable",
-	"sourcePaths": [
-		"glad",
-		"source"
-	],
-	"importPaths": [
-		"."
-	],
 	"stringImportPaths": [
 		"shaders"
 	],
 	"versions": [
+		"GL_30",
 		"SDL_2022"
 	]
 }
